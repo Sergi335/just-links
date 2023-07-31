@@ -1,7 +1,9 @@
 const app = require('express')()
+require('dotenv').config()
 const { v4 } = require('uuid')
 const path = require('path')
 const pug = require('pug')
+const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
 app
 // Configurando app esto no va
@@ -21,5 +23,5 @@ app.get('/api/item/:slug', (req, res) => {
   const { slug } = req.params
   res.end(`Item: ${slug}`)
 })
-
+dbConnect()
 module.exports = app
