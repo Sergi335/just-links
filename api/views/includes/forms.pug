@@ -1,0 +1,114 @@
+.container.modals
+  p#moveError
+  #addDeskForm.deskForm
+    h2 A&ntilde;ade Escritorio
+    input#deskName(type='text' name='deskName' maxlength='35' required)
+    button#deskSubmit(type='submit') Enviar
+    p#deskError
+  #editDeskForm.deskForm
+    h2 Edita Escritorio
+    form
+      input#editdeskName(type='text' name='deskName' maxlength='35' required)
+      button#editdeskSubmit(type='submit') Modificar
+    .selectBackground
+      p Cambiar Fondo 
+      each img in backgrounds 
+        img(class='miniatures' src=`${img.ruta}`, alt=`${img.nombre}`)
+      .solidColor.miniatures
+    .selectInfoColor 
+      p Cambiar color del panel
+      #accentColor.infoColors
+      #black.infoColors 
+      #white.infoColors
+      #transparent.infoColors 
+    p#editdeskError
+  #addColForm.deskForm
+    h2 A&ntilde;ade Columna
+    input#colName(type='text' name='colName' maxlength='35' required)
+    button#colSubmit(type='submit') Enviar
+    p#addColError
+  #addLinkForm.deskForm
+    h2 A&ntilde;ade Link
+    p Nombre
+    input#linkName(type='text' name='linkName' maxlength='35' required)
+    p URL
+    input#linkURL(type='text' name='linkURL')
+    button#linkSubmit(type='submit') Enviar
+    p#linkError
+  #editLinkForm.deskForm
+    h2 Edita Link
+    fieldset
+      legend Nombre y URL
+      label(for='editLinkName') Nombre
+      input#editlinkName(type='text' name='editlinkName' placeholder='' maxlength='35' required)
+      label(for='editLinkURL') URL
+      input#editlinkURL(type='text' name='editlinkURL' placeholder='')
+      label(for='editLinkDescription') Description
+      input#editlinkDescription(type='text' name='editlinkDescription' placeholder='')
+      button#editlinkSubmit(type='submit') Modificar
+      p#editLinkError
+  #deleteLinkForm.deskForm
+    h2 Seguro que quieres borrar este Link?
+    button#confDeletelinkSubmit(type='submit') Si
+    button#noDeletelinkSubmit(type='submit') No
+    p#deleteLinkError
+  #deleteLinkImgForm.deskForm
+    h2 Seguro que quieres borrar esta imagen?
+    button#confDeleteImgSubmit(type='submit') Si
+    button#noDeleteImgSubmit(type='submit') No
+    p#deleteImgError
+  #deleteColForm.deskForm
+    h2 Seguro que quieres borrar esta columna?
+    button#confDeletecolSubmit(type='submit') Si
+    button#noDeletecolSubmit(type='submit') No
+    p#deleteColError
+  #deleteDeskForm.deskForm
+    h2 Seguro que quieres borrar este escritorio?
+    button#confDeletedeskSubmit(type='submit') Si
+    button#noDeletedeskSubmit(type='submit') No
+    p#deleteDeskError
+  #menuColumn.menuColumn
+    strong Opciones Columna
+    p#elementoC informacion del elemento 
+    p#infoC otra informacion
+    span.menuItem.addlink Nuevo
+    span.menuItem.paste-btn Pegar
+    span.menuItem.editcol Editar
+    span.menuItem.moveCol Mover a
+      i.icofont-thin-right
+      ul#destDesk
+        if escritorios !== undefined
+        each val in escritorios
+          li(id=`${val.name}`)= val.name
+    span.menuItem.borracol Borrar 
+  #menuLink.menuLink
+    strong Opciones Enlace
+    p#elementoL informacion del elemento 
+    p#infoL otra informacion
+    p#infoD otra informacion
+    span.menuItem.editalink Editar
+    span.menuItem.moveLink Mover a
+      i.icofont-thin-right
+      ul#destCol
+        strong#otherDesk Mover a otro escritorio
+        if columnas !== undefined
+        each val in columnas
+          li(id=`${val.name}`)= val.name
+    span.menuItem.borralink Borrar
+  #menuMoveTo(draggable='true')
+    ul#destDeskMoveTo
+      if escritorios !== undefined
+        each val in escritorios
+          li.accordion(id=`${val.name}`)
+            i.icofont-folder &nbsp;
+            | #{val.name}
+            ul
+              each columnasVal in columnasAll
+                - if (columnasVal.escritorio === val.name)
+                    li(id=`${columnasVal.name}`)= columnasVal.name
+    #moveToControls
+      button#acceptMove Aceptar 
+      button#cancelMove Cancelar
+  button#btnSubirArriba
+    i.icofont-scroll-up
+  #alertCard

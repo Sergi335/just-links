@@ -1,0 +1,46 @@
+#sidepanel
+  #sideHeader
+    h2 Link Info
+    button#prev Anterior 
+    button#next Siguiente
+    i#sideClose.icofont-close
+    p#linkId
+  .sidePanelA2
+    #linkInfoContainer
+      p Nombre:&nbsp;
+        span#lname 
+      p Panel:&nbsp;
+        span#lpanel 
+      p Url:&nbsp;
+        a#lurl(target='_blank') 
+      p Activo:&nbsp;
+        span#lactive 
+      p Fecha Creación:&nbsp;
+        span#ladded
+      p Icono:&nbsp; 
+        img#limage(title='Cambiar icono')
+    #imgOptions 
+      img#option1(src='img/opcion1.svg')
+      img#option2(src='img/opcion2.png')
+      img#option3(src='img/opcion3.png')
+      input#upLinkImg(type='file' accept='image/*')
+      i.icofont-cloud-upload
+      button#saveLinkImage Guardar
+  #notesContainer
+    p Descripción:&nbsp;
+    #linkNotes(contenteditable='true') Escribe aqu&iacute;
+    #textControls
+      i.icofont-code-alt
+      i.icofont-font
+      i.icofont-delete-alt
+      button#sendNotes Guardar
+  #imgContainer
+    #linkImages(contenteditable='false')
+      #liLoader Cargando ...
+      iframe(id='videoFrame' src='' frameborder='0' width='560' height='340' scrolling='no' allowfullscreen='')
+      #imgMasonry
+    button#pasteImg Pegar Imágen
+  #myModal.modal
+    span.close &times;
+    img#img01.modal-content
+    #caption
