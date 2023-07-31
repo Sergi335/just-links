@@ -1,5 +1,6 @@
 const app = require('express')();
 const { v4 } = require('uuid');
+const pug = require('pug')
 app.get('/', (req, res) => {
   res.render('index.pug')
 })
