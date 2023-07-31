@@ -1,6 +1,8 @@
 const app = require('express')();
 const { v4 } = require('uuid');
-
+app.get('/', (req, res) => {
+  res.render('index.pug')
+})
 app.get('/api', (req, res) => {
   const path = `/api/item/${v4()}`;
   res.setHeader('Content-Type', 'text/html');
