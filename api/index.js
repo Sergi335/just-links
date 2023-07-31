@@ -7,6 +7,7 @@ const pug = require('pug')
 const publicDir = express.static(path.join(__dirname, 'public'))
 const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
+const port = (process.env.port || 3000)
 const routes = require('./routes/index')
 app
 // Configurando app esto no va
@@ -15,9 +16,7 @@ app
 app
   .use(publicDir)
   .use('/', routes)
-// app.get('/', (req, res) => {
-//   res.render('index.pug')
-// })
+
 app.get('/api', (req, res) => {
   const path = `/api/item/${v4()}`
   res.setHeader('Content-Type', 'text/html')
@@ -29,5 +28,11 @@ app.get('/api/item/:slug', (req, res) => {
   const { slug } = req.params
   res.end(`Item: ${slug}`)
 })
+
+app.listen(port, () => {
+  console.log('Eyyy tu app corre por el puerto ' + port)
+})
+
 dbConnect()
+
 module.exports = app
