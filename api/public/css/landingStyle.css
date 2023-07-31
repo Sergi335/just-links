@@ -1,0 +1,63 @@
+header {
+
+    display: flex;
+
+    background-color: #ccc;
+
+    height: 80px;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 55px;
+}
+
+section {
+
+    height: 80vh;
+
+    background-color: darkgray;
+}
+
+#loginForm form {
+
+    position: absolute;
+
+    top: 35%;
+
+    left: 37%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background-color: white;
+
+    padding: 50px;
+
+    border-radius: 22px;
+
+    display: none;
+}
+
+#registerForm form {
+
+    position: absolute;
+
+    top: 35%;
+
+    left: 37%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background-color: white;
+
+    padding: 50px;
+
+    border-radius: 22px;
+
+    display: none;
+}

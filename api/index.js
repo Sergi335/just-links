@@ -3,6 +3,7 @@ require('dotenv').config()
 const { v4 } = require('uuid')
 const path = require('path')
 const pug = require('pug')
+const publicDir = express.static(path.join(__dirname, 'public'))
 const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
 const routes = require('./routes/index')
@@ -11,6 +12,7 @@ app
   .set('views', viewDir)
   .set('view engine', 'pug')
 app
+  .use(publicDir)
   .use('/', routes)
 // app.get('/', (req, res) => {
 //   res.render('index.pug')
