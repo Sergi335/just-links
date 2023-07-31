@@ -31,8 +31,7 @@ const registraUsuario = async (req, res) => {
 const compruebaUsuario = async (req, res) => {
   try {
     const { body } = req
-    // eslint-disable-next-line no-new-object
-    const objeto = new Object()
+    const objeto = {}
     objeto.name = body.name
     objeto.password = body.password
     const dataUser = await usersModel.find({ name: `${body.name}` })

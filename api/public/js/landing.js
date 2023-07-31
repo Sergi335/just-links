@@ -1,7 +1,8 @@
 window.onload = function () {
   const btnStart = document.getElementById('btnStart')
   const constants = {
-    BASE_URL: 'https://just-links.vercel.app/'
+    // BASE_URL: 'https://just-links.vercel.app/'
+    BASE_URL: 'http://localhost:3003'
   }
   btnStart.addEventListener('click', () => {
     console.log('Has hecho click')

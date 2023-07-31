@@ -15,6 +15,7 @@ app
   .set('view engine', 'pug')
 app
   .use(publicDir)
+  .use(express.json())
   .use('/', routes)
 
 app.get('/api', (req, res) => {
