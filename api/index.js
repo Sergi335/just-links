@@ -1,5 +1,6 @@
 const app = require('express')();
 const { v4 } = require('uuid');
+const path = require('path')
 const pug = require('pug')
 const viewDir = path.join(__dirname, 'views')
 app
