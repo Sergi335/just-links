@@ -6,7 +6,7 @@ const port = (process.env.port || 3000)
 const app = express()
 
 app
-// Configurando app
+// Configurando app esto no va
   .set('views', viewDir)
   .set('view engine', 'pug')
 app
