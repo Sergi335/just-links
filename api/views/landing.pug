@@ -1,0 +1,32 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Document
+  link(rel='stylesheet' href='/css/landingStyle.css')
+  script(src='/js/landing.js')
+header
+  #logo
+    img(src='/img/logo.jpg' alt='')
+  #login
+    button#btnStart Get Started
+section
+#loginForm
+  form
+    input#loginName(type='text' name='nick' placeholder='nombre' required='true')
+    input#loginPass(type='password' name='password' placeholder='password' required='true')
+    input(type='submit' value='Entrar')
+    p
+    | Todav&iacute;a no tienes una cuenta? 
+    a(href='#') reg&iacute;strate
+    p#error
+#registerForm
+  form
+    input#registerName(type='text' name='name' placeholder='nombre' required='true')
+    input#registerEmail(type='email' name='email' placeholder='email' required='true')
+    input#registerPass(type='password' name='password' placeholder='password' required='true')
+    input(type='submit' value='Registrarse')
+    p
+    | Ya tienes una cuenta? 
+    a(href='#') Inicia Sesi&oacute;n

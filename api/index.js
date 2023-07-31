@@ -5,13 +5,16 @@ const path = require('path')
 const pug = require('pug')
 const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
+const routes = require('./routes/index')
 app
 // Configurando app esto no va
   .set('views', viewDir)
   .set('view engine', 'pug')
-app.get('/', (req, res) => {
-  res.render('index.pug')
-})
+app
+  .use('/', routes)
+// app.get('/', (req, res) => {
+//   res.render('index.pug')
+// })
 app.get('/api', (req, res) => {
   const path = `/api/item/${v4()}`
   res.setHeader('Content-Type', 'text/html')
