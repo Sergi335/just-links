@@ -11,10 +11,11 @@ app
   .set('view engine', 'pug')
 app
   .use(publicDir)
+  
+app.get('/', (req, res) => {
+      res.render('index.pug')
+})
 app.listen(port, () => {
     console.log('Eyyy tu app corre por el puerto ' + port)
 })
-
-app.get('/', (req, res) => {
-    res.render('index.pug')
-})
+module.exports = app;
