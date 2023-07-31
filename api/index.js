@@ -1,6 +1,11 @@
 const app = require('express')();
 const { v4 } = require('uuid');
 const pug = require('pug')
+const viewDir = path.join(__dirname, 'views')
+app
+// Configurando app esto no va
+  .set('views', viewDir)
+  .set('view engine', 'pug')
 app.get('/', (req, res) => {
   res.render('index.pug')
 })
