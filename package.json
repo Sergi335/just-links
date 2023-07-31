@@ -1,0 +1,11 @@
+{
+  "name": "just-links",
+  "version": "1.0.0",
+  "description": "store links and descriptions",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sergio sánchez",
+  "license": "ISC"
+}
