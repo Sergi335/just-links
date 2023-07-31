@@ -1,6 +1,8 @@
 window.onload = function () {
   const btnStart = document.getElementById('btnStart')
-
+  const constants = {
+    BASE_URL: 'just-links.vercel.app'
+  }
   btnStart.addEventListener('click', () => {
     console.log('Has hecho click')
     const logBlock = document.querySelector('#loginForm form')
@@ -49,7 +51,7 @@ window.onload = function () {
     }
 
     // Realiza la solicitud fetch para enviar los datos del formulario
-    fetch('http://localhost:3001/login', {
+    fetch(`${constants.BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -85,7 +87,7 @@ window.onload = function () {
           // document.cookie = `token=${token}; path=/; expires=Thu, 01 Jan 2024 00:00:00 UTC; domain=tudominio.com; secure;`;
           document.cookie = `token=${token}`
           document.cookie = `user=${user[0].name}`
-          window.location = 'http://localhost:3001/templates'
+          window.location = `${constants.BASE_URL}/templates`
         }
       })
       .catch(function (error) {
@@ -110,7 +112,7 @@ window.onload = function () {
     }
 
     // Realiza la solicitud fetch para enviar los datos del formulario
-    fetch('http://localhost:3001/register', {
+    fetch(`${constants.BASE_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
