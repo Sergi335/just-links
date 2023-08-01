@@ -8,34 +8,36 @@ document.addEventListener('click', escondeDialogos)
  * Función que carga los eventos en la web
  */
 function cargaWeb () {
-  addDesktopEvents()
-  darHora()
-  handleDbClick()
-  handleSimpleClick()
-  window.onscroll = function () {
-    toggleBotonSubirArriba()
+  if (window.location.pathname !== '/profile') {
+    addDesktopEvents()
+    darHora()
+    handleDbClick()
+    handleSimpleClick()
+    window.onscroll = function () {
+      toggleBotonSubirArriba()
+    }
+    addContextMenuEvents()
+    // Declaramos la variable para pasar a ordenaCols
+    const desk = document.getElementById('deskTitle').innerText
+
+    // Añadimos los eventos de columnas
+    addColumnEvents()
+
+    // Añadimos los eventos de los links
+    // Locura que si no llamas a ordenacols dos veces en dos funciones distintas(cierto?), no funciona, tocatelos
+    const $raiz = document.getElementById(`${desk}Cols`)
+    addLinkEvents($raiz)
+
+    if (!document.body.classList.contains('edit')) {
+      const hijos = $raiz.childNodes
+      hijos.forEach(element => {
+        ordenaItems(element.childNodes[0].innerText)
+      })
+      ordenaCols($raiz)
+    }
+
+    ordenaDesks()
   }
-  addContextMenuEvents()
-  // Declaramos la variable para pasar a ordenaCols
-  const desk = document.getElementById('deskTitle').innerText
-
-  // Añadimos los eventos de columnas
-  addColumnEvents()
-
-  // Añadimos los eventos de los links
-  // Locura que si no llamas a ordenacols dos veces en dos funciones distintas(cierto?), no funciona, tocatelos
-  const $raiz = document.getElementById(`${desk}Cols`)
-  addLinkEvents($raiz)
-
-  if (!document.body.classList.contains('edit')) {
-    const hijos = $raiz.childNodes
-    hijos.forEach(element => {
-      ordenaItems(element.childNodes[0].innerText)
-    })
-    ordenaCols($raiz)
-  }
-
-  ordenaDesks()
 }
 
 // Manejo de Eventos
@@ -1507,33 +1509,35 @@ function escondeDeleteDeskDialog () {
   dialog.style.display = visible ? 'none' : 'flex'
 }
 function escondeDialogos (event) {
-  const cuadros = [
-    ...document.querySelectorAll('.deskForm'),
-    document.getElementById('addDesk'),
-    document.getElementById('addCol'),
-    document.getElementById('editDesk'),
-    document.getElementById('removeDesk'),
-    document.getElementById('menuMoveTo'),
-    document.getElementById('otherDesk'),
-    document.getElementById('menuLink'),
-    document.getElementById('menuColumn'),
-    ...document.querySelectorAll('.addlink'),
-    ...document.querySelectorAll('.icofont-close-line'),
-    ...document.querySelectorAll('.editalink'),
-    ...document.querySelectorAll('.borralink'),
-    ...document.querySelectorAll('.borracol')
-  ]
+  if (window.location.pathname !== '/profile') {
+    const cuadros = [
+      ...document.querySelectorAll('.deskForm'),
+      document.getElementById('addDesk'),
+      document.getElementById('addCol'),
+      document.getElementById('editDesk'),
+      document.getElementById('removeDesk'),
+      document.getElementById('menuMoveTo'),
+      document.getElementById('otherDesk'),
+      document.getElementById('menuLink'),
+      document.getElementById('menuColumn'),
+      ...document.querySelectorAll('.addlink'),
+      ...document.querySelectorAll('.icofont-close-line'),
+      ...document.querySelectorAll('.editalink'),
+      ...document.querySelectorAll('.borralink'),
+      ...document.querySelectorAll('.borracol')
+    ]
 
-  cuadros.forEach(element => {
-    element.addEventListener('click', (event) => {
-      event.stopPropagation()
+    cuadros.forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.stopPropagation()
+      })
+
+      const visible = element.style.display === 'flex' || element.style.display === 'block'
+      if (visible && !cuadros.includes(event.target)) {
+        element.style.display = 'none'
+      }
     })
-
-    const visible = element.style.display === 'flex' || element.style.display === 'block'
-    if (visible && !cuadros.includes(event.target)) {
-      element.style.display = 'none'
-    }
-  })
+  }
 }
 
 // Funciones para aplicar Sortablejs

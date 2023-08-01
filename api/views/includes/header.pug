@@ -44,7 +44,7 @@ header
         #userControl
           .avatar
             - if (userImg)
-              img(src=userImg alt='Profile Image')
+              img(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
             - else
               img(src='img/avatar.svg' alt='Default Image')
           .controls

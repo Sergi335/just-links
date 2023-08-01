@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', sidePanel)
 
 function sidePanel () {
   // console.log('Hay sidepanel')
-  addPanelEvents()
+  if (window.location.pathname !== '/profile') addPanelEvents()
   const element = document.querySelectorAll('div.link')[0]
   if (element && element !== null) {
     element.classList.add('navActive')

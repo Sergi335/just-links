@@ -23,7 +23,7 @@ include includes/header.pug
           i.icofont-upload-alt
           p cambiar imagen
           - if (userImg)
-            img#preview-image(src=userImg alt='Profile Image')
+            img#preview-image(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
           - else
             img#preview-image(src='img/avatar.svg' alt='Default Image')
           input#image-input(type='file' accept='image/*')

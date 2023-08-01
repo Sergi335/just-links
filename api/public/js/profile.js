@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', cargaProfile)
 function cargaProfile () {
   console.log('Hay JS')
@@ -50,12 +49,12 @@ function cargaProfile () {
   document.getElementById('brokenLinks').addEventListener('click', findBrokenLinks)
 }
 function profile () {
-  window.location = 'http://localhost:3001/templates'
+  window.location = '/templates'
 }
 function logOut () {
   console.log('Cierra sesión')
   document.cookie = 'token='
-  window.location = 'http://localhost:3001'
+  window.location = '/'
 }
 async function selectDesktop (event) {
   event.stopPropagation()
@@ -269,7 +268,7 @@ async function findDuplicates () {
   const $raiz2 = document.getElementById('brokenLinksResult')
   $raiz2.innerHTML = ''
   $raiz.innerHTML = ''
-  const data = await fetch('http://localhost:3001/duplicados', {
+  const data = await fetch('/duplicados', {
     method: 'GET',
     headers: {
       contentType: 'application/json'
@@ -325,7 +324,7 @@ async function findBrokenLinks () {
     $raiz.innerHTML = ''
   }
   $ppc.style.display = 'block'
-  const data = await fetch('http://localhost:3001/allLinks', {
+  const data = await fetch('/allLinks', {
     method: 'GET',
     headers: {
       contentType: 'application/json'
@@ -340,7 +339,7 @@ async function findBrokenLinks () {
   console.log('🚀 ~ file: profile.js:325 ~ findBrokenLinks ~ numeroPasos:', numeroPasos)
   let count = 0
   const downLinks = await Promise.all(res.map(async (link) => {
-    const response = await fetch(`http://localhost:3001/linkStatus?url=${link.URL}`, {
+    const response = await fetch(`/linkStatus?url=${link.URL}`, {
       method: 'GET',
       headers: {
         contentType: 'application/json'
