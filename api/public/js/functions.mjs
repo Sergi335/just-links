@@ -1,7 +1,7 @@
 import { editColumn } from './scripts3.js'
 
 export const constants = {
-  BASE_URL: 'http://localhost:3001',
+  BASE_URL: '',
   BACKGROUNDS_URL: '/img/'
 }
 
