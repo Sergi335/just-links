@@ -8,6 +8,7 @@ const publicDir = express.static(path.join(__dirname, 'public'))
 const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
 const port = (process.env.port || 3000)
+const cookieParser = require('cookie-parser')
 const routes = require('./routes/index')
 app
 // Configurando app esto no va
@@ -16,6 +17,7 @@ app
 app
   .use(publicDir)
   .use(express.json())
+  .use(cookieParser())
   .use('/', routes)
 
 app.get('/api', (req, res) => {

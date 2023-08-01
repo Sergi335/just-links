@@ -4,55 +4,5 @@ head
   meta(http-equiv='X-UA-Compatible' content='IE=edge')
   meta(name='viewport' content='width=device-width, initial-scale=1.0')
   title Document
-  link(rel='stylesheet' href='/css/style2.css')
-  link(rel='stylesheet' href='/css/icofont/icofont/icofont.min.css')
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js')
-  script(src='/js/MiniMasonry.js-master/build/minimasonry.min.js')
-  script(type='module' src='/js/scripts3.js')
-  script(src='/js/search.js')
-  script(type='module' src='/js/sidepanel.js')
-  script(type='module' src='/js/functions.mjs')
-  script(type='module' src='/js/styles.js')
-body(data-desk= escritorio)
-include includes/header.pug
-.container
-  div(id=escritorio + 'Cols' class='cuerpoInt' data-id='columns')
-    - var contador = {}
-    each val in columnas
-      .envolt(orden= `${val.order}`)
-        .headercolumn
-          h2.ctitle= val.name
-        
-        - var item = val.name
-        if contador.hasOwnProperty(item)
-          - var numero = contador[item] + 1
-          - contador[item] = numero
-          div(id=escritorio + val.name + numero, class='columna', data-db=`${val._id}`)
-            each link in links
-              if link.idpanel == val._id
-                .link(id=`${link._id}` orden= `${link.orden}`)
-                  img(src=`${link.imgURL}`)
-                  a(href= `${link.URL}` target='_blank' title= `${link.name}`)
-                    span.title #{link.name}
-                    span.description #{link.description}
-                  .lcontrols
-                    span.icofont-ui-edit.showPanel
-            if val.vacio == true
-              .link(orden='0')
-        else
-          - contador[item] = 1
-          div(id=escritorio + val.name, class='columna', data-db=`${val._id}`)
-            each link in links
-              if link.idpanel == val._id
-                .link(id=`${link._id}` orden= `${link.orden}`)
-                  img(src=`${link.imgURL}`)
-                  a(href= `${link.URL}` target='_blank' title= `${link.name}`)
-                    span.title #{link.name}
-                    span.description #{link.description}
-                  .lcontrols
-                    span.icofont-ui-edit.showPanel
-            if val.vacio == true
-              .link(orden='0')
-include includes/forms.pug
-include includes/sidepanel.pug
-script(src='/js/Sortable-master/Sortable.min.js')
+body 
+  h1 Hola Templates
