@@ -204,7 +204,7 @@ async function showLinkInfo (element) {
       }
     }
 
-    const res = await fetch(`http://localhost:3001/link?id=${id}`, {
+    const res = await fetch(`/link?id=${id}`, {
       method: 'GET',
       headers: {
         'content-type': 'application/json'
@@ -626,7 +626,7 @@ function makeMasonry (loader = '') {
 async function getUrlStatus (url) {
   console.log('🚀 ~ file: sidepanel.js:644 ~ getUrlStatus ~ url:', url)
   console.log('Funciona Status')
-  const query = await fetch(`http://localhost:3001/linkStatus?url=${url}`, {
+  const query = await fetch(`/linkStatus?url=${url}`, {
     method: 'GET',
     headers: {
       'content-type': 'application/json'
