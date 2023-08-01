@@ -1,0 +1,91 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Document
+  link(rel='stylesheet' href='/css/style2.css')
+  link(rel='stylesheet' href='/css/icofont/icofont.min.css')
+  script(type='module' src='/js/profile.js')
+  script(type='module' src='/js/styles.js')
+  script(src='/js/search.js')
+include includes/header.pug
+.container#profileContent
+  #profileResume
+    #profileWrapper
+      #profile.tab
+        button#defaultOpen.tablinks Informaci&oacute;n
+        button#profileSeg.tablinks Seguridad
+        button#profilePreferences.tablinks Preferencias
+      #info.tabcontent
+        h2 Información básica
+        .profile-image
+          i.icofont-upload-alt
+          p cambiar imagen
+          - if (userImg)
+            img#preview-image(src=userImg alt='Profile Image')
+          - else
+            img#preview-image(src='img/avatar.svg' alt='Default Image')
+          input#image-input(type='file' accept='image/*')
+        .userInfo 
+          p #{user}
+          p #{userData[0].email}
+          p 
+            span Miembro desde: 
+            | #{formatoFinal}
+        .estatistics
+          h2 Estadísticas
+          p Número de escritorios: #{escritoriosCount}
+          p Número de paneles: #{panelesCount}
+          p Número de links: #{linksCount}
+          div.statsControls
+            div.groupControl
+              h3 Encontrar Duplicados 
+              button#duplicates Buscar
+            div.groupControl
+              h3 Encontrar Links Caidos 
+              button#brokenLinks Buscar
+          .progress-pie-chart(data-percent='0')
+              .ppc-progress
+                .ppc-progress-fill
+              .ppc-percents
+                .pcc-percents-wrapper
+                  span %
+          div#duplicatesResult
+          div#brokenLinksResult
+            
+      #security.tabcontent
+        h2 Seguridad 
+        p Contraseña
+        p Cambiar contraseña
+        input(type='password' disabled='true' value='password')
+        button#changePassword Cambiar
+        #changePasswordDialog
+          p Introduzca su antigua contraseña
+          input(type='password' id='oldPassword')
+          p Introduzca la nueva contraseña
+          input(type='password' id='newPassword')
+          button#changePasswordSubmit Enviar
+          button#changePasswordCancel Cancelar
+        p Copia de seguridad de tus datos
+        p Crear copia
+        #backupControls
+          button#backup Crear Copia 
+          button#download Descargar
+        p#errorMessage 
+        p#successMessage
+        hr
+        p Restaurar Copia
+        label(for='upFile') Subir Archivo:
+        input#upFile(type='file' name='upFile')
+        p#errorUpMessage 
+        p#successUpMessage
+      #preferences.tabcontent
+        button#closeAccount Cerrar Cuenta
+        #profileDeleteConfirm 
+          p Seguro que quieres eliminar tu perfil? Esto borrará todos tus datos
+          p Esta operación no se puede deshacer
+          button#confirm Confirmar 
+          button#cancel Cancelar
+button#btnSubirArriba
+  i.icofont-scroll-up
