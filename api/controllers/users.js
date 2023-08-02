@@ -37,16 +37,15 @@ const displayUserProfile = async (req, res) => {
     res.send({ error })
   }
 }
-const updateProfileImage = async (req, res) => {
-  const user = req.user.name
-  const imagePath = req.file.path // Obtén la ruta del archivo subido desde multer
-  const newPath = imagePath.replace(/^public\\/, '')
-  console.log(newPath)
-  console.log(user)
+const updateProfileImage = async (url, user) => {
+  const imagePath = url
+  // const newPath = imagePath.replace(/^public\\/, '')
+  // console.log(newPath)
+  // console.log(user)
   // Realiza la actualización en la base de datos
   usersModel.findOneAndUpdate(
     { name: user },
-    { profileImage: newPath },
+    { profileImage: imagePath },
     { new: true }
   )
     .then(user => {
@@ -54,7 +53,8 @@ const updateProfileImage = async (req, res) => {
         // Usuario encontrado y actualizado correctamente
         console.log('Usuario encontrado y actualizado:', user)
         const mensaje = 'Usuario encontrado y actualizado'
-        res.send({ mensaje })
+        // res.send({ mensaje })
+        console.log(mensaje)
         // Continúa con el flujo de tu aplicación
       } else {
         // No se encontró el usuario

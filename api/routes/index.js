@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const upload = multer()
 const { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword } = require('../controllers/auth')
 const { getItems, getItemsCount, createItem, deleteItem, editItem, editdragItem, actualizarOrdenElementos, getNameByUrl, moveItem, getItem, setNotes, setLinkImg, setImages, deleteImage, obtenerStatus, encontrarDuplicadosPorURL, getAllItems } = require('../controllers/links')
 const { getDeskItems, deleteDeskItem, createDeskItem, editDeskItem, testTemplates, ordenaDesks, cagadasFix, getSidePanel } = require('../controllers/escritorios')
@@ -10,6 +12,7 @@ const { validateEditDesktop, validateCreateDesktop } = require('../validators/es
 const { getColItems, createColItem, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns } = require('../controllers/columnas')
 const { displayUserProfile, updateProfileImage } = require('../controllers/users')
 const { searchLinks } = require('../controllers/searchController')
+const { uploadProfileImage } = require('../helpers/storage')
 
 router.get('/', (req, res) => {
   res.render('landing.pug')
@@ -39,6 +42,7 @@ router.post('/links', authMiddleware, validateCreateLink, createItem)
 router.post('/columnas', authMiddleware, validateCreateColumn, createColItem)
 router.post('/escritorios', authMiddleware, validateCreateDesktop, createDeskItem)
 router.post('/linkNotes', authMiddleware, setNotes)
+router.post('/uploadImgProfile', authMiddleware, upload.single('file'), uploadProfileImage)
 router.delete('/deleteImg', authMiddleware, deleteImage)
 router.delete('/links', authMiddleware, deleteItem)
 router.delete('/columnas', authMiddleware, deleteColItem)

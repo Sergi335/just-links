@@ -59,7 +59,7 @@ function logOut () {
 async function selectDesktop (event) {
   event.stopPropagation()
   const deskName = event.target.innerText
-  window.location = `http://localhost:3001/templates?escritorio=${deskName}`
+  window.location = `/templates?escritorio=${deskName}`
 }
 function openConfirm () {
   const $confirmForm = document.getElementById('profileDeleteConfirm')
@@ -76,7 +76,7 @@ function openConfirm () {
 async function deleteAccount () {
   console.log('Cuenta cerrada')
   // llamar a eliminaUsuario de auth.js
-  const res = await fetch('http://localhost:3001/deleteUser', {
+  const res = await fetch('/deleteUser', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -86,12 +86,12 @@ async function deleteAccount () {
   document.cookie = 'token='
   document.cookie = 'user='
   // Primero ventanita, confirmar y redirigir
-  window.location = 'http://localhost:3001'
+  window.location = '/'
   console.log(json)
 }
 async function createBackup () {
   try {
-    const res = await fetch('http://localhost:3001/backup', {
+    const res = await fetch('/backup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ async function createBackup () {
 }
 async function downloadBackup () {
   try {
-    const res = await fetch('http://localhost:3001/downloadBackup', {
+    const res = await fetch('/downloadBackup', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -143,7 +143,7 @@ async function uploadFile (event) {
 
   try {
     // Enviar el archivo al servidor utilizando una solicitud POST
-    const response = await fetch('http://localhost:3001/uploadBackup', {
+    const response = await fetch('/uploadBackup', {
       method: 'POST',
       body: formData
     })
@@ -164,19 +164,21 @@ async function uploadFile (event) {
     errorP.innerText = error
   }
 }
-async function uploadImg () {
+async function uploadImg (event) {
+  console.log(event.srcElement.files[0])
   const previewImage = document.getElementById('preview-image')
   const imageInput = document.getElementById('image-input')
 
   const file = imageInput.files[0]
 
   if (file) {
+    console.log(file)
     const imageUrl = URL.createObjectURL(file)
     previewImage.src = imageUrl
     const formData = new FormData()
-    formData.append('profileImage', file)
+    formData.append('file', file)
     try {
-      const response = await fetch('http://localhost:3001/uploadImgProfile', {
+      const response = await fetch('/uploadImgProfile', {
         method: 'POST',
         body: formData
       })
@@ -232,7 +234,7 @@ async function changePassword () {
   let body = { oldPassword, newPassword }
   body = JSON.stringify(body)
   console.log(body)
-  const res = await fetch('http://localhost:3001/changePassword', {
+  const res = await fetch('/changePassword', {
     method: 'POST',
     headers: {
       'content-Type': 'Application/json'
