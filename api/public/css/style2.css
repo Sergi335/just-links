@@ -38,7 +38,7 @@ body {
     background-attachment: fixed;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     margin: 0;
-    overflow-x: hidden;
+    overflow: hidden;
     background-image: var(--light-bgGradient);
 }
 button {
@@ -767,7 +767,7 @@ div.avatar:hover .controls {
 }
 
 div#profile {
-    background-color: var(--light-bgColor);
+    cursor: pointer;
     width: 100%;
     display: flex;
 }
@@ -1081,8 +1081,21 @@ div.controls button {
 
 .container {
     padding: 104px 0;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+.container::-webkit-scrollbar {
+    width: 8px;
+    /* Ancho de la barra de desplazamiento */
 }
 
+.container::-webkit-scrollbar-thumb {
+    background-color: var(--light-accentColor);
+}
+
+.container::-webkit-scrollbar-track {
+    background-color: var(--light-bgColor);
+}
 .cuerpo {
     display: flex;
     padding: 90px 0;
@@ -1310,15 +1323,13 @@ div.settings:hover .bodcontrols {
     display: flex;
 }
 .bodcontrols {
-    align-items: center;
-    gap: 15px;
     position: absolute;
     background-color: var(--light-secondColor);
     box-shadow: 0px 15px 25px var(--light-shadow);
     border-radius: 5px;
     top: 58px;
-    right: 4.3%;
-    padding: 21px 22px;
+    right: 7%;
+    padding-top: 12px;
     z-index: 12;
     flex-direction: column;
     align-items: flex-start;
@@ -1326,17 +1337,22 @@ div.settings:hover .bodcontrols {
     color: var(--light-textColor);
     font-weight: 500;
 }
-
+.bodcontrols span:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
 .bodcontrols span {
 
     cursor: pointer;
     font-size: 14px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 10px;
+    width: -webkit-fill-available;
+    padding: 5px 15px;
 }
-
+.bodcontrols span:hover {
+    background-color: var(--main-hv-color);
+}
 .lastVisited {
     background-color: var(--light-accentColor);
     backdrop-filter: blur(14px);

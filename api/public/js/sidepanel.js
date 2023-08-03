@@ -324,7 +324,7 @@ async function sendNotes (event) {
   let body = { id, notes }
   body = JSON.stringify(body)
   console.log(body)
-  const res = await fetch('http://localhost:3001/linkNotes', {
+  const res = await fetch('/linkNotes', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
@@ -490,7 +490,7 @@ async function fetchImage () {
     const file = new File([blob], 'image', { type: blob.type })
     formData.append('images', file, 'image.png')
     formData.append('linkId', id)
-    const res = await fetch('http://localhost:3001/uploadImg', {
+    const res = await fetch('/uploadImg', {
       method: 'POST',
       body: formData
     })
@@ -528,7 +528,7 @@ async function deleteImage (event) {
       id
     }
     body = JSON.stringify(body)
-    const res = await fetch('http://localhost:3001/deleteImg', {
+    const res = await fetch('/deleteImg', {
       method: 'DELETE',
       headers: {
         'content-type': 'application/json'

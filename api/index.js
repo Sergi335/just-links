@@ -4,8 +4,6 @@ require('dotenv').config()
 const path = require('path')
 // eslint-disable-next-line no-unused-vars
 const pug = require('pug')
-const favicon = require('serve-favicon')
-const faviconURL = path.join(__dirname, 'public', 'img', 'favicon.ico')
 const publicDir = express.static(path.join('api', 'public'))
 const dbConnect = require('./config/mongo')
 const viewDir = path.join(__dirname, 'views')
@@ -18,7 +16,6 @@ app
   .set('view engine', 'pug')
 app
   .use(publicDir)
-  .use(favicon(faviconURL))
   .use(express.json())
   .use(cookieParser())
   .use('/', routes)
