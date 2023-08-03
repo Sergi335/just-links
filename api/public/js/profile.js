@@ -1,3 +1,4 @@
+import { sendMessage } from './functions.mjs'
 document.addEventListener('DOMContentLoaded', cargaProfile)
 function cargaProfile () {
   console.log('Hay JS')
@@ -187,11 +188,23 @@ async function uploadImg (event) {
         const result = await response.json()
         console.log(result)
         console.log('Ruta de imagen actualizada correctamente')
+        const firstKey = Object.keys(result)[0]
+        const firstValue = result[firstKey]
+
+        if (firstKey === 'error') {
+          sendMessage(false, `${firstKey}, ${firstValue}`)
+        } else {
+          const avatar = document.querySelector('#profile img')
+          avatar.src = imageUrl
+          sendMessage(true, 'Imagen Cambiada')
+        }
       } else {
         console.error('Error al actualizar la ruta de la imagen')
+        sendMessage(false, 'Error al actualizar la ruta de la imagen')
       }
     } catch (error) {
       console.error('Error al realizar la solicitud:', error)
+      sendMessage(false, `Error al realizar la solicitud:, ${error}`)
     }
   }
 }

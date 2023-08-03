@@ -26,8 +26,15 @@ const uploadProfileImage = async (req, res) => {
     // si el usuario ya tiene una habrá que borrar la antigua
     const downloadURL = await getDownloadURL(snapshot.ref)
     console.log(downloadURL)
-    updateProfileImage(downloadURL, user)
-    res.send({ message: '¡Archivo o blob subido!' })
+    const resultadoDb = await updateProfileImage(downloadURL, user)
+    console.log('🚀 ~ file: storage.js:30 ~ uploadProfileImage ~ resultadoDb:', resultadoDb)
+    const firstKey = Object.keys(resultadoDb)[0]
+    const firstValue = resultadoDb[firstKey]
+    if (firstKey === 'error') {
+      res.send({ error: `${firstKey} : ${firstValue}` })
+    } else {
+      res.send({ message: '¡Archivo o blob subido!' })
+    }
   } catch (error) {
     console.error('Error al subir el archivo:', error)
     res.status(500).send({ error: 'Error al subir el archivo' })
@@ -36,14 +43,20 @@ const uploadProfileImage = async (req, res) => {
 const uploadLinkIcon = async (req, res) => {
   const file = req.file
   const user = req.cookies.user
-  const imagesRef = ref(storage, `${user}/images/icons`)
   const linkId = req.body.linkId
-  // Asegurémonos de que 'file' está presente en la solicitud.
+  const imagesRef = ref(storage, `${user}/images/icons`)
+  // Si no hay imagen ha elegido una de muestra
   if (!req.file) {
     const filePath = req.body.filePath
-    setLinkImg(filePath, user, linkId)
-    console.log(req.body.filePath)
-    res.send({ message: '¡Ruta Cambiada!' })
+    const resultadoDb = await setLinkImg(filePath, user, linkId)
+    console.log(resultadoDb)
+    const firstKey = Object.keys(resultadoDb)[0]
+    const firstValue = resultadoDb[firstKey]
+    if (firstKey === 'error') {
+      res.send({ error: `${firstKey} : ${firstValue}` })
+    } else {
+      res.send({ message: '¡Ruta Cambiada!' })
+    }
     return
   }
 
@@ -51,13 +64,23 @@ const uploadLinkIcon = async (req, res) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
     const extension = file.originalname.split('.').pop()
     const imageRef = ref(imagesRef, `${uniqueSuffix}.${extension}`)
-    const snapshot = await uploadBytes(imageRef, file.buffer)
-    // si el usuario ya tiene una habrá que borrar la antigua
-    const downloadURL = await getDownloadURL(snapshot.ref)
-    console.log(downloadURL)
-    console.log(req.body.linkId)
-    setLinkImg(downloadURL, user, linkId)
-    res.send({ message: '¡Archivo o blob subido!' })
+    try {
+      const snapshot = await uploadBytes(imageRef, file.buffer)
+      // si el usuario ya tiene una habrá que borrar la antigua
+      const downloadURL = await getDownloadURL(snapshot.ref)
+      console.log(downloadURL)
+      console.log(req.body.linkId)
+      const resultadoDb = await setLinkImg(downloadURL, user, linkId)
+      const firstKey = Object.keys(resultadoDb)[0]
+      const firstValue = resultadoDb[firstKey]
+      if (firstKey === 'error') {
+        res.send({ error: `${firstKey} : ${firstValue}` })
+      } else {
+        res.send({ message: '¡Archivo o blob subido!' })
+      }
+    } catch (error) {
+      res.send(error)
+    }
   } catch (error) {
     console.error('Error al subir el archivo:', error)
     res.status(500).send({ error: 'Error al subir el archivo' })

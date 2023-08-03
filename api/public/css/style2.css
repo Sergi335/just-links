@@ -991,20 +991,20 @@ li.accordion {
 
 #alertCard {
     position: fixed;
-    top: 64px;
-    background-color: var(--light-bgColor);
+    top: 170px;
+    background-color: var(--light-secondColor);
     min-height: 90px;
     min-width: 243px;
-    border-radius: 15px;
+    border-radius: 5px;
     box-shadow: 0px 3px 19px var(--light-shadow);
-    right: 50px;
+    right: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
     transform: translateX(335px);
     transition: transform 0.3s ease-in-out;
-    border-left: 25px solid mediumseagreen;
-    z-index: 1;
+    /* border-left: 25px solid mediumseagreen; */
+    z-index: 2;
 }
 
 #profileDeleteConfirm {

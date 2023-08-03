@@ -164,13 +164,15 @@ const testTemplates = async (req, res) => {
     mode
   }
   if (!req.cookies.mode || req.cookies.mode === 'normal') {
+    res.setHeader('Cache-Control', 's-maxage=86400')
     res.render('indexTemplates.pug', locals)
   } else {
-    res.render('indexTemplatesEdit.pug', locals)
+    res.status(200).render('ind exTemplatesEdit.pug', locals)
   }
 }
 const getSidePanel = async (req, res) => {
-  res.render('includes/sidepanel.pug')
+  res.setHeader('Cache-Control', 's-maxage=86400')
+  res.status(200).render('includes/sidepanel.pug')
 }
 const ordenaDesks = async (req, res) => {
   try {

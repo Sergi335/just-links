@@ -39,33 +39,21 @@ const displayUserProfile = async (req, res) => {
 }
 const updateProfileImage = async (url, user) => {
   const imagePath = url
-  // const newPath = imagePath.replace(/^public\\/, '')
-  // console.log(newPath)
-  // console.log(user)
-  // Realiza la actualización en la base de datos
-  usersModel.findOneAndUpdate(
+  await usersModel.findOneAndUpdate(
     { name: user },
     { profileImage: imagePath },
     { new: true }
   )
-    .then(user => {
-      if (user) {
-        // Usuario encontrado y actualizado correctamente
-        console.log('Usuario encontrado y actualizado:', user)
-        const mensaje = 'Usuario encontrado y actualizado'
-        // res.send({ mensaje })
-        console.log(mensaje)
-        // Continúa con el flujo de tu aplicación
-      } else {
-        // No se encontró el usuario
-        console.log('Usuario no encontrado')
-        // Maneja el caso de usuario no encontrado de alguna manera apropiada
-      }
-    })
-    .catch(error => {
-      console.error('Error al buscar y actualizar el usuario:', error)
-      // Maneja el error de alguna manera apropiada
-    })
+  if (user) {
+    // Usuario encontrado y actualizado correctamente
+    console.log('Usuario encontrado y actualizado:', user)
+    return { message: 'Usuario encontrado y actualizado' }
+  } else {
+    // No se encontró el usuario
+    console.log('Usuario no encontrado')
+    return { error: 'Usuario no encontrado' }
+    // Maneja el caso de usuario no encontrado de alguna manera apropiada
+  }
 }
 
 module.exports = { displayUserProfile, updateProfileImage }

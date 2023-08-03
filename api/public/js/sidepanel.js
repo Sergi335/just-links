@@ -83,13 +83,10 @@ function closePanel () {
   // Tiene sentido la comprobación?
   if (panel.style.display === 'none' || panel.style.display === '') {
     panel.style.display = 'grid'
-    console.log('entro')
   } else {
     panel.style.display = 'none'
     const imagePanel = document.getElementById('linkImages')
     imagePanel.innerHTML = ''
-    document.body.style.overflow = 'initial'
-    console.log('entro')
   }
 }
 export function togglePanel (event) {
@@ -100,11 +97,8 @@ export function togglePanel (event) {
   // Esta comprobación tiene sentido?
   if (panel.style.display === 'none' || panel.style.display === '') {
     panel.style.display = 'grid'
-    document.body.style.overflow = 'hidden'
-    console.log('entro')
   } else {
     panel.style.display = 'none'
-    console.log('entro')
   }
   showLinkInfo(element)
 }
@@ -391,17 +385,17 @@ async function changeLinkImg (event) {
 
   if (event.target.id === 'option1') {
     console.log('Subimos imagen1')
-    previewImage.src = 'img/opcion1.svg'
+    previewImage.src = '/img/opcion1.svg'
     // imageH.src = 'img/opcion1.svg'
   }
   if (event.target.id === 'option2') {
     console.log('Subimos imagen2')
-    previewImage.src = 'img/opcion2.png'
+    previewImage.src = '/img/opcion2.png'
     // imageH.src = 'img/opcion2.png'
   }
   if (event.target.id === 'option3') {
     console.log('Subimos imagen3')
-    previewImage.src = 'img/opcion3.png'
+    previewImage.src = '/img/opcion3.png'
     // imageH.src = 'img/opcion3.png'
   }
 }
@@ -409,6 +403,7 @@ async function changeLinkImg (event) {
 async function fetchLinkImage () {
   const image = document.getElementById('limage')
   const src = image.src
+  console.log('🚀 ~ file: sidepanel.js:412 ~ fetchLinkImage ~ src:', src)
   const linkId = document.getElementById('linkId').innerText
   console.log(linkId)
   console.log(`Subimos la imagen ${src}`)
@@ -431,13 +426,22 @@ async function fetchLinkImage () {
         const result = await response.json()
         const link = document.getElementById(linkId)
         link.childNodes[0].src = src
+        const firstKey = Object.keys(result)[0]
+        const firstValue = result[firstKey]
+
+        if (firstKey === 'error') {
+          sendMessage(false, `${firstKey}, ${firstValue}`)
+        } else {
+          sendMessage(true, 'Imagen cambiada!')
+        }
         console.log(result)
-        console.log('Ruta de imagen actualizada correctamente')
       } else {
         console.error('Error al actualizar la ruta de la imagen')
+        sendMessage(false, 'Error al cambiar imagen')
       }
     } catch (error) {
       console.error('Error al realizar la solicitud:', error)
+      sendMessage(false, 'Error al cambiar imagen')
     }
   } else {
     const formData = new FormData()
@@ -451,16 +455,24 @@ async function fetchLinkImage () {
       })
 
       if (response.ok) {
-        console.log('entroooo')
         const result = await response.json()
         const link = document.getElementById(linkId)
         link.childNodes[0].src = src
+        const firstKey = Object.keys(result)[0]
+        const firstValue = result[firstKey]
+
+        if (firstKey === 'error') {
+          sendMessage(false, `${firstKey}, ${firstValue}`)
+        } else {
+          sendMessage(true, 'Imagen cambiada!')
+        }
         console.log(result)
-        console.log('Ruta de imagen actualizada correctamente')
       } else {
+        sendMessage(false, 'Error al cambiar imagen')
         console.error('Error al actualizar la ruta de la imagen')
       }
     } catch (error) {
+      sendMessage(false, 'Error al cambiar imagen')
       console.error('Error al realizar la solicitud:', error)
     }
   }

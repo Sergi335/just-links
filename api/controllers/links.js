@@ -29,18 +29,32 @@ const setNotes = async (req, res) => {
   console.log(data)
   res.send({ data })
 }
+/**
+ * Función para cambiar la imagen del link (favicon), si la url recibida es la de firebase inserta la ruta y si es de muestra inserta la ruta local
+ * @param {*} url
+ * @param {*} user
+ * @param {*} linkId
+ * @returns
+ */
 const setLinkImg = async (url, user, linkId) => {
   const urlObj = new URL(url)
   const dominio = 'firebasestorage.googleapis.com'
   if (urlObj.hostname === dominio) {
-    const imagePath = url
-    const data = await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
-    console.log(data)
+    try {
+      const imagePath = url
+      await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
+      return { message: 'imagen de link cambiada' }
+    } catch (error) {
+      return ({ error })
+    }
   } else {
-    const imagePath = url
-    console.log('No hay imagePath')
-    const data = await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
-    console.log(data)
+    try {
+      const imagePath = urlObj.pathname
+      await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
+      return { message: 'imagen de link cambiada' }
+    } catch (error) {
+      return ({ error })
+    }
   }
 }
 const setImages = async (url, user, linkId) => {

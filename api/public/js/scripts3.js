@@ -13,7 +13,8 @@ function cargaWeb () {
     darHora()
     handleDbClick()
     handleSimpleClick()
-    window.onscroll = function () {
+    const contenedor = document.querySelectorAll('.container')[0]
+    contenedor.onscroll = function () {
       toggleBotonSubirArriba()
     }
     addContextMenuEvents()
@@ -2084,12 +2085,14 @@ function setLastVisited (event) {
   }
 }
 function scrollToTop () {
-  document.body.scrollTop = 0
-  document.documentElement.scrollTop = 0
+  const contenedor = document.querySelectorAll('.container')[0]
+  contenedor.scrollTop = 0
+  // document.documentElement.scrollTop = 0
 }
 function toggleBotonSubirArriba () {
   const btnSubirArriba = document.getElementById('btnSubirArriba')
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+  const contenedor = document.querySelectorAll('.container')[0]
+  if (contenedor.scrollTop > 20) {
     btnSubirArriba.style.opacity = 1
     btnSubirArriba.style.visibility = 'visible'
   } else {
