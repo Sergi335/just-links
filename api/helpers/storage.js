@@ -19,7 +19,9 @@ const uploadProfileImage = async (req, res) => {
   const imagesRef = ref(storage, `${user}/images/profile`)
 
   try {
-    const imageRef = ref(imagesRef, file.originalname)
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    const extension = file.originalname.split('.').pop()
+    const imageRef = ref(imagesRef, `${uniqueSuffix}.${extension}`)
     const snapshot = await uploadBytes(imageRef, file.buffer)
     // si el usuario ya tiene una habrá que borrar la antigua
     const downloadURL = await getDownloadURL(snapshot.ref)
@@ -46,7 +48,9 @@ const uploadLinkIcon = async (req, res) => {
   }
 
   try {
-    const imageRef = ref(imagesRef, file.originalname)
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    const extension = file.originalname.split('.').pop()
+    const imageRef = ref(imagesRef, `${uniqueSuffix}.${extension}`)
     const snapshot = await uploadBytes(imageRef, file.buffer)
     // si el usuario ya tiene una habrá que borrar la antigua
     const downloadURL = await getDownloadURL(snapshot.ref)
