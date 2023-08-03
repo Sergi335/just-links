@@ -422,7 +422,7 @@ async function fetchLinkImage () {
     formData.append('linkId', linkId)
     console.log(formData)
     try {
-      const response = await fetch('http://localhost:3001/uploadLinkImg', {
+      const response = await fetch('/uploadLinkImg', {
         method: 'POST',
         body: formData
       })
@@ -445,12 +445,13 @@ async function fetchLinkImage () {
     formData.append('linkId', linkId)
     console.log(formData)
     try {
-      const response = await fetch('http://localhost:3001/uploadLinkImg', {
+      const response = await fetch('/uploadLinkImg', {
         method: 'POST',
         body: formData
       })
 
       if (response.ok) {
+        console.log('entroooo')
         const result = await response.json()
         const link = document.getElementById(linkId)
         link.childNodes[0].src = src

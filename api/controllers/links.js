@@ -6,6 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const https = require('https')
 const crypto = require('crypto')
+const { URL } = require('url')
 
 const getItem = async (req, res) => {
   const user = req.user.name
@@ -28,47 +29,38 @@ const setNotes = async (req, res) => {
   console.log(data)
   res.send({ data })
 }
-const setLinkImg = async (req, res) => {
-  const user = req.user.name
-  console.log(req.body.linkId)
-  // Obtén la ruta del archivo subido desde multer
-  if (req.file) {
-    const imagePath = req.file.path
-    const newPath = imagePath.replace(/^public\\/, '')
-    console.log(user)
-    console.log(imagePath)
-    const data = await linksModel.findOneAndUpdate({ _id: req.body.linkId, user }, { $set: { imgURL: newPath } })
+const setLinkImg = async (url, user, linkId) => {
+  const urlObj = new URL(url)
+  const dominio = 'firebasestorage.googleapis.com'
+  if (urlObj.hostname === dominio) {
+    const imagePath = url
+    const data = await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
     console.log(data)
-    res.send({ ok: 'Imagen subida y actualizada' })
   } else {
+    const imagePath = url
     console.log('No hay imagePath')
-    console.log(req.body.filePath)
-    const data = await linksModel.findOneAndUpdate({ _id: req.body.linkId, user }, { $set: { imgURL: req.body.filePath } })
+    const data = await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
     console.log(data)
-    res.send({ ok: 'Imagen de muestra añadida' })
   }
 }
-const setImages = async (req, res) => {
-  const user = req.user.name
+const setImages = async (url, user, linkId) => {
+  // const user = req.user.name
   // console.log(req.file)
   // Obtén la ruta del archivo subido desde multer
-  if (req.file.path) {
-    const imagePath = req.file.path
-    const newPath = imagePath.replace(/^public\\/, '')
-    console.log(user)
-    console.log(imagePath)
+  if (url) {
+    const imagePath = url
     const data = await linksModel.findOneAndUpdate(
-      { _id: req.body.linkId, user },
-      { $push: { images: newPath } },
+      { _id: linkId, user },
+      { $push: { images: imagePath } },
       { new: true }
     )
     console.log(data)
-    res.send(data)
+    // res.send(data)
     // res.send({ ok: 'Imagen subida y actualizada' })
   } else {
     console.log('No hay imagePath')
-    console.log(req.body.filePath)
-    res.send({ error: 'No hay filePath' })
+    // console.log(req.body.filePath)
+    // res.send({ error: 'No hay filePath' })
   }
 }
 const deleteImage = async (req, res) => {

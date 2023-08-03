@@ -1,7 +1,8 @@
 const { initializeApp } = require('firebase/app')
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage')
 const { firebaseConfig } = require('../config/firebase')
-const {udateProfileImage, updateProfileImage} = require('../controllers/users')
+const { updateProfileImage } = require('../controllers/users')
+const { setLinkImg } = require('../controllers/links')
 
 const app = initializeApp(firebaseConfig)
 const storage = getStorage(app)
@@ -30,5 +31,33 @@ const uploadProfileImage = async (req, res) => {
     res.status(500).send({ error: 'Error al subir el archivo' })
   }
 }
+const uploadLinkIcon = async (req, res) => {
+  const file = req.file
+  const user = req.cookies.user
+  const imagesRef = ref(storage, `${user}/images/icons`)
+  const linkId = req.body.linkId
+  // Asegurémonos de que 'file' está presente en la solicitud.
+  if (!req.file) {
+    const filePath = req.body.filePath
+    setLinkImg(filePath, user, linkId)
+    console.log(req.body.filePath)
+    res.send({ message: '¡Ruta Cambiada!' })
+    return
+  }
 
-module.exports = { uploadProfileImage }
+  try {
+    const imageRef = ref(imagesRef, file.originalname)
+    const snapshot = await uploadBytes(imageRef, file.buffer)
+    // si el usuario ya tiene una habrá que borrar la antigua
+    const downloadURL = await getDownloadURL(snapshot.ref)
+    console.log(downloadURL)
+    console.log(req.body.linkId)
+    setLinkImg(downloadURL, user, linkId)
+    res.send({ message: '¡Archivo o blob subido!' })
+  } catch (error) {
+    console.error('Error al subir el archivo:', error)
+    res.status(500).send({ error: 'Error al subir el archivo' })
+  }
+}
+
+module.exports = { uploadProfileImage, uploadLinkIcon }
