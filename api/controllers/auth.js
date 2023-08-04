@@ -36,7 +36,7 @@ const compruebaUsuario = async (req, res) => {
     objeto.password = body.password
     const dataUser = await usersModel.find({ name: `${body.name}` })
     const oldPass = dataUser[0].password
-    console.log(dataUser[0].password)
+    // console.log(dataUser[0].password)
     const resultado = await compare(objeto.password, oldPass)
     if (!resultado) {
       const message = 'Error usuario o contraseña incorrecta'

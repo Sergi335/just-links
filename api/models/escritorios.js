@@ -4,6 +4,9 @@ const DesktopSchema = new mongoose.Schema({
   name: {
     type: String
   },
+  displayName: {
+    type: String
+  },
   user: {
     type: String
   },

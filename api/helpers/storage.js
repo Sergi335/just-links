@@ -1,8 +1,9 @@
 const { initializeApp } = require('firebase/app')
-const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage')
+const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage')
 const { firebaseConfig } = require('../config/firebase')
 const { updateProfileImage } = require('../controllers/users')
-const { setLinkImg } = require('../controllers/links')
+const { setLinkImg, setImages, deleteImage } = require('../controllers/links')
+const { escritoriosModel, columnasModel, linksModel } = require('../models/index')
 
 const app = initializeApp(firebaseConfig)
 const storage = getStorage(app)
@@ -86,5 +87,110 @@ const uploadLinkIcon = async (req, res) => {
     res.status(500).send({ error: 'Error al subir el archivo' })
   }
 }
+const uploadImg = async (req, res) => {
+  const file = req.file
+  const user = req.cookies.user
+  const linkId = req.body.linkId
+  const imagesRef = ref(storage, `${user}/images/linkImages`)
+  // Si no hay imagen error
+  if (!req.file) {
+    res.send({ error: 'No hemos recibido imagen' })
+    return
+  }
 
-module.exports = { uploadProfileImage, uploadLinkIcon }
+  try {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    const extension = file.originalname.split('.').pop()
+    const imageRef = ref(imagesRef, `${uniqueSuffix}.${extension}`)
+    try {
+      const snapshot = await uploadBytes(imageRef, file.buffer)
+      // si el usuario ya tiene una habrá que borrar la antigua
+      const downloadURL = await getDownloadURL(snapshot.ref)
+      console.log(downloadURL)
+      console.log(req.body.linkId)
+      const resultadoDb = await setImages(downloadURL, user, linkId)
+      const firstKey = Object.keys(resultadoDb)[0]
+      const firstValue = resultadoDb[firstKey]
+      if (firstKey === 'error') {
+        res.send({ error: `${firstKey} : ${firstValue}` })
+      } else {
+        res.send(resultadoDb)
+      }
+    } catch (error) {
+      res.send(error)
+    }
+  } catch (error) {
+    console.error('Error al subir el archivo:', error)
+    res.status(500).send({ error: 'Error al subir el archivo' })
+  }
+}
+const deleteImg = async (req, res) => {
+  const user = req.cookies.user
+  const linkId = req.body.id
+  const imageUrl = req.body.image
+  console.log(req.body)
+
+  try {
+    if (!imageUrl) {
+      res.send({ error: 'No se encontró la imagen para eliminar' })
+      return
+    }
+
+    // Construye la referencia a la imagen en Storage
+    const imageRef = ref(storage, imageUrl)
+
+    // Borra el archivo
+    await deleteObject(imageRef)
+
+    // Borra la referencia de la imagen en tu base de datos (suponiendo que tengas una función para hacerlo)
+    await deleteImage(imageUrl, user, linkId)
+
+    res.send({ message: 'Imagen eliminada exitosamente' })
+  } catch (error) {
+    console.error('Error al eliminar la imagen:', error)
+    res.status(500).send({ error: 'Error al eliminar la imagen' })
+  }
+}
+async function backup (req, res) {
+  const user = req.user.name
+  try {
+    // Obtener la ruta completa del directorio de backups
+    const fileName = `${user}dataBackup.json`
+    const fileRef = ref(storage, `${user}/backups/${fileName}`)
+
+    const data1 = await escritoriosModel.find({ user }).lean()
+    const data2 = await columnasModel.find({ user }).lean()
+    const data3 = await linksModel.find({ user }).lean()
+
+    const backupData = {
+      escritorios: data1,
+      columnas: data2,
+      links: data3
+    }
+    const jsonString = JSON.stringify(backupData)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const stream = await blob.arrayBuffer()
+    const snapshot = await uploadBytes(fileRef, stream)
+
+    const downloadUrl = await getDownloadURL(snapshot.ref)
+    console.log('🚀 ~ file: storage.js:177 ~ backup ~ downloadUrl:', downloadUrl)
+
+    console.log('Copia de seguridad almacenada en Firebase Storage correctamente.')
+    const mensaje = 'Copia de seguridad creada'
+    res.send({ mensaje })
+  } catch (error) {
+    const mensaje = 'Error al crear la copia de seguridad'
+    console.error('Error al crear la copia de seguridad:', error)
+    res.send({ mensaje })
+  }
+}
+const downloadBackup = async (req, res) => {
+  const user = req.user.name
+  const fileName = `${user}dataBackup.json`
+  const fileRef = ref(storage, `${user}/backups/${fileName}`)
+  const downloadUrl = await getDownloadURL(fileRef)
+  console.log(downloadUrl)
+
+  res.send({ downloadUrl })
+}
+module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup }

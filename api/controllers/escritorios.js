@@ -6,16 +6,16 @@ const { createDummyContent } = require('../helpers/createDummyContent')
 const cagadasFix = async (req, res) => {
   try {
     // Actualizamos las columnas
-    const filtro = { escritorio: '&lt;h1&gt;Hola&lt;&#x2F;h1&gt;', user: 'SergioSR' } // Filtrar documentos
-    console.log(filtro)
-    const actualizacion = { $set: { escritorio: 'Test' } } // Actualizar
-    console.log(actualizacion)
+    // const filtro = { escritorio: 'Economía', user: 'SergioSR' } // Filtrar documentos
+    // console.log(filtro)
+    // const actualizacion = { $set: { escritorio: 'economia' } } // Actualizar
+    // console.log(actualizacion)
 
-    await columnasModel.updateMany(filtro, actualizacion)
+    // await columnasModel.updateMany(filtro, actualizacion)
 
     // Actualizamos los Links
-    const filtroL = { escritorio: '&lt;h1&gt;Hola&lt;&#x2F;h1&gt;', user: 'SergioSR' } // Filtrar documentos
-    const actualizacionL = { $set: { escritorio: 'Test' } } // Actualizar
+    const filtroL = { escritorio: 'Economía', user: 'SergioSR' } // Filtrar documentos
+    const actualizacionL = { $set: { escritorio: 'test' } } // Actualizar
 
     await linksModel.updateMany(filtroL, actualizacionL)
 
@@ -40,31 +40,31 @@ const getDeskItems = async (req, res) => {
  * @param {*} res
  */
 const editDeskItem = async (req, res) => {
-  const { body } = req
-  console.log(body)
+  const { oldName, newName, newNameFormat } = req.body
+  console.log(req.body)
   const user = req.user.name
-  const seek = await escritoriosModel.find({ name: `${body.nombre}`, user: `${user}` })
+  const seek = await escritoriosModel.find({ name: newNameFormat, user })
   const err = { error: 'El escritorio ya existe' }
   if (seek.length > 0) {
     res.send(err)
   } else {
     try {
       await escritoriosModel.findOneAndUpdate(
-        { name: `${body.nombreOld}`, user: `${user}` }, // El filtro para buscar el documento
-        { $set: { name: `${body.nombre}` } }, // La propiedad a actualizar
+        { name: oldName, user }, // El filtro para buscar el documento
+        { $set: { name: newNameFormat, displayName: newName } }, // La propiedad a actualizar
         { new: true } // Opciones adicionales (en este caso, devuelve el documento actualizado)
       )
       // Actualizamos las columnas
-      const filtro = { escritorio: `${body.nombreOld}`, user: `${user}` } // Filtrar documentos
+      const filtro = { escritorio: oldName, user } // Filtrar documentos
       console.log(filtro)
-      const actualizacion = { $set: { escritorio: `${body.nombre}` } } // Actualizar
+      const actualizacion = { $set: { escritorio: newNameFormat } } // Actualizar
       console.log(actualizacion)
 
       await columnasModel.updateMany(filtro, actualizacion)
 
       // Actualizamos los Links
-      const filtroL = { escritorio: `${body.nombreOld}`, user: `${user}` } // Filtrar documentos
-      const actualizacionL = { $set: { escritorio: `${body.nombre}` } } // Actualizar
+      const filtroL = { escritorio: oldName, user } // Filtrar documentos
+      const actualizacionL = { $set: { escritorio: newNameFormat } } // Actualizar
 
       await linksModel.updateMany(filtroL, actualizacionL)
 
@@ -81,21 +81,22 @@ const editDeskItem = async (req, res) => {
  * @param {*} res
  */
 const createDeskItem = async (req, res) => {
-  const { body } = req
-  console.log(body)
+  const { name, displayName, orden } = req.body
+  console.log(req.body)
 
   const objeto = {}
-  objeto.name = body.nombre
+  objeto.name = name
+  objeto.displayName = displayName
   objeto.user = req.user.name
-  objeto.orden = body.orden
+  objeto.orden = orden
   console.log(objeto)
-  const seek = await escritoriosModel.find({ name: `${objeto.name}`, user: `${objeto.user}` })
+  const seek = await escritoriosModel.find({ name: objeto.name, user: objeto.user })
   const err = { error: 'El escritorio ya existe' }
   if (seek.length > 0) {
     res.send(err)
   } else {
     await escritoriosModel.create(objeto)
-    const lista = await escritoriosModel.find({ user: `${objeto.user}` }).sort({ orden: 1 })
+    const lista = await escritoriosModel.find({ user: objeto.user }).sort({ orden: 1 })
     res.send(lista)
   }
 }
@@ -105,34 +106,34 @@ const createDeskItem = async (req, res) => {
  * @param {*} res
  */
 const deleteDeskItem = async (req, res) => {
-  const { body } = req
-  console.log(body)
+  const { name } = req.body
+  console.log(req.body)
   const user = req.user.name
-  const linksinDesk = await linksModel.deleteMany({ escritorio: `${body.name}`, user })
-  const panelsinDesk = await columnasModel.deleteMany({ escritorio: `${body.name}`, user })
-  const data = await escritoriosModel.deleteOne({ name: `${body.name}`, user })
-  const lista = await escritoriosModel.find().sort({ orden: 1 })
+  const linksinDesk = await linksModel.deleteMany({ escritorio: name, user })
+  const panelsinDesk = await columnasModel.deleteMany({ escritorio: name, user })
+  const data = await escritoriosModel.deleteOne({ name, user })
+  const lista = await escritoriosModel.find({ user }).sort({ orden: 1 })
   console.log(data)
   console.log(linksinDesk)
   console.log(panelsinDesk)
   res.send(lista)
 }
 const testTemplates = async (req, res) => {
-  console.log(req.query.mode)
-  const params = req.query.escritorio
-  console.log('🚀 ~ file: escritorios.js:124 ~ testTemplates ~ params:', params)
+  const params = req.params.nombre
   const user = req.cookies.user
+  console.log('🚀 ~ file: escritorios.js:124 ~ testTemplates ~ params:', params)
   // User new? if si crear dummy content
   let isNewUser = await usersModel.find({ name: `${user}` })
   const userImg = isNewUser[0].profileImage
   isNewUser = isNewUser[0].newUser
-  console.log(`Es nuevo usuario? ${isNewUser}`)
   if (isNewUser) {
     // Insertar en DB
     await createDummyContent(user)
   }
   const escritorios = await escritoriosModel.find({ user }).sort({ orden: 1 })
   // console.log(escritorios)
+  const deskNames = escritorios.map(desk => ({ displayName: desk.displayName, name: desk.name }))
+  console.log('🚀 ~ file: escritorios.js:135 ~ testTemplates ~ deskNames:', deskNames)
   let escritorio
   if (params) {
     escritorio = params
@@ -141,21 +142,30 @@ const testTemplates = async (req, res) => {
   } else {
     escritorio = null
   }
+  // escritorio = escritorio.replace(/-/g, ' ').toLowerCase()
+  // escritorio = escritorio.toLocaleString()
+  console.log('🚀 ~ file: escritorios.js:135 ~ testTemplates ~ escritorio:', escritorio)
   const existeEscritorio = await escritoriosModel.findOne({ name: escritorio, user })
+  // console.log('🚀 ~ file: escritorios.js:148 ~ testTemplates ~ existeEscritorio:', existeEscritorio.displayName)
+  // const searchDesk = existeEscritorio.displayName
+  // console.log('🚀 ~ file: escritorios.js:150 ~ testTemplates ~ searchDesk:', searchDesk)
   if (existeEscritorio === null) {
     console.log('No exite escritorio')
+    // crear 404 y enviar
     res.status(404).send({ error: 'not found' })
+    return
   }
   // const backgrounds = await getBackgrounds()
   // console.log(backgrounds)
-  console.log(escritorio)
+  // try catch
   const columnas = await columnasModel.find({ user, escritorio }).sort({ order: 1 })
+  console.log('🚀 ~ file: escritorios.js:160 ~ testTemplates ~ columnas:', columnas)
   const columnasAll = await columnasModel.find({ user }).sort({ order: 1 })
   const links = await linksModel.find({ user, escritorio }).sort({ orden: 1 })
   const mode = req.cookies.mode
   const locals = {
     escritorio,
-    escritorios,
+    deskNames,
     columnas,
     columnasAll,
     links,
@@ -167,7 +177,8 @@ const testTemplates = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=86400')
     res.render('indexTemplates.pug', locals)
   } else {
-    res.status(200).render('ind exTemplatesEdit.pug', locals)
+    res.setHeader('Cache-Control', 's-maxage=86400')
+    res.status(200).render('indexTemplatesEdit.pug', locals)
   }
 }
 const getSidePanel = async (req, res) => {
@@ -187,12 +198,13 @@ const ordenaDesks = async (req, res) => {
       ordenActual.set(elemento, orden)
       orden++
     })
+    console.log('🚀 ~ file: escritorios.js:196 ~ ordenaDesks ~ ordenActual:', ordenActual)
 
     // Actualizamos el campo "orden" de cada elemento en la base de datos
     const updates = elementos.map(async (elemento) => {
       const orden = ordenActual.get(elemento)
       await escritoriosModel.findOneAndUpdate(
-        { name: elemento, user },
+        { displayName: elemento, user },
         { orden },
         { new: true }
       )

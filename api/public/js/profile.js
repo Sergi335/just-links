@@ -60,7 +60,7 @@ function logOut () {
 async function selectDesktop (event) {
   event.stopPropagation()
   const deskName = event.target.innerText
-  window.location = `/templates?escritorio=${deskName}`
+  window.location = `/${deskName}`
 }
 function openConfirm () {
   const $confirmForm = document.getElementById('profileDeleteConfirm')
@@ -92,7 +92,7 @@ async function deleteAccount () {
 }
 async function createBackup () {
   try {
-    const res = await fetch('/backup', {
+    const res = await fetch('/api/backup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -100,8 +100,9 @@ async function createBackup () {
     })
     const json = await res.json()
     console.log(json)
-    const successP = document.getElementById('successMessage')
-    successP.innerText = json.mensaje
+    // const successP = document.getElementById('successMessage')
+    sendMessage(true, json.mensaje)
+    // successP.innerText = json.mensaje
   } catch (error) {
     console.log(error)
     const errorP = document.getElementById('errorMessage')
@@ -110,24 +111,19 @@ async function createBackup () {
 }
 async function downloadBackup () {
   try {
-    const res = await fetch('/downloadBackup', {
+    const res = await fetch('/api/downloadBackup', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
     })
-
     if (!res.ok) {
       throw new Error('Error al descargar la copia de seguridad')
     }
-
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'dataBackup.json'
-    a.click()
-    URL.revokeObjectURL(url)
+    const json = await res.json()
+    console.log(json)
+    const { downloadUrl } = json
+    window.open(downloadUrl)
 
     const successP = document.getElementById('successMessage')
     successP.innerText = 'Copia de seguridad descargada correctamente.'

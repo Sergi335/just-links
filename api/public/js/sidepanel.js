@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', sidePanel)
 
 function sidePanel () {
   // console.log('Hay sidepanel')
-  if (window.location.pathname !== '/profile') addPanelEvents()
+  if (window.location.pathname !== '/api/profile') addPanelEvents()
   const element = document.querySelectorAll('div.link')[0]
   if (element && element !== null) {
     element.classList.add('navActive')
@@ -198,7 +198,7 @@ async function showLinkInfo (element) {
       }
     }
 
-    const res = await fetch(`/link?id=${id}`, {
+    const res = await fetch(`/api/link?id=${id}`, {
       method: 'GET',
       headers: {
         'content-type': 'application/json'
@@ -417,7 +417,7 @@ async function fetchLinkImage () {
     formData.append('linkId', linkId)
     console.log(formData)
     try {
-      const response = await fetch('/uploadLinkImg', {
+      const response = await fetch('/api/uploadLinkImg', {
         method: 'POST',
         body: formData
       })
@@ -449,7 +449,7 @@ async function fetchLinkImage () {
     formData.append('linkId', linkId)
     console.log(formData)
     try {
-      const response = await fetch('/uploadLinkImg', {
+      const response = await fetch('/api/uploadLinkImg', {
         method: 'POST',
         body: formData
       })
@@ -502,7 +502,7 @@ async function fetchImage () {
     const file = new File([blob], 'image', { type: blob.type })
     formData.append('images', file, 'image.png')
     formData.append('linkId', id)
-    const res = await fetch('/uploadImg', {
+    const res = await fetch('/api/uploadImg', {
       method: 'POST',
       body: formData
     })
@@ -540,7 +540,7 @@ async function deleteImage (event) {
       id
     }
     body = JSON.stringify(body)
-    const res = await fetch('/deleteImg', {
+    const res = await fetch('/api/deleteImg', {
       method: 'DELETE',
       headers: {
         'content-type': 'application/json'
@@ -630,23 +630,23 @@ function makeMasonry (loader = '') {
       container: '#imgMasonry',
       baseWidth: 300
     })
-    console.log(masonry)
+    // console.log(masonry)
   }, 100)
   if (loader) {
     loader.style.display = 'none'
   }
 }
 async function getUrlStatus (url) {
-  console.log('🚀 ~ file: sidepanel.js:644 ~ getUrlStatus ~ url:', url)
-  console.log('Funciona Status')
-  const query = await fetch(`/linkStatus?url=${url}`, {
+  // console.log('🚀 ~ file: sidepanel.js:644 ~ getUrlStatus ~ url:', url)
+  // console.log('Funciona Status')
+  const query = await fetch(`/api/linkStatus?url=${url}`, {
     method: 'GET',
     headers: {
       'content-type': 'application/json'
     }
   })
   const res = await query.json()
-  console.log(res)
+  // console.log(res)
   const holder = document.getElementById('lactive')
   const firstKey = Object.keys(res)[0]
   const firstValue = res[firstKey]

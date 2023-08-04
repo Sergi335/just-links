@@ -77,9 +77,9 @@
     span.menuItem.moveCol Mover a
       i.icofont-thin-right
       ul#destDesk
-        if escritorios !== undefined
-        each val in escritorios
-          li(id=`${val.name}`)= val.name
+        if deskNames !== undefined
+        each val in deskNames
+          li(id=`${val.name}`)= val.displayName
     span.menuItem.borracol Borrar 
   #menuLink.menuLink
     strong Opciones Enlace
@@ -97,11 +97,11 @@
     span.menuItem.borralink Borrar
   #menuMoveTo(draggable='true')
     ul#destDeskMoveTo
-      if escritorios !== undefined
-        each val in escritorios
+      if deskNames !== undefined
+        each val in deskNames
           li.accordion(id=`${val.name}`)
             i.icofont-folder &nbsp;
-            | #{val.name}
+            | #{val.displayName}
             ul
               each columnasVal in columnasAll
                 - if (columnasVal.escritorio === val.name)

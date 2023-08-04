@@ -1,7 +1,7 @@
 import { editColumn } from './scripts3.js'
 
 export const constants = {
-  BASE_URL: '',
+  BASE_URL: '/api',
   BACKGROUNDS_URL: '/img/'
 }
 
@@ -21,7 +21,13 @@ function hora () {
     posicion.innerHTML = hora + ':' + min
   }
 }
-
+export function formatPath (path) {
+  const decodedPath = decodeURIComponent(path)
+  const formattedPath = decodedPath.replace(/\s+/g, '-').toLowerCase()
+  console.log('🚀 ~ file: formatUrl.js:6 ~ formatUrl ~ formattedUrl:', formattedPath)
+  const normalizedPath = formattedPath.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  return normalizedPath
+}
 export function darHora () {
   hora()
   setInterval(hora, 60000)

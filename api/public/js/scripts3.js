@@ -1,4 +1,4 @@
-import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants } from './functions.mjs'
+import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath } from './functions.mjs'
 import { togglePanel, navLinkInfos } from './sidepanel.js'
 
 document.addEventListener('DOMContentLoaded', cargaWeb)
@@ -8,7 +8,7 @@ document.addEventListener('click', escondeDialogos)
  * Función que carga los eventos en la web
  */
 function cargaWeb () {
-  if (window.location.pathname !== '/profile') {
+  if (window.location.pathname !== '/api/profile') {
     addDesktopEvents()
     darHora()
     handleDbClick()
@@ -48,10 +48,10 @@ function cargaWeb () {
  */
 function addDesktopEvents () {
   // Agregar evento click a cada elemento de la lista de de selección escritorios
-  document.querySelectorAll('.deskList').forEach(item => {
-    item.removeEventListener('click', selectDesktop)
-    item.addEventListener('click', selectDesktop)
-  })
+  // document.querySelectorAll('.deskList').forEach(item => {
+  //   item.removeEventListener('click', selectDesktop)
+  //   item.addEventListener('click', selectDesktop)
+  // })
 
   // Agregar evento de clic al botón para agregar una columna
   document.querySelector('#addCol').removeEventListener('click', toggleDialogColumn)
@@ -247,16 +247,6 @@ function addContextMenuEvents () {
   })
 }
 // Manejo de escritorios
-
-/**
- * Función para navegar entre escritorios x
- * @param {Object} event
- */
-async function selectDesktop (event) {
-  event.stopPropagation()
-  const deskName = event.target.innerText
-  window.location = `/templates?escritorio=${deskName}`
-}
 /**
  * Función para editar el nombre de un escritorio, refact xx
  * llama a fetch - si hay error llama a funcion de message - si no esconde dialogos, llama a refreshDesktops y adddesktopEvents - marca el desk actual como activo en la lista - cambia la url con el nombre de la url actualizada
@@ -264,9 +254,11 @@ async function selectDesktop (event) {
 async function editDesktop (event) {
   // No sirve habrá que quitar el form
   event.preventDefault()
-  const nombreOld = document.body.getAttribute('data-desk')
-  const nombre = document.getElementById('editdeskName').value.trim()
-  const body = { nombre, nombreOld }
+  const oldName = document.body.getAttribute('data-desk')
+  const newName = document.getElementById('editdeskName').value.trim()
+  const newNameFormat = formatPath(newName)
+
+  const body = { newName, newNameFormat, oldName }
   const params = {
     url: `${constants.BASE_URL}/escritorios`,
     body,
@@ -276,7 +268,6 @@ async function editDesktop (event) {
     }
   }
   const res = await fetchS(params)
-  console.log(res)
   const firstKey = Object.keys(res)[0]
   const firstValue = res[firstKey]
 
@@ -293,16 +284,16 @@ async function editDesktop (event) {
     dialog.style.display = visible ? 'none' : 'flex'
     refreshDesktops(res)
     addDesktopEvents()
-    document.getElementById('deskTitle').innerText = `${nombre}`
+    document.getElementById('deskTitle').innerText = `${newName}`
     const buttons = document.querySelectorAll('a.deskList')
     buttons.forEach(button => {
-      if (button.innerText === nombre) {
+      if (button.innerText === newName) {
         button.classList.add('active')
       }
     })
-    const url = window.location.href
-    const nuevaUrl = url.replace(/=.*$/, `=${nombre}`)
-    window.history.pushState(null, null, nuevaUrl)
+    const url = new URL(window.location.href)
+    url.pathname = `${newNameFormat}`
+    window.history.pushState(null, null, url)
     sendMessage(true, 'Edición Correcta')
   }
   // TODO animar el cambio de nombre??
@@ -311,11 +302,11 @@ async function editDesktop (event) {
  * Función para crear un escritorio, refact xx - todo mensaje exito
  */
 async function createDesktop () {
-  const nombre = document.getElementById('deskName').value.trim()
+  const displayName = document.getElementById('deskName').value.trim()
+  const name = formatPath(displayName)
   let orden = document.querySelectorAll('a.deskList')
-  orden = orden.length
-  orden = orden + 1
-  const body = { nombre, orden }
+  orden = orden.length + 1
+  const body = { name, displayName, orden }
   const params = {
     url: `${constants.BASE_URL}/escritorios`,
     method: 'POST',
@@ -336,16 +327,16 @@ async function createDesktop () {
       sendMessage(false, `${firstKey}, ${firstValue}`)
     }
   } else {
-    window.location = `${constants.BASE_URL}/templates?escritorio=${nombre}`
+    window.location = `/${name}`
     // Mensaje exito despues
   }
 }
 /**
- * Función para borrar un escritorio, refact xx falta probar borrar con links y cols
+ * Función para borrar un escritorio, refact xx
  */
 async function deleteDesktop () {
-  const nombre = document.body.getAttribute('data-desk')
-  const body = { name: nombre }
+  const name = document.body.getAttribute('data-desk')
+  const body = { name }
   const params = {
     url: `${constants.BASE_URL}/escritorios`,
     method: 'DELETE',
@@ -361,7 +352,7 @@ async function deleteDesktop () {
   if (firstKey === 'error') {
     sendMessage(false, `${firstKey}, ${firstValue}`)
   } else {
-    window.location = `${constants.BASE_URL}/templates?escritorio=${res[0].name}`
+    window.location = `/${res[0].name}`
     // Necesario??
     const dialog = document.getElementById('deleteDeskForm')
     const visible = dialog.style.display === 'flex'
@@ -387,7 +378,8 @@ function refreshDesktops (lista) {
   arr.forEach(element => {
     const $nodos = document.createElement('a')
     $nodos.setAttribute('class', 'deskList')
-    const $textos = document.createTextNode(`${element.name}`)
+    $nodos.setAttribute('href', `/${element.name}`)
+    const $textos = document.createTextNode(`${element.displayName}`)
 
     $nodos.appendChild($textos)
     $raiz.appendChild($nodos)
@@ -405,16 +397,16 @@ function changeLayout (event) {
     console.log('Entro al if')
     if (getCookieValue('mode') === 'edit') {
       document.cookie = 'mode=normal'
-      window.location = `${constants.BASE_URL}/templates?escritorio=${deskName}`
+      window.location = `/${deskName}`
       console.log('Modo normal')
     } else if (getCookieValue('mode') === 'normal') {
       document.cookie = 'mode=edit'
-      window.location = `${constants.BASE_URL}/templates?escritorio=${deskName}&mode=edit`
+      window.location = `/${deskName}`
       console.log('Modo edit')
     }
   } else {
     document.cookie = 'mode=edit'
-    window.location = `${constants.BASE_URL}/templates?escritorio=${deskName}&mode=edit`
+    window.location = `/${deskName}`
     console.log('Entro al else')
   }
 }
@@ -1510,7 +1502,7 @@ function escondeDeleteDeskDialog () {
   dialog.style.display = visible ? 'none' : 'flex'
 }
 function escondeDialogos (event) {
-  if (window.location.pathname !== '/profile') {
+  if (window.location.pathname !== '/api/profile') {
     const cuadros = [
       ...document.querySelectorAll('.deskForm'),
       document.getElementById('addDesk'),
@@ -1806,7 +1798,7 @@ function logOut () {
 // Funcion ir a perfil
 function profile () {
   console.log('Has hecho click')
-  window.location = `${constants.BASE_URL}/profile`
+  window.location = '/api/profile'
 }
 function mostrarMenu (event) {
   event.preventDefault() // Evitar el menú contextual predeterminado del navegador

@@ -69,52 +69,45 @@ const setImages = async (url, user, linkId) => {
       { new: true }
     )
     console.log(data)
+    return data
     // res.send(data)
     // res.send({ ok: 'Imagen subida y actualizada' })
   } else {
-    console.log('No hay imagePath')
+    return { error: 'No hay url' }
     // console.log(req.body.filePath)
     // res.send({ error: 'No hay filePath' })
   }
 }
-const deleteImage = async (req, res) => {
-  const user = req.user.name
-  const { body } = req
-  console.log(body.image)
-  console.log(body.id)
-  const originalUrl = body.image
-  let modifiedUrl = originalUrl.replace('http://localhost:3001/', '').split('/').join('\\')
-  modifiedUrl = modifiedUrl.replace('blob:', '')
-  console.log('🚀 ~ file: links.js:71 ~ deleteImage ~ modifiedUrl:', modifiedUrl)
-
+const deleteImage = async (url, user, linkId) => {
   try {
     const updatedArticle = await linksModel.findOneAndUpdate(
-      { _id: body.id, user },
-      { $pull: { images: { $in: [modifiedUrl] } } },
+      { _id: linkId, user },
+      { $pull: { images: { $in: [url] } } },
       { new: true }
     )
 
     if (updatedArticle) {
       console.log('Artículo actualizado:', updatedArticle)
-      const filePath = path.join(__dirname, '../..', 'public', modifiedUrl)
-      console.log(filePath)
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.error('Error al eliminar el archivo:', err)
-          res.send({ error: 'Error al borrar' })
-        } else {
-          console.log('Archivo eliminado exitosamente.')
-          res.send({ message: 'Borrado' })
-        }
-      })
+      // const filePath = path.join(__dirname, '../..', 'public', modifiedUrl)
+      // console.log(filePath)
+      // fs.unlink(filePath, (err) => {
+      //   if (err) {
+      //     console.error('Error al eliminar el archivo:', err)
+      //     res.send({ error: 'Error al borrar' })
+      //   } else {
+      //     console.log('Archivo eliminado exitosamente.')
+      //     res.send({ message: 'Borrado' })
+      //   }
+      // })
       // res.send({ message: 'Borrado' })
+      return updatedArticle
     } else {
       console.log('No se encontró ningún artículo que cumpla los criterios de búsqueda.')
-      res.send({ error: 'No encontrado' })
+      return { error: 'No encontrado' }
     }
   } catch (error) {
     console.error('Error al actualizar el artículo:', error)
-    res.send({ error: 'Error al borrar' })
+    return { error: 'Error al borrar' }
   }
 }
 const getNameByUrl = async (req, res) => {

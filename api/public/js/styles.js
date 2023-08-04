@@ -33,20 +33,17 @@ function loadStyles () {
 function addActiveClass () {
   // Pasar a select desktop
   const menuItems = document.querySelectorAll('.deskList')
-  const desktop = window.location.href
-  const partes = desktop.split('=')
-  const valor = partes.pop()
-  const valorDecodificado = decodeURIComponent(valor)
+  // const desktop = window.location.href
+  // const partes = desktop.split('=')
+  const valor = new URL(window.location.href)
+  const valorDecodificado = decodeURIComponent(valor.pathname)
   menuItems.forEach(item => {
-    if (item.innerText === valorDecodificado) {
+    if (item.attributes.href.textContent === valorDecodificado) {
       item.classList.add('active')
     } else {
       item.classList.remove('active')
     }
   })
-  if (window.location.href === 'http://localhost:3001/templates') {
-    menuItems[0].classList.add('active')
-  }
 }
 function selectBackground (event) {
   console.log(event.target)

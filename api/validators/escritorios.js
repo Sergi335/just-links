@@ -2,11 +2,11 @@ const { check } = require('express-validator')
 const { validateResults } = require('../helpers/handleValidators')
 
 const validateEditDesktop = [
-  check('nombreOld')
+  check('oldName')
     .exists()
     .notEmpty(),
   // .escape(),
-  check('nombre')
+  check('newName')
     .exists()
     .notEmpty()
     // .escape()
@@ -16,7 +16,7 @@ const validateEditDesktop = [
   }
 ]
 const validateCreateDesktop = [
-  check('nombre')
+  check('name')
     .exists()
     .notEmpty()
     // .escape()
