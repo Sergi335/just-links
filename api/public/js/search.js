@@ -21,7 +21,7 @@ function searchLinks (query) {
     }
   }
   const resultsContainer = document.getElementById('resultsContainer')
-  fetch(`/search?query=${query}`)
+  fetch(`/api/search?query=${query}`)
     .then(response => response.json())
     .then(data => {
       // Limpia el contenedor de resultados

@@ -219,10 +219,24 @@ function selectText (element) {
 
 export const videoUrlsObj = {
   Youtube: {
-    url: 'https://www.youtube.com/watch',
+    url: /^https:\/\/www\.youtube\.com\/watch\?(?!.*&list=PL)/,
     embedURL: 'https://www.youtube.com/embed/',
     extractParam: function (url) {
       return url.split('=')[1]
+    }
+  },
+  YoutubeList: {
+    url: /^https:\/\/www\.youtube\.com\/watch.*&list=PL/,
+    embedURL: 'https://www.youtube.com/embed/',
+    extractParam: function (url) {
+      const videoIdMatch = url.match(/v=([^&]+)/)
+      const playlistIdMatch = url.match(/list=([^&]+)/)
+
+      if (videoIdMatch && playlistIdMatch) {
+        const videoId = videoIdMatch[1]
+        const playlistId = playlistIdMatch[1]
+        return `${videoId}?list=${playlistId}`
+      }
     }
   },
   Pornhub: {
@@ -248,7 +262,11 @@ export function checkUrlMatch (url) {
   for (const key in videoUrlsObj) {
     if (Object.prototype.hasOwnProperty.call(videoUrlsObj, key)) {
       const videoUrl = videoUrlsObj[key]
-      if (url.includes(videoUrl.url)) {
+
+      if (
+        (videoUrl.url instanceof RegExp && videoUrl.url.test(url)) || // Si es una expresión regular
+        (typeof videoUrl.url === 'string' && url.includes(videoUrl.url)) // Si es un string
+      ) {
         const extractedParam = videoUrl.extractParam(url)
         return videoUrl.embedURL + extractedParam
       }

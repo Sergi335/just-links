@@ -14,12 +14,13 @@ function cargaWeb () {
     handleDbClick()
     handleSimpleClick()
     const contenedor = document.querySelectorAll('.container')[0]
-    contenedor.onscroll = function () {
+    contenedor.onscroll = function (event) {
       toggleBotonSubirArriba()
+      console.log(event.target.scrollTop)
     }
     addContextMenuEvents()
     // Declaramos la variable para pasar a ordenaCols
-    const desk = document.getElementById('deskTitle').innerText
+    const desk = document.body.getAttribute('data-desk')
 
     // Añadimos los eventos de columnas
     addColumnEvents()
@@ -1160,6 +1161,9 @@ async function moveLinksEdit (event) {
  * @param {*} event
  */
 async function pasteLink (event) {
+  const menu = document.getElementById('menuColumn')
+  const visible = menu.style.display === 'block'
+  visible ? menu.style.display = 'none' : menu.style.display = 'block'
   // lee el contenido del portapapeles entonces ...
   navigator.clipboard.read().then((clipboardItems) => {
     // por cada clipboardItem ...

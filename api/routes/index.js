@@ -12,7 +12,7 @@ const { validateEditDesktop, validateCreateDesktop } = require('../validators/es
 const { getColItems, createColItem, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns } = require('../controllers/columnas')
 const { displayUserProfile } = require('../controllers/users')
 const { searchLinks } = require('../controllers/searchController')
-const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup } = require('../helpers/storage')
+const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl } = require('../helpers/storage')
 
 router.get('/', (req, res) => {
   res.render('landing.pug')
@@ -36,6 +36,7 @@ router.get('/api/search', authMiddleware, searchLinks)
 router.get('/api/deleteUser', authMiddleware, eliminaUsuario)
 router.get('/api/profile', authMiddleware, displayUserProfile)
 router.get('/api/downloadBackup', authMiddleware, downloadBackup)
+router.get('/api/getBackground', authMiddleware, getBackgroundUrl)
 router.post('/api/changePassword', authMiddleware, cambiaPassword)
 // router.post('/register', registraUsuario)
 router.post('/login', compruebaUsuario) // Va a fallar

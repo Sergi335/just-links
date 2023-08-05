@@ -13,22 +13,31 @@ function loadStyles () {
     color.removeEventListener('click', selectInfoColor)
     color.addEventListener('click', selectInfoColor)
   })
+  const accentColors = document.querySelectorAll('.accentColors')
+  accentColors.forEach(color => {
+    color.removeEventListener('click', selectAccentColor)
+    color.addEventListener('click', selectAccentColor)
+  })
   document.getElementById('themeSwitch').removeEventListener('click', selectTheme)
   document.getElementById('themeSwitch').addEventListener('click', selectTheme)
 
   if (window.localStorage.getItem('infoColor')) {
     const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
-    panel.style.backgroundColor = color
+    panel.style.background = color
   }
-  if (window.localStorage.getItem('bodyBackground')) {
-    const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
-    document.body.style.backgroundImage = `url(${url})`
-  }
-  if (window.localStorage.getItem('theme')) {
-    const theme = JSON.parse(window.localStorage.getItem('theme'))
-    document.documentElement.classList.add(theme)
-  }
+  // if (window.localStorage.getItem('accentColor')) {
+  //   const color = JSON.parse(window.localStorage.getItem('accentColor'))
+  //   document.documentElement.style.setProperty('--light-accentColor', color)
+  // }
+  // if (window.localStorage.getItem('bodyBackground')) {
+  //   const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
+  //   document.body.style.backgroundImage = `url(${url})`
+  // }
+  // if (window.localStorage.getItem('theme')) {
+  //   const theme = JSON.parse(window.localStorage.getItem('theme'))
+  //   document.documentElement.classList.add(theme)
+  // }
 }
 function addActiveClass () {
   // Pasar a select desktop
@@ -45,15 +54,20 @@ function addActiveClass () {
     }
   })
 }
-function selectBackground (event) {
+async function selectBackground (event) {
   console.log(event.target)
+  const nombre = event.target.alt
   if (event.target.nodeName === 'IMG') {
-    const extension = 'webp'
-    const oldRoute = event.target.alt
-    const extActual = oldRoute.split('.').pop()
-    const ruta = oldRoute.replace(`.${extActual}`, `.${extension}`)
-    document.body.style.backgroundImage = `url(${constants.BACKGROUNDS_URL}${ruta})`
-    window.localStorage.setItem('bodyBackground', JSON.stringify(`${constants.BACKGROUNDS_URL}${ruta}`))
+    const data = await fetch(`${constants.BASE_URL}/getBackground?nombre=${nombre}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+    const url = await data.text()
+    console.log(url)
+    document.body.style.backgroundImage = `url(${url})`
+    window.localStorage.setItem('bodyBackground', JSON.stringify(`${url}`))
   } else {
     document.body.style.backgroundImage = ''
     window.localStorage.setItem('bodyBackground', '')
@@ -62,12 +76,15 @@ function selectBackground (event) {
 function selectInfoColor (event) {
   console.log(event.target.id)
   const panel = document.querySelector('.sideInfo')
-  if (event.target.id === 'accentColor') {
-    panel.style.backgroundColor = 'var(--light-accentColor)'
-    window.localStorage.setItem('infoColor', JSON.stringify('var(--light-accentColor)'))
-  } else {
-    panel.style.backgroundColor = event.target.id
-    window.localStorage.setItem('infoColor', JSON.stringify(event.target.id))
+  switch (event.target.id) {
+    case 'theme':
+      panel.style.background = 'var(--light-bgGradient)'
+      window.localStorage.setItem('infoColor', JSON.stringify('var(--light-bgGradient)'))
+      break
+    case 'transparent':
+      panel.style.background = 'transparent'
+      window.localStorage.setItem('infoColor', JSON.stringify('transparent'))
+      break
   }
 }
 function selectTheme (event) {
@@ -79,4 +96,10 @@ function selectTheme (event) {
     root.classList.add('dark')
     window.localStorage.setItem('theme', JSON.stringify('dark'))
   }
+}
+function selectAccentColor (event) {
+  console.log(event.target.id)
+  const color = event.target.id
+  document.documentElement.style.setProperty('--light-accentColor', color)
+  window.localStorage.setItem('accentColor', JSON.stringify(`${color}`))
 }

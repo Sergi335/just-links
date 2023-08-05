@@ -16,6 +16,25 @@ head
   script(type='module' src='/js/styles.js')
 
 body(class=mode data-desk= escritorio)
+script.
+  console.log('Este es un mensaje desde el script en el cuerpo.')
+  if (window.localStorage.getItem('theme')) {
+    const theme = JSON.parse(window.localStorage.getItem('theme'))
+    document.documentElement.classList.add(theme)
+  }
+  if (window.localStorage.getItem('accentColor')) {
+    const color = JSON.parse(window.localStorage.getItem('accentColor'))
+    document.documentElement.style.setProperty('--light-accentColor', color)
+  }
+  if (window.localStorage.getItem('infoColor')) {
+    const panel = document.querySelector('.sideInfo')
+    const color = JSON.parse(window.localStorage.getItem('infoColor'))
+    panel.style.background = color
+  }
+  if (window.localStorage.getItem('bodyBackground')) {
+    const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
+    document.body.style.backgroundImage = `url(${url})`
+  }
 include includes/header.pug
 .container
   .skeleton-loader

@@ -318,7 +318,7 @@ async function sendNotes (event) {
   let body = { id, notes }
   body = JSON.stringify(body)
   console.log(body)
-  const res = await fetch('/linkNotes', {
+  const res = await fetch('/api/linkNotes', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'

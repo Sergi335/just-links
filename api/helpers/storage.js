@@ -1,5 +1,5 @@
 const { initializeApp } = require('firebase/app')
-const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage')
+const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll, getMetadata } = require('firebase/storage')
 const { firebaseConfig } = require('../config/firebase')
 const { updateProfileImage } = require('../controllers/users')
 const { setLinkImg, setImages, deleteImage } = require('../controllers/links')
@@ -193,4 +193,47 @@ const downloadBackup = async (req, res) => {
 
   res.send({ downloadUrl })
 }
-module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup }
+const getBackgrounds = async (user) => {
+  try {
+    const fileRef = ref(storage, `${user}/images/miniatures`)
+    const list = await listAll(fileRef)
+    const { items } = list
+    // console.log(items)
+    const backgroundsPromises = items.map(async (back) => ({
+      url: await getDownloadURL(back),
+      nombre: (await getMetadata(back)).name
+    }))
+
+    const backgrounds = await Promise.all(backgroundsPromises)
+    return backgrounds
+  } catch (err) {
+    console.error('Error al leer la carpeta:', err)
+    throw err
+  }
+}
+const getBackgroundUrl = async (req, res) => {
+  const user = req.user.name
+  const nombre = req.query.nombre
+  console.log('🚀 ~ file: storage.js:216 ~ getBackgroundUrl ~ user:', nombre)
+  try {
+    // const fileRef = ref(storage, `${user}/images/backgrounds`)
+    // const list = await listAll(fileRef)
+    // const { items } = list
+    const fileRef = ref(storage, `${user}/images/backgrounds/${nombre}`)
+    const downloadUrl = await getDownloadURL(fileRef)
+
+    // const metadataPromises = items.map(async (item) => {
+    //   const itemMetadata = await getMetadata(item)
+    //   return itemMetadata
+    // })
+
+    // const metadata = await Promise.all(metadataPromises)
+
+    // console.log('🚀 ~ file: storage.js:222 ~ getBackgroundUrl ~ metadata:', metadata)
+    console.log('Me han llamado')
+    res.send(downloadUrl)
+  } catch (error) {
+    res.send(error)
+  }
+}
+module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl }

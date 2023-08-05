@@ -2,6 +2,7 @@ const { escritoriosModel, usersModel } = require('../models/index')
 const { linksModel } = require('../models/index')
 const { columnasModel } = require('../models/index')
 const { createDummyContent } = require('../helpers/createDummyContent')
+const { getBackgrounds } = require('../helpers/storage')
 
 const cagadasFix = async (req, res) => {
   try {
@@ -119,59 +120,59 @@ const deleteDeskItem = async (req, res) => {
   res.send(lista)
 }
 const testTemplates = async (req, res) => {
-  const params = req.params.nombre
-  const user = req.cookies.user
-  console.log('🚀 ~ file: escritorios.js:124 ~ testTemplates ~ params:', params)
+  const escritorio = req.params.nombre
+  const { user, mode } = req.cookies
   // User new? if si crear dummy content
-  let isNewUser = await usersModel.find({ name: `${user}` })
-  const userImg = isNewUser[0].profileImage
-  isNewUser = isNewUser[0].newUser
+  const [userData] = await usersModel.find({ name: `${user}` })
+  const userImg = userData.profileImage
+  const isNewUser = userData.newUser
   if (isNewUser) {
     // Insertar en DB
     await createDummyContent(user)
   }
   const escritorios = await escritoriosModel.find({ user }).sort({ orden: 1 })
-  // console.log(escritorios)
   const deskNames = escritorios.map(desk => ({ displayName: desk.displayName, name: desk.name }))
-  console.log('🚀 ~ file: escritorios.js:135 ~ testTemplates ~ deskNames:', deskNames)
-  let escritorio
-  if (params) {
-    escritorio = params
+
+  let escritorioSelected
+  let escritorioSelectedFormat
+  if (escritorio) {
+    escritorioSelected = escritorio
+    const desktop = escritorios.find(desk => desk.name === escritorio)
+    escritorioSelected = desktop.name
+    escritorioSelectedFormat = desktop.displayName
+    console.log(desktop.displayName)
   } else if (escritorios.length > 0) {
-    escritorio = escritorios[0].name
+    escritorioSelected = escritorios[0].name
+    escritorioSelectedFormat = escritorios[0].displayName
   } else {
-    escritorio = null
+    escritorioSelected = null
+    escritorioSelectedFormat = null
   }
-  // escritorio = escritorio.replace(/-/g, ' ').toLowerCase()
-  // escritorio = escritorio.toLocaleString()
-  console.log('🚀 ~ file: escritorios.js:135 ~ testTemplates ~ escritorio:', escritorio)
+
   const existeEscritorio = await escritoriosModel.findOne({ name: escritorio, user })
-  // console.log('🚀 ~ file: escritorios.js:148 ~ testTemplates ~ existeEscritorio:', existeEscritorio.displayName)
-  // const searchDesk = existeEscritorio.displayName
-  // console.log('🚀 ~ file: escritorios.js:150 ~ testTemplates ~ searchDesk:', searchDesk)
   if (existeEscritorio === null) {
     console.log('No exite escritorio')
     // crear 404 y enviar
     res.status(404).send({ error: 'not found' })
     return
   }
-  // const backgrounds = await getBackgrounds()
+  const backgrounds = await getBackgrounds(user)
   // console.log(backgrounds)
   // try catch
   const columnas = await columnasModel.find({ user, escritorio }).sort({ order: 1 })
-  console.log('🚀 ~ file: escritorios.js:160 ~ testTemplates ~ columnas:', columnas)
   const columnasAll = await columnasModel.find({ user }).sort({ order: 1 })
   const links = await linksModel.find({ user, escritorio }).sort({ orden: 1 })
-  const mode = req.cookies.mode
   const locals = {
-    escritorio,
+    escritorioSelected,
+    escritorioSelectedFormat,
     deskNames,
     columnas,
     columnasAll,
     links,
     user,
     userImg,
-    mode
+    mode,
+    backgrounds
   }
   if (!req.cookies.mode || req.cookies.mode === 'normal') {
     res.setHeader('Cache-Control', 's-maxage=86400')

@@ -12,15 +12,18 @@
       button#editdeskSubmit(type='submit') Modificar
     .selectBackground
       p Cambiar Fondo 
-      //- each img in backgrounds 
-      //-   img(class='miniatures' src=`${img.ruta}`, alt=`${img.nombre}`)
+      each item in backgrounds 
+        img(class='miniatures' src=`${item.url}`, alt=`${item.nombre}`)
       .solidColor.miniatures
     .selectInfoColor 
       p Cambiar color del panel
-      #accentColor.infoColors
-      #black.infoColors 
-      #white.infoColors
+      #theme.infoColors 
       #transparent.infoColors 
+    .selectAccentColor 
+      p Cambiar color de acento
+      div(id='yellow').accentColors
+      div(id='blue').accentColors
+      div(id='green').accentColors
     p#editdeskError
   #addColForm.deskForm
     h2 A&ntilde;ade Columna
