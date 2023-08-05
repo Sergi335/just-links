@@ -117,11 +117,11 @@ header {
     border-radius: 5px;
     height: 84vh;
     border-left: 1px solid var(--light-thirdColor);
+    width: 8%;
 }
 .sideInfo p {
     color: var(--light-textColor);
     margin: 0;
-    padding-left: 10px;
     font-size: 14px;
 }
 .sideInfo p:nth-child(7), .sideInfo p:nth-child(11), .sideInfo p:nth-child(15), .sideInfo p:nth-child(19) {
@@ -151,10 +151,16 @@ div#yellow {
     background-color: #ffff00;
 }
 div#blue {
-    background-color: #3366ff;
+    background-color: cornflowerblue;
 }
 div#green {
     background-color: #00cc66;
+}
+div#defaultLight {
+    background-color: #bababa;
+}
+div#defaultDark {
+    background-color: #bf7272;
 }
 .sideInfo div {
     display: flex;
@@ -1101,7 +1107,7 @@ div.controls button {
 }
 
 .container {
-    padding: 104px 0;
+    padding: 75px 0;
     overflow-y: auto;
     max-height: 90vh;
 }

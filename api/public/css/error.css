@@ -26,6 +26,8 @@ section {
 }
 section p {
     text-align: center;
+    border-left: 1px solid;
+    padding-left: 15px;
 }
 
 #loginForm form {
@@ -68,4 +70,11 @@ section p {
     border-radius: 22px;
 
     display: none;
+}
+#errorLog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    gap: 15px;
 }

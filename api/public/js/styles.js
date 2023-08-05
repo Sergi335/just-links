@@ -100,6 +100,26 @@ function selectTheme (event) {
 function selectAccentColor (event) {
   console.log(event.target.id)
   const color = event.target.id
-  document.documentElement.style.setProperty('--light-accentColor', color)
-  window.localStorage.setItem('accentColor', JSON.stringify(`${color}`))
+  switch (color) {
+    case 'yellow':
+      document.documentElement.style.setProperty('--light-accentColor', '#ffff00')
+      window.localStorage.setItem('accentColor', JSON.stringify('#ffff00'))
+      break
+    case 'blue':
+      document.documentElement.style.setProperty('--light-accentColor', 'cornflowerblue')
+      window.localStorage.setItem('accentColor', JSON.stringify('cornflowerblue'))
+      break
+    case 'green':
+      document.documentElement.style.setProperty('--light-accentColor', '#00cc66')
+      window.localStorage.setItem('accentColor', JSON.stringify('#00cc66'))
+      break
+    case 'defaultLight':
+      document.documentElement.style.setProperty('--light-accentColor', '#bababa')
+      window.localStorage.setItem('accentColor', JSON.stringify('#bababa'))
+      break
+    case 'defaultDark':
+      document.documentElement.style.setProperty('--light-accentColor', '#bf7272')
+      window.localStorage.setItem('accentColor', JSON.stringify('#bf7272'))
+      break
+  }
 }

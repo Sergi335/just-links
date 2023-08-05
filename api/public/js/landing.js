@@ -84,7 +84,7 @@ window.onload = function () {
           // document.cookie = `token=${token}; path=/; expires=Thu, 01 Jan 2024 00:00:00 UTC; domain=tudominio.com; secure;`;
           document.cookie = `token=${token}`
           document.cookie = `user=${user[0].name}`
-          window.location = '/templates'
+          window.location = '/inicio'
         }
       })
       .catch(function (error) {
