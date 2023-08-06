@@ -33,7 +33,6 @@ html.dark {
 }
 body {
     background-size: 100%;
-    background-repeat: no-repeat;
     background-attachment: fixed;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     margin: 0;
@@ -80,7 +79,7 @@ header {
 .headLeft {
     grid-area: headLeft;
     display: flex;
-    gap: 2px;
+    gap: 28px;
     justify-content: flex-start;
     align-items: center;
     padding-left: 19%;
@@ -106,8 +105,11 @@ header {
 .mono {
     font-family: monospace;
 }
+.slideUp {
+    transform: translateY(-48px) !important;
+}
 .sideInfo {
-    display: flex;
+    display: none;
     gap: 2px;
     position: fixed;
     top: 155px;
@@ -193,11 +195,13 @@ p#saludo {
 
 .headCenter {
     grid-area: headCenter;
-    display: flex;
+    display: none;
     justify-content: space-evenly;
     align-items: center;
 }
-
+#showMenu {
+    display: flex;
+}
 #reloj {
     font-size: 40px;
     line-height: 1;
@@ -1107,7 +1111,7 @@ div.controls button {
 }
 
 .container {
-    padding: 75px 0;
+    padding: 120px 0;
     overflow-y: auto;
     max-height: 90vh;
 }
@@ -1131,23 +1135,17 @@ div.controls button {
 
 .cuerpoInt {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
-    max-width: 68%;
     margin: 0 auto;
-    padding: 50px;
+    padding: 50px 10px;
     border-top: 0;
     margin-top: -15px;
-    /* background-color: #bababa57;
-    backdrop-filter: blur(40px); */
     border-radius: 5px;
-    gap: 50px;
     opacity: 1;
     transition: all 1s;
+    justify-content: center;
 }
-/* .envolt:last-child {
-    flex-grow: 0;
-} */
-
 .visiblePanels {
     visibility: hidden;
     transition: all 1s;
@@ -1489,15 +1487,20 @@ i.icofont-scroll-up {
 }
 
 .dropdown-content {
-    display: flex;
+    display: block;
     background-color: var(--light-secondColor);
     justify-content: center;
     font-size: 14px;
-    position: sticky;
+    position: absolute;
     top: 83px;
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
     border-bottom: 1px solid var(--border-color);
+    transform: translateX(-100%);
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    transition: transform .5s;
 }
 
 .dropdown-content a {
@@ -1505,10 +1508,10 @@ i.icofont-scroll-up {
     padding: 12px 20px;
     text-decoration: none;
     display: block;
-    max-width: 180px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: 1.3em;
 }
 
 .dropdown-content a:hover {
@@ -1641,4 +1644,36 @@ div.headCenter input[type="text"]:focus-visible {
     width: 200px;
     background-color: antiquewhite;
     cursor: pointer;
+}
+@media (min-width: 1536px) {
+    body {
+        background-repeat: no-repeat;
+    }
+    .sideInfo {
+        display: flex;
+    }
+    .cuerpoInt {
+        max-width: 68%;
+        gap: 50px;
+        justify-content: start;
+        flex-direction: row;
+        padding: 50px;
+    }
+    .container {
+        padding: 75px 0;
+    }
+    .dropdown-content {
+        display: flex;
+        position: sticky;
+        transform: none;
+        height: auto;
+        width: auto;
+    }
+    .dropdown-content a {
+        max-width: 180px;
+        font-size: 14px;
+    }
+    .headCenter {
+        display: flex;
+    }
 }

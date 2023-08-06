@@ -29,16 +29,18 @@ function cargaWeb () {
     // Locura que si no llamas a ordenacols dos veces en dos funciones distintas(cierto?), no funciona, tocatelos
     const $raiz = document.getElementById(`${desk}Cols`)
     addLinkEvents($raiz)
+    if (window.matchMedia('(min-width: 1536px)').matches) {
+      if (!document.body.classList.contains('edit')) {
+        const hijos = $raiz.childNodes
+        hijos.forEach(element => {
+          // ordenaItems(element.childNodes[0].innerText)
+          ordenaItems(element.childNodes[1].id)
+        })
+        ordenaCols($raiz)
+      }
 
-    if (!document.body.classList.contains('edit')) {
-      const hijos = $raiz.childNodes
-      hijos.forEach(element => {
-        ordenaItems(element.childNodes[0].innerText)
-      })
-      ordenaCols($raiz)
+      ordenaDesks()
     }
-
-    ordenaDesks()
   }
 }
 
@@ -166,8 +168,10 @@ function addLinkEvents ($raiz) {
     link.removeEventListener('click', setLastVisited)
     link.addEventListener('click', setLastVisited)
   })
-  if (!document.body.classList.contains('edit')) {
-    ordenaCols($raiz)
+  if (window.matchMedia('(min-width: 1536px)').matches) {
+    if (!document.body.classList.contains('edit')) {
+      ordenaCols($raiz)
+    }
   }
 }
 function addContextMenuEvents () {
@@ -1544,8 +1548,7 @@ function ordenaItems (panel) {
     const escritorioActual = document.body.getAttribute('data-desk')
     const el = []
     // let order = [];
-    el.push(document.getElementById(`${escritorioActual}${panel}`))
-
+    el.push(document.getElementById(`${panel}`))
     el.forEach(element => {
       const grupo = `Shared${escritorioActual}`
 

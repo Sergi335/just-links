@@ -21,6 +21,9 @@ function loadStyles () {
   document.getElementById('themeSwitch').removeEventListener('click', selectTheme)
   document.getElementById('themeSwitch').addEventListener('click', selectTheme)
 
+  document.getElementById('showMenu').removeEventListener('click', showMenu)
+  document.getElementById('showMenu').addEventListener('click', showMenu)
+
   if (window.localStorage.getItem('infoColor')) {
     const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
@@ -121,5 +124,18 @@ function selectAccentColor (event) {
       document.documentElement.style.setProperty('--light-accentColor', '#bf7272')
       window.localStorage.setItem('accentColor', JSON.stringify('#bf7272'))
       break
+  }
+}
+function showMenu () {
+  console.log('click')
+  const menu = document.getElementById('drpEscritorios')
+  if (window.matchMedia('(min-width: 1536px)').matches) {
+    menu.classList.toggle('slideUp')
+  } else {
+    if (menu.style.transform === 'translateX(-100%)' || menu.style.transform === '') {
+      menu.style.transform = 'translateX(0)'
+    } else {
+      menu.style.transform = 'translateX(-100%)'
+    }
   }
 }
