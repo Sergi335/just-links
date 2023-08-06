@@ -138,9 +138,11 @@ const testTemplates = async (req, res) => {
   if (escritorio) {
     escritorioSelected = escritorio
     const desktop = escritorios.find(desk => desk.name === escritorio)
-    escritorioSelected = desktop.name
-    escritorioSelectedFormat = desktop.displayName
-    console.log(desktop.displayName)
+    if (desktop) {
+      escritorioSelected = desktop.name
+      escritorioSelectedFormat = desktop.displayName
+      console.log(desktop.displayName)
+    }
   } else if (escritorios.length > 0) {
     escritorioSelected = escritorios[0].name
     escritorioSelectedFormat = escritorios[0].displayName

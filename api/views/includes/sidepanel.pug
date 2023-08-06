@@ -3,7 +3,8 @@
     h2 Link Info
     button#prev Anterior 
     button#next Siguiente
-    i#sideClose.icofont-close
+    #closeContainer
+      i#sideClose.icofont-close
     p#linkId
   .sidePanelA2
     #linkInfoContainer
@@ -11,7 +12,7 @@
         span#lname 
       p Panel:&nbsp;
         span#lpanel 
-      p Url:&nbsp;
+      p.url Url:&nbsp;
         a#lurl(target='_blank') 
       p Activo:&nbsp;
         span#lactive 
@@ -27,7 +28,7 @@
       i.icofont-cloud-upload
       button#saveLinkImage Guardar
   #notesContainer
-    p Descripción:&nbsp;
+    p Notas:&nbsp;
     #linkNotes(contenteditable='true') Escribe aqu&iacute;
     #textControls
       i.icofont-code-alt

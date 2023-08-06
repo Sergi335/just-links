@@ -15,9 +15,8 @@ head
   script(type='module' src='/js/functions.mjs')
   script(type='module' src='/js/styles.js')
 
-body(class=mode data-desk= escritorio)
+body(class=mode data-desk= escritorioSelected)
 script.
-  console.log('Este es un mensaje desde el script en el cuerpo.')
   if (window.localStorage.getItem('theme')) {
     const theme = JSON.parse(window.localStorage.getItem('theme'))
     document.documentElement.classList.add(theme)
@@ -25,11 +24,6 @@ script.
   if (window.localStorage.getItem('accentColor')) {
     const color = JSON.parse(window.localStorage.getItem('accentColor'))
     document.documentElement.style.setProperty('--light-accentColor', color)
-  }
-  if (window.localStorage.getItem('infoColor')) {
-    const panel = document.querySelector('.sideInfo')
-    const color = JSON.parse(window.localStorage.getItem('infoColor'))
-    panel.style.background = color
   }
   if (window.localStorage.getItem('bodyBackground')) {
     const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
@@ -82,11 +76,11 @@ include includes/header.pug
       .gridPanel
         .textHolder.skeleton
 
-  div(id=escritorio + 'Cols' class='cuerpoInt' data-id='columns')
+  div(id=escritorioSelected + 'Cols' class='cuerpoInt' data-id='columns')
     if columnas.length === 0
       .tab
-      div(id='edit' + escritorio + 'default', class='tabcontent', orden='0')
-        div(class='columna' id=escritorio + 'default', data-db='')
+      div(id='edit' + escritorioSelected + 'default', class='tabcontent', orden='0')
+        div(class='columna' id=escritorioSelected + 'default', data-db='')
         include includes/sidepanel.pug
     else
       .tab
@@ -106,8 +100,8 @@ include includes/header.pug
         if contadortb.hasOwnProperty(item)
           - var numero = contadortb[item] + 1
           - contadortb[item] = numero
-          div(id='edit' + escritorio + val.name + numero, class='tabcontent', orden=`${val.order}`)
-            div(class='columna' id=escritorio + val.name + numero, data-db=`edit${val._id}`)
+          div(id='edit' + escritorioSelected + val.name + numero, class='tabcontent', orden=`${val.order}`)
+            div(class='columna' id=escritorioSelected + val.name + numero, data-db=`edit${val._id}`)
               each link in links
                 if link.idpanel == val._id
                   .link(id=`${link._id}` orden= `${link.orden}`)
@@ -122,8 +116,8 @@ include includes/header.pug
           //- include includes/sidepanel.pug
         else
           - contadortb[item] = 1
-          div(id='edit' + escritorio + val.name, class='tabcontent', orden=`${val.order}`)
-            div(class='columna' id=escritorio + val.name, data-db=`edit${val._id}`)
+          div(id='edit' + escritorioSelected + val.name, class='tabcontent', orden=`${val.order}`)
+            div(class='columna' id=escritorioSelected + val.name, data-db=`edit${val._id}`)
               each link in links
                 if link.idpanel == val._id
                   .link(id=`${link._id}` orden= `${link.orden}`)

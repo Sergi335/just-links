@@ -15,7 +15,6 @@ head
   script(type='module' src='/js/styles.js')
 body(data-desk= escritorioSelected)
 script.
-  console.log('Este es un mensaje desde el script en el cuerpo.')
   if (window.localStorage.getItem('theme')) {
     const theme = JSON.parse(window.localStorage.getItem('theme'))
     document.documentElement.classList.add(theme)

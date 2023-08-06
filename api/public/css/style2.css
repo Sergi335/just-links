@@ -357,7 +357,7 @@ div.avatar img {
 }
 #sidepanel {
     grid-template-columns: repeat(2, 50%);
-    /* grid-template-rows: 10% minmax(0, 1fr); */
+    grid-template-rows: 6% 45% 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     grid-template-areas:
@@ -366,7 +366,7 @@ div.avatar img {
         "a4 a4";
     position: fixed;
     width: -webkit-fill-available;
-    top: 129px;
+    top: 83px;
     background-image: var(--light-bgGradient);
     display: none;
     align-items: center;
@@ -380,8 +380,8 @@ div.avatar img {
     text-decoration: none;
 }
 .sidePanelA2 {
-    width: 10%;
-    display: flex;
+    width: 20%;
+    display: none;
     justify-content: center;
     flex-direction: column;
     position: absolute;
@@ -392,10 +392,14 @@ div.avatar img {
 } */
 
 #linkInfoContainer p {
-    font-weight: 600;
     margin-left: 50px;
 }
-
+p.url {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 #sidepanel p span {
     font-weight: 400;
 }
@@ -405,6 +409,7 @@ div.avatar img {
     justify-content: space-between;
     align-items: center;
     grid-area: a1;
+    align-self: start;
 }
 
 #sideHeadP {
@@ -433,8 +438,8 @@ div.avatar img {
 button#pasteImg,
 button#saveImg {
     position: relative;
-    top: 15px;
-    right: -779px;
+    top: -42px;
+    right: -853px;
 }
 
 button#sendNotes:hover,
@@ -447,7 +452,7 @@ button#saveLinkImage:hover {
 }
 
 #linkNotes {
-    width: 35%;
+    width: 90%;
     height: 25vh;
     overflow-y: auto;
     background-color: var(--light-secondColor);
@@ -457,8 +462,7 @@ button#saveLinkImage:hover {
 }
 
 #linkImages {
-    height: 95%;
-    /* background-color: var(--light-secondColor); */
+    height: 100%;
     overflow-y: auto;
     display: flex;
     align-items: flex-start;
@@ -470,7 +474,7 @@ button#saveLinkImage:hover {
     background-size: 42%;
     background-position: center;
     position: relative;
-    /* border: 3px solid var(--border-color); */
+    background-color: var(--main-hv-color)
 }
 
 #linkImages a {
@@ -514,7 +518,13 @@ button#saveLinkImage:hover {
     background-color: #f1f1f1;
     /* Color de fondo de la barra de desplazamiento */
 }
-
+#closeContainer {
+    width: 140.75px;
+    width: 140.75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .icofont-close {
     /* margin-right: 50px; */
     cursor: pointer;
@@ -524,11 +534,10 @@ button#saveLinkImage:hover {
     justify-content: center;
     align-items: center;
     border-radius: 30px;
-    width: 140.75px;
 }
 
 .icofont-close:hover {
-    background-color: #f1f1f1;
+    background-color: var(--light-bgColor);
 }
 
 #notesContainer {
@@ -537,6 +546,7 @@ button#saveLinkImage:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    align-self: start;
 }
 #notesContainer p {
     width: 35%;
@@ -546,10 +556,9 @@ button#saveLinkImage:hover {
 }
 #imgContainer {
     grid-area: a3;
-    /* padding-right: 50px; */
-    /* height: 100%; */
+    height: 100%;
     align-self: start;
-    width: 50%;
+    width: 100%;
     justify-self: center;
 }
 
@@ -579,8 +588,7 @@ button#saveLinkImage:hover {
 .modal-content {
     margin: auto;
     display: block;
-    width: 80%;
-    /* max-width: 700px; */
+    max-width: 100%;
 }
 
 .modal-content,
@@ -1153,7 +1161,7 @@ div.controls button {
 }
 .envolt {
     color: var(--light-textColor);
-    width: 390px;
+    width: 100%;
     margin-bottom: 65px;
     height: fit-content;
     box-shadow: var(--light-neumoShadow);
@@ -1322,7 +1330,6 @@ i.icofont-gear {
 #videoFrame {
     display: none;
     width: 100% !important;
-    min-height: 500px;
     transform: none !important;
 }
 #imgMasonry {
@@ -1501,6 +1508,7 @@ i.icofont-scroll-up {
     height: 100%;
     overflow-y: auto;
     transition: transform .5s;
+    z-index: 2;
 }
 
 .dropdown-content a {
@@ -1668,6 +1676,7 @@ div.headCenter input[type="text"]:focus-visible {
         transform: none;
         height: auto;
         width: auto;
+        z-index: 0;
     }
     .dropdown-content a {
         max-width: 180px;
@@ -1675,5 +1684,23 @@ div.headCenter input[type="text"]:focus-visible {
     }
     .headCenter {
         display: flex;
+    }
+    .envolt {
+        width: 390px;
+    }
+    .sidePanelA2 {
+        display: flex;
+    }
+    #imgContainer {
+        width: 50%;
+    }
+    #videoFrame {
+        min-height: 490px;
+    }
+    #sidepanel {
+        top: 129px;
+    }
+    #linkNotes {
+        width: 35%;
     }
 }

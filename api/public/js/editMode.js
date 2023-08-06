@@ -9,7 +9,7 @@ function editMode () {
     col.removeEventListener('click', openTab)
     col.addEventListener('click', openTab)
   })
-  const desk = document.getElementById('deskTitle').innerText
+  const desk = document.body.getAttribute('data-desk')
   document.body.setAttribute('data-desk', `${desk}`)
   const $raiz = document.querySelector('.tab')
   const hijos = $raiz.childNodes
