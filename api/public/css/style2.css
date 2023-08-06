@@ -79,7 +79,7 @@ header {
 .headLeft {
     grid-area: headLeft;
     display: flex;
-    gap: 28px;
+    gap: 15px;
     justify-content: flex-start;
     align-items: center;
     padding-left: 19%;
@@ -325,9 +325,9 @@ div.avatar {
 
 div.avatar img {
 
-    width: 50px;
+    width: 25px;
     border-radius: 50%;
-    height: 50px;
+    height: 25px;
     object-fit: cover;
     vertical-align: bottom;
 }
@@ -357,7 +357,7 @@ div.avatar img {
 }
 #sidepanel {
     grid-template-columns: repeat(2, 50%);
-    grid-template-rows: 6% 45% 1fr;
+    grid-template-rows: 7% 45% 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     grid-template-areas:
@@ -406,7 +406,7 @@ p.url {
 
 #sideHeader {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     grid-area: a1;
     align-self: start;
@@ -428,7 +428,7 @@ p.url {
 
 #sidepanel h2 {
     font-weight: 400;
-    padding-left: 50px;
+    font-size: 12px;
 }
 
 #linkId {
@@ -453,7 +453,7 @@ button#saveLinkImage:hover {
 
 #linkNotes {
     width: 90%;
-    height: 25vh;
+    height: 100%;
     overflow-y: auto;
     background-color: var(--light-secondColor);
     padding: 15px;
@@ -462,7 +462,7 @@ button#saveLinkImage:hover {
 }
 
 #linkImages {
-    height: 100%;
+    height: 85%;
     overflow-y: auto;
     display: flex;
     align-items: flex-start;
@@ -519,8 +519,6 @@ button#saveLinkImage:hover {
     /* Color de fondo de la barra de desplazamiento */
 }
 #closeContainer {
-    width: 140.75px;
-    width: 140.75px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -547,9 +545,10 @@ button#saveLinkImage:hover {
     justify-content: center;
     align-items: center;
     align-self: start;
+    height: -webkit-fill-available;
 }
 #notesContainer p {
-    width: 35%;
+    width: 90%;
     margin: 0;
     padding: 15px;
     border: 3px solid transparent;
@@ -645,24 +644,38 @@ button#saveLinkImage:hover {
 
 #imgOptions {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     width: 50%;
     margin: 30px 0;
-    padding-left: 50px;
+    padding-left: 20px;
     opacity: 0;
 }
-
+.imgOptionsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    gap: 19px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--main-hv-color);
+    padding: 20px;
+}
+.imgOptionsControls {
+    column-gap: 15px;
+    display: flex;
+    margin-top: 25px;
+    justify-content: center;
+    align-items: center;
+}
 #imgOptions input {
-    position: relative;
-    top: 0;
-    left: 47px;
+    position: absolute;
+    left: 80px;
     width: 37px;
     height: 37px;
     opacity: 0;
     cursor: pointer;
-    /* transform: translateX(-176px);
-    opacity: 0; */
 }
 i.icofont-code-alt, i.icofont-font {
     display: none;
@@ -685,11 +698,12 @@ i.icofont-code-alt, i.icofont-font {
     animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 .estatistics {
-    margin: 0 auto;
+    width: 72%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-left: 16px;
 }
 .statsControls {
     display: flex;
@@ -881,7 +895,12 @@ div#profile {
     width: 65%;
     margin: 0 auto;
 }
-
+#profileContent {
+    padding-top: 87px;
+}
+body.profile p#saludo, body.profile .sideInfo div, body.profile #showMenu, body.profile #drpEscritorios  {
+    display: none;
+}
 div#profile button {
     display: block;
     background-color: var(--light-accentColor);
@@ -895,8 +914,11 @@ div#profile button {
     transition: background 0.3s;
     font-size: 17px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    border-radius: 0;
 }
-
+body.profile .sideInfo {
+    top: 74px;
+}
 #changePasswordDialog {
     position: absolute;
     background-color: var(--light-bgColor);
@@ -924,8 +946,8 @@ div#profile button:hover {
 }
 
 div.userInfo {
-    text-align: center;
-    margin-top: 50px;
+    margin-top: 10px;
+    width: 100%;
 }
 
 .tabcontent {
@@ -934,16 +956,32 @@ div.userInfo {
     justify-content: center;
     align-items: center;
     min-width: 435px;
+    color: var(--light-textColor);
 }
 
 .tabcontent h2 {
     font-weight: 400;
 }
-
 /* Create an active/current "tab button" class */
 div#profile button.active {
     background-color: #f1f1f1;
     border-bottom: 3px solid var(--light-accentColor);
+}
+body.profile .tabcontent {
+    flex-direction: row;
+    width: 100%;
+    align-items: start;
+}
+body.profile .tabcontent h2 {
+    width: 100%;
+}
+div.info {
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    padding-left: 16px;
+    height: 84vh;
+    background-color: var(--main-hv-color);
 }
 
 #backupControls {
@@ -1199,7 +1237,7 @@ span.description {
     display: flex;
     align-items: center;
 }
-.link:nth-child(even) {
+.link:nth-child(even):not(.lastVisited) {
     background-color: var(--light-fourthColor);
 }
 .link:nth-child(even):hover {
@@ -1343,7 +1381,7 @@ h2.ctitle:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    /* gap: 15px; */
     width: -webkit-fill-available;
 }
 div.settings {
@@ -1386,11 +1424,11 @@ div.settings:hover .bodcontrols {
     background-color: var(--main-hv-color);
 }
 .lastVisited {
-    background-color: var(--light-accentColor);
+    background-color: var(--main-hv-color);
     backdrop-filter: blur(14px);
 }
 .link.lastVisited a, .link.lastVisited p {
-    color: var(--light-textColor);
+    color: var(--light-textColor)69;
 }
 #btnSubirArriba {
     visibility: hidden;
@@ -1398,7 +1436,7 @@ div.settings:hover .bodcontrols {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 9999;
+    z-index: 1;
     border: none;
     border-radius: 4px;
     background-color: var(--light-secondColor);
@@ -1657,6 +1695,16 @@ div.headCenter input[type="text"]:focus-visible {
     body {
         background-repeat: no-repeat;
     }
+    .headRightSub > div {
+        gap: 15px;
+    }
+    div.avatar img {
+        width: 50px;
+        height: 50px;
+    }
+    .headLeft {
+        gap: 28px;
+    }
     .sideInfo {
         display: flex;
     }
@@ -1701,6 +1749,23 @@ div.headCenter input[type="text"]:focus-visible {
         top: 129px;
     }
     #linkNotes {
+        width: 35%;
+    }
+    #sideHeader {
+        justify-content: space-between;
+        align-self: center;
+    }
+    #sidepanel h2 {
+        padding-left: 50px;
+        font-size: revert;
+    }
+    #closeContainer {
+        width: 140.75px
+    }
+    #linkImages {
+        height: 100%;
+    }
+    #notesContainer p {
         width: 35%;
     }
 }

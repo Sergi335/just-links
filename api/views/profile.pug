@@ -19,21 +19,22 @@ include includes/header.pug
         button#profileSeg.tablinks Seguridad
         button#profilePreferences.tablinks Preferencias
       #info.tabcontent
-        h2 Información básica
-        .profile-image
-          i.icofont-upload-alt
-          p cambiar imagen
-          - if (userImg)
-            img#preview-image(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
-          - else
-            img#preview-image(src='img/avatar.svg' alt='Default Image')
-          input#image-input(type='file' accept='image/*')
-        .userInfo 
-          p #{user}
-          p #{userData[0].email}
-          p 
-            span Miembro desde: 
-            | #{formatoFinal}
+        .info
+          h2 Información básica
+          .profile-image
+            i.icofont-upload-alt
+            p cambiar imagen
+            - if (userImg)
+              img#preview-image(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
+            - else
+              img#preview-image(src='img/avatar.svg' alt='Default Image')
+            input#image-input(type='file' accept='image/*')
+          .userInfo 
+            p #{user}
+            p #{userData[0].email}
+            p 
+              span Miembro desde: 
+              | #{formatoFinal}
         .estatistics
           h2 Estadísticas
           p Número de escritorios: #{escritoriosCount}

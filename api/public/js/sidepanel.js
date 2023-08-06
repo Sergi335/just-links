@@ -398,6 +398,26 @@ async function changeLinkImg (event) {
     previewImage.src = '/img/opcion3.png'
     // imageH.src = 'img/opcion3.png'
   }
+  if (event.target.id === 'option4') {
+    console.log('Subimos imagen4')
+    previewImage.src = '/img/opcion4.svg'
+    // imageH.src = 'img/opcion3.png'
+  }
+  if (event.target.id === 'option5') {
+    console.log('Subimos imagen5')
+    previewImage.src = '/img/opcion5.svg'
+    // imageH.src = 'img/opcion3.png'
+  }
+  if (event.target.id === 'option6') {
+    console.log('Subimos imagen6')
+    previewImage.src = '/img/opcion6.svg'
+    // imageH.src = 'img/opcion3.png'
+  }
+  if (event.target.id === 'option7') {
+    console.log('Subimos imagen7')
+    previewImage.src = '/img/opcion7.ico'
+    // imageH.src = 'img/opcion3.png'
+  }
 }
 // Para guardar la imagen favicon del link
 async function fetchLinkImage () {

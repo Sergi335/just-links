@@ -27,20 +27,11 @@ function loadStyles () {
   if (window.localStorage.getItem('infoColor')) {
     const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
+    color === 'var(--light-bgGradient)'
+      ? panel.style.borderRadius = '5px'
+      : panel.style.borderRadius = '0'
     panel.style.background = color
   }
-  // if (window.localStorage.getItem('accentColor')) {
-  //   const color = JSON.parse(window.localStorage.getItem('accentColor'))
-  //   document.documentElement.style.setProperty('--light-accentColor', color)
-  // }
-  // if (window.localStorage.getItem('bodyBackground')) {
-  //   const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
-  //   document.body.style.backgroundImage = `url(${url})`
-  // }
-  // if (window.localStorage.getItem('theme')) {
-  //   const theme = JSON.parse(window.localStorage.getItem('theme'))
-  //   document.documentElement.classList.add(theme)
-  // }
 }
 function addActiveClass () {
   // Pasar a select desktop
@@ -82,10 +73,12 @@ function selectInfoColor (event) {
   switch (event.target.id) {
     case 'theme':
       panel.style.background = 'var(--light-bgGradient)'
+      panel.style.borderRadius = '5px'
       window.localStorage.setItem('infoColor', JSON.stringify('var(--light-bgGradient)'))
       break
     case 'transparent':
       panel.style.background = 'transparent'
+      panel.style.borderRadius = '0'
       window.localStorage.setItem('infoColor', JSON.stringify('transparent'))
       break
   }

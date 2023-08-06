@@ -1,9 +1,10 @@
-import { sendMessage } from './functions.mjs'
+import { sendMessage, constants } from './functions.mjs'
 document.addEventListener('DOMContentLoaded', cargaProfile)
 function cargaProfile () {
   console.log('Hay JS')
   darHora()
   progressCircle()
+  document.body.classList.add('profile')
   const clsAccButton = document.getElementById('closeAccount')
   clsAccButton.addEventListener('click', openConfirm)
 
@@ -50,7 +51,7 @@ function cargaProfile () {
   document.getElementById('brokenLinks').addEventListener('click', findBrokenLinks)
 }
 function profile () {
-  window.location = '/templates'
+  window.history.back()
 }
 function logOut () {
   console.log('Cierra sesión')
@@ -279,7 +280,7 @@ async function findDuplicates () {
   const $raiz2 = document.getElementById('brokenLinksResult')
   $raiz2.innerHTML = ''
   $raiz.innerHTML = ''
-  const data = await fetch('/duplicados', {
+  const data = await fetch(`${constants.BASE_URL}/duplicados`, {
     method: 'GET',
     headers: {
       contentType: 'application/json'
@@ -335,7 +336,7 @@ async function findBrokenLinks () {
     $raiz.innerHTML = ''
   }
   $ppc.style.display = 'block'
-  const data = await fetch('/allLinks', {
+  const data = await fetch(`${constants.BASE_URL}/allLinks`, {
     method: 'GET',
     headers: {
       contentType: 'application/json'
@@ -350,7 +351,7 @@ async function findBrokenLinks () {
   console.log('🚀 ~ file: profile.js:325 ~ findBrokenLinks ~ numeroPasos:', numeroPasos)
   let count = 0
   const downLinks = await Promise.all(res.map(async (link) => {
-    const response = await fetch(`/linkStatus?url=${link.URL}`, {
+    const response = await fetch(`${constants.BASE_URL}/linkStatus?url=${link.URL}`, {
       method: 'GET',
       headers: {
         contentType: 'application/json'
