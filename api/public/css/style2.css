@@ -380,7 +380,7 @@ div.avatar img {
     align-items: center;
     height: -webkit-fill-available;
     /* padding: 30px; */
-    z-index: 3;
+    z-index: 4;
     color: var(--firstTextColor);
 }
 #lurl {
@@ -1910,6 +1910,7 @@ div.headCenter input[type="text"]:focus-visible {
     }
     #sidepanel {
         top: 131px;
+        z-index: 3;
     }
     #linkNotes {
         width: 35%;

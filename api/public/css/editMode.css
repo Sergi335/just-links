@@ -16,19 +16,19 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 50;
-    padding-top: 100px;
+    z-index: 4;
     left: 0;
-    top: 130px;
+    top: 0;
     width: 100vw;
-    height: 83vh;
+    height: -webkit-fill-available;
     overflow: auto;
-    background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.9);
 }
-
+.sideInfo {
+    height: auto;
+}
 .active {
-    border-bottom: 3px solid var(--light-accentColor);
+    border-bottom: 3px solid var(--accentColor);
 }
 i.icofont-scroll-up {
     font-size: 27px;
@@ -180,31 +180,34 @@ div.textHolder.skeleton {
 /* Style the buttons inside the tab */
 .tab button {
     display: block;
-    background-color: inherit;
-    color: var(--light-textColor);
+    background-color: var(--secondColor);
+    color: var(--firstTextColor);
     border: none;
     outline: none;
     text-align: left;
     cursor: pointer;
     font-size: 13px;
-    font-family: montserrat;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     width: 225px;
     height: 45px;
     padding-left: 12px;
     font-weight: 500;
 }
-
+.envolt {
+    box-shadow: none;
+    border-radius: 0;
+}
 /* Change background color of buttons on hover */
 .tab button:hover {
-    background-color: var(--main-hv-color);
-    color: var(--light-textColor);
+    background-color: var(--firstHvColor);
+    box-shadow: none;
 }
 
 /* Create an active/current "tab button" class */
 .tab button.active {
-    border-left: 3px solid var(--light-accentColor);
-    background-color: var(--light-bgColor);
-    color: var(--light-textColor);
+    border-left: 3px solid var(--accentColor);
+    background-color: var(--fifthColor);
+    color: var(--firstTextColor);
 }
 
 /* Style the tab content */
@@ -223,26 +226,11 @@ div.textHolder.skeleton {
     justify-content: center;
     align-items: center;
     margin-top: 0;
-    padding: 157px 0 0;
+    padding: 106px 0 0;
 }
 
 .container2 {
     padding: 0;
-}
-
-#resultsContainer {
-    flex-direction: column;
-    position: absolute;
-    top: 64px;
-    left: 33%;
-    background-color: white;
-    width: 29vw;
-    overflow: hidden;
-    overflow-y: auto;
-    display: none;
-    padding: 0px 43px;
-    max-height: 95vh;
-    z-index: 11;
 }
 
 body.edit #sidepanel.maximized {
@@ -256,7 +244,7 @@ body.edit #sidepanel.maximized {
         "a3 a3"
         "a4 a4";
     top: 100px;
-    background: var(--light-bgColor);
+    background: var(--bgGradient);
     width: 42%;
     position: initial;
     padding: 0;
@@ -264,6 +252,7 @@ body.edit #sidepanel.maximized {
     top: 156px;
     transition: width .5s;
     flex-grow: 1;
+    z-index: 1;
 }
 
 body.edit #sidepanel {
@@ -278,7 +267,7 @@ body.edit #sidepanel {
         "a2"
         "a4";
     top: 100px;
-    background: transparent;
+    background-image: var(--bgGradient);
     width: 42%;
     position: initial;
     padding: 0;
@@ -286,8 +275,10 @@ body.edit #sidepanel {
     top: 156px;
     transition: width .5s;
     flex-grow: 1;
-    color: var(--light-textColor);
+    color: var(--firstTextColor);
     z-index: 0;
+    box-shadow: var(--neumoShadow);
+    border-radius: 2px;
 }
 .tabcontent::-webkit-scrollbar {
     width: 8px;
@@ -326,8 +317,12 @@ iframe#videoFrame {
 .sidePanelA2 {
     align-self: start;
     z-index: 1;
+    position: initial;
+    width: auto;
 }
-
+#sideHeader {
+    justify-content: space-around;
+}
 .sidePanelA2 a {
     word-wrap: break-word;
     text-decoration: none;
@@ -350,8 +345,8 @@ iframe#videoFrame {
 }
 
 .navActive {
-    border-left-color: var(--light-accentColor) !important;
-    background-color: var(--light-bgColor) !important;
+    border-left-color: var(--accentColor) !important;
+    background-color: var(--fifthColor) !important;
 }
 
 #linkInfoContainer p {
@@ -382,8 +377,11 @@ iframe#videoFrame {
 #sidepanel h2 {
     font-size: 15px;
     font-variant: petite-caps;
+    padding-left: 0;
 }
-
+#closeContainer {
+    width: auto;
+}
 button#sendNotes,
 button#saveLinkImage {
     background-color: var(--light-bgColor);
@@ -417,12 +415,13 @@ button#pasteImg {
     background-color: transparent;
     overflow-y: auto;
     overflow-x: hidden;
+    height: -webkit-fill-available;
 }
 
 #sidepanel.maximized #linkImages {
     min-height: auto;
     max-height: none;
-    height: 38rem !important;
+    /* height: 38rem !important; */
 }
 
 body.edit #notesContainer {
@@ -434,6 +433,7 @@ body.edit #notesContainer {
 
 #imgContainer {
     padding-right: 0;
+    width: 100%;
 
 }
 
@@ -468,9 +468,9 @@ body.edit .cuerpoInt {
     margin-left: 17%;
     padding: 15px;
     overflow: hidden;
+    background-color: var(--firstHvColor);
 }
 .icofont-expand {
-    margin-right: 81px;
     cursor: pointer;
 }
 .columna {
@@ -490,7 +490,7 @@ body.edit .cuerpoInt {
     border-left-color: transparent;
     background-color: transparent;
 }
-.link:nth-child(even) {
+.link:nth-child(even):not(.lastVisited) {
     background-color: transparent;
 }
 .link:nth-child(even):hover {

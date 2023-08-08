@@ -8,7 +8,9 @@ function sidePanel () {
   if (element && element !== null) {
     element.classList.add('navActive')
     // Esto es para edit view
-    // showLinkInfo(element)
+    if (document.body.classList.contains('edit')) {
+      showLinkInfo(element)
+    }
   }
 }
 function addPanelEvents () {
