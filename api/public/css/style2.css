@@ -66,7 +66,7 @@ header {
     top: 0;
     background-image: var(--bgGradient);
     height: 83px;
-    z-index: 2;
+    z-index: 4;
 }
 .ui-icon {
     width: 24px;
@@ -196,10 +196,16 @@ p#saludo {
 }
 
 .headCenter {
-    grid-area: headCenter;
+    grid-area: none;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
+    height: 50px;
+    border: 0;
+    background-image: var(--bgGradient);
+    position: absolute;
+    top: 83px;
+    width: 100%;
 }
 #showMenu {
     display: flex;
@@ -338,7 +344,7 @@ div.avatar img {
     flex-direction: column;
     position: absolute;
     background-color: var(--firstColor);
-    top: 83px;
+    top: 51px;
     width: 100%;
     overflow-y: auto;
     display: none;
@@ -564,6 +570,7 @@ button#saveImg {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.9);
     height: -webkit-fill-available;
+    z-index: 4;
 }
 
 .modal-content {
@@ -1326,7 +1333,7 @@ span.description {
 }
 .link {
     height: 50px;
-    /* background-color: var(--thirdColor); */
+    background-color: var(--fifthColor);
     display: flex;
     align-items: center;
 }
@@ -1683,7 +1690,7 @@ i.icofont-scroll-up {
     justify-content: center;
     font-size: 14px;
     position: absolute;
-    top: 83px;
+    top: 132px;
     border-top: 1px solid var(--firstBorderColor);
     flex-wrap: wrap;
     border-bottom: 1px solid var(--firstBorderColor);
@@ -1732,9 +1739,7 @@ div.headCenter input[type="text"] {
     border-radius: 5px;
     border: 1px solid var(--firstBorderColor);
     color: var(--firstTextColor);
-    position: absolute;
-    top: 99px;
-    width: 87%;
+    width: 90%;
 }
 div.headCenter input[type="text"]::placeholder {
     color: var(--firstTextColor);
@@ -1854,6 +1859,17 @@ div.headCenter input[type="text"]:focus-visible {
     .headLeft {
         gap: 28px;
     }
+    .headCenter {
+        grid-area: headCenter;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        height: auto;
+        background-image: none;
+        position: initial;
+        top: auto;
+        width: auto;
+    }
     .sideInfo {
         display: flex;
     }
@@ -1874,6 +1890,7 @@ div.headCenter input[type="text"]:focus-visible {
         height: auto;
         width: auto;
         z-index: 1;
+        top: 83px;
     }
     .dropdown-content a {
         max-width: 180px;
