@@ -66,7 +66,7 @@ header {
     top: 0;
     background-image: var(--bgGradient);
     height: 83px;
-    z-index: 4;
+    z-index: 5;
 }
 .ui-icon {
     width: 24px;
@@ -344,12 +344,12 @@ div.avatar img {
     flex-direction: column;
     position: absolute;
     background-color: var(--firstColor);
-    top: 51px;
+    top: 133px;
     width: 100%;
     overflow-y: auto;
     display: none;
     max-height: 95vh;
-    z-index: 1;
+    z-index: 6;
 }
 #resultsContainer::-webkit-scrollbar {
     width: 8px;
@@ -374,13 +374,13 @@ div.avatar img {
         "a4 a4";
     position: fixed;
     width: -webkit-fill-available;
-    top: 83px;
+    top: 133px;
     background-image: var(--bgGradient);
     display: none;
     align-items: center;
     height: -webkit-fill-available;
     /* padding: 30px; */
-    z-index: 4;
+    z-index: 5;
     color: var(--firstTextColor);
 }
 #lurl {
@@ -693,6 +693,15 @@ body.profile .tabcontent {
     display: flex;
     /* gap: 15px; */
 }
+body.profile .tabcontent:nth-child(2) {
+    background-image: url(https://images.unsplash.com/photo-1688507383637-78f49f095269?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80);
+    background-size: cover;
+    background-position: bottom;
+    background-attachment: fixed;
+}
+.userInfo {
+    color: var(--accentColor);
+}
 .estatistics {
     width: 40%;
     display: flex;
@@ -700,16 +709,19 @@ body.profile .tabcontent {
     justify-content: center;
     align-items: stretch;
     flex-grow: 1;
-    border-radius: 5px;
     padding: 50px;
-    background-color: var(--secondColor);
+    background-image: var(--bgGradient);
+    gap: 15px;
 }
 .statsInfo {
-    width: 50%;
+    width: 35%;
     background-color: var(--fourthColor);
     border-radius: 5px;
     padding: 0 15px;
     box-shadow: var(--secondNeumoShadow);
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }
 div.password {
     display: flex;
@@ -738,17 +750,18 @@ div.backup {
 div.info {
     display: flex;
     flex-direction: column;
-    width: 40%;
-    background-color: var(--main-ac-color);
-    flex-grow: 1;
+    width: 65%;
     border-radius: 5px;
     padding: 50px;
 }
 .statsControls {
     display: flex;
-    flex-direction: column;
     gap: 15px;
-    width: 50%;
+    width: 35%;
+    box-shadow: var(--secondNeumoShadow);
+    border-radius: 5px;
+    padding: 40px 0;
+    justify-content: center;
 }
 .groupControl {
     text-align: center;
@@ -794,6 +807,7 @@ body.profile div.results {
     transition: max-height 1.6s ease-out;
     overflow: hidden;
     width: 100%;
+    background-image: var(--bgGradient);
 }
 
 div#preferences {
@@ -908,8 +922,8 @@ div#profile {
 
 .profile-image {
     position: relative;
-    width: 110px;
-    height: 110px;
+    width: 200px;
+    height: 200px;
     overflow: hidden;
     border-radius: 50%;
     display: flex;
@@ -973,11 +987,10 @@ div#profile {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 65%;
     margin: 0 auto;
 }
 #profileContent {
-    padding-top: 118px;
+    padding-top: 83px;
 }
 body.profile p#saludo, body.profile .sideInfo div, body.profile #showMenu, body.profile #drpEscritorios  {
     display: none;
@@ -1062,11 +1075,21 @@ div#profile button:hover {
     background-color: #f1f1f1;
 }
 
-div.userInfo {
+/* div.userInfo {
     margin-top: 10px;
-    width: 100%;
+} */
+.wrapper {
+    display: flex;
+    gap: 45px;
+    align-items: center;
 }
-
+.userInfo p:first-child {
+    font-size: 26px;
+    margin: 0;
+}
+.userInfo p:nth-child(2) {
+    margin-top: 0;
+}
 .tabcontent {
     /* min-height: 854px; */
     flex-direction: column;
@@ -1078,7 +1101,10 @@ div.userInfo {
 }
 
 .tabcontent h2 {
-    font-weight: 400;
+    /* font-weight: 400; */
+    font-size: 45px;
+    color: var(--accentColor);
+    margin-top: 0;
 }
 /* Create an active/current "tab button" class */
 div#profile button.active {
@@ -1086,7 +1112,11 @@ div#profile button.active {
     border-bottom: 3px solid var(--accentColor);
 }
 
-
+body.profile .sideInfo {
+    height: auto;
+    top: 121px;
+    border-left: 0;
+}
 #backupControls {
     display: flex;
     justify-content: space-between;
@@ -1699,7 +1729,7 @@ i.icofont-scroll-up {
     height: 100%;
     overflow-y: auto;
     transition: transform .5s;
-    z-index: 2;
+    z-index: 6;
 }
 
 .dropdown-content a {
@@ -1940,5 +1970,6 @@ div.headCenter input[type="text"]:focus-visible {
     #resultsContainer {
         width: 28vw;
         top: 61px;
+        left: 36%;
     }
 }
