@@ -59,8 +59,10 @@
     p#deleteLinkError
   #deleteLinkImgForm.deskForm
     h2 Seguro que quieres borrar esta imagen?
-    button#confDeleteImgSubmit(type='submit') Si
-    button#noDeleteImgSubmit(type='submit') No
+    .buttons
+      button#confDeleteImgSubmit(type='submit') Si
+      button#noDeleteImgSubmit(type='submit') No
+    p Esta acción no se puede deshacer
     p#deleteImgError
   #deleteColForm.deskForm
     h2 Seguro que quieres borrar esta columna?

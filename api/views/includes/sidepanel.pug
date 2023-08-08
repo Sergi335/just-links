@@ -41,10 +41,13 @@
       i.icofont-code-alt
       i.icofont-font
       i.icofont-delete-alt.ui-icon
+      svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+        path(stroke-linecap='round' stroke-linejoin='round' d='M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z')
       button#sendNotes Guardar
   #imgContainer
     #linkImages(contenteditable='false')
-      #liLoader Cargando ...
+      #liLoader
+        span.loader
       iframe(id='videoFrame' src='' frameborder='0' width='560' height='340' scrolling='no' allowfullscreen='')
       #imgMasonry
     button#pasteImg Pegar Imágen

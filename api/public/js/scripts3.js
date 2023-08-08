@@ -16,7 +16,7 @@ function cargaWeb () {
     const contenedor = document.querySelectorAll('.container')[0]
     contenedor.onscroll = function (event) {
       toggleBotonSubirArriba()
-      console.log(event.target.scrollTop)
+      // console.log(event.target.scrollTop)
     }
     addContextMenuEvents()
     // Declaramos la variable para pasar a ordenaCols

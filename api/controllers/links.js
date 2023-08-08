@@ -2,8 +2,6 @@ const { linksModel, columnasModel } = require('../models/index')
 const { handleHttpError } = require('../helpers/handleError')
 const axios = require('axios')
 const cheerio = require('cheerio')
-const fs = require('fs')
-const path = require('path')
 const https = require('https')
 const crypto = require('crypto')
 const { URL } = require('url')
@@ -79,6 +77,10 @@ const setImages = async (url, user, linkId) => {
   }
 }
 const deleteImage = async (url, user, linkId) => {
+  console.log('🚀 ~ file: links.js:82 ~ deleteImage ~ url:', url)
+  // let modifiedUrl = url.replace('http://localhost:3003/', '').split('/').join('\\')
+  // modifiedUrl = modifiedUrl.replace('blob:', '')
+  // console.log('🚀 ~ file: links.js:85 ~ deleteImage ~ modifiedUrl:', modifiedUrl)
   try {
     const updatedArticle = await linksModel.findOneAndUpdate(
       { _id: linkId, user },

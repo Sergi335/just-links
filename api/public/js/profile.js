@@ -14,11 +14,14 @@ function cargaProfile () {
   // Agregar evento de clic al botón de cerrar sesión
   document.querySelector('#logout').removeEventListener('click', logOut)
   document.querySelector('#logout').addEventListener('click', logOut)
+
+  document.querySelector('.icofont-close').removeEventListener('click', closeResults)
+  document.querySelector('.icofont-close').addEventListener('click', closeResults)
   // Agregar evento click a cada elemento de la lista de de selección escritorios
-  document.querySelectorAll('.deskList').forEach(item => {
-    item.removeEventListener('click', selectDesktop)
-    item.addEventListener('click', selectDesktop)
-  })
+  // document.querySelectorAll('.deskList').forEach(item => {
+  //   item.removeEventListener('click', selectDesktop)
+  //   item.addEventListener('click', selectDesktop)
+  // })
   // Agregar evento de clic al botón de crear backup
   document.querySelector('#backup').removeEventListener('click', createBackup)
   document.querySelector('#backup').addEventListener('click', createBackup)
@@ -32,12 +35,12 @@ function cargaProfile () {
   document.querySelector('#image-input').removeEventListener('change', uploadImg)
   document.querySelector('#image-input').addEventListener('change', uploadImg)
 
-  document.querySelector('#defaultOpen').addEventListener('click', openSection)
-  document.querySelector('#profileSeg').addEventListener('click', openSection)
-  document.querySelector('#profilePreferences').addEventListener('click', openSection)
+  // document.querySelector('#defaultOpen').addEventListener('click', openSection)
+  // document.querySelector('#profileSeg').addEventListener('click', openSection)
+  // document.querySelector('#profilePreferences').addEventListener('click', openSection)
 
   // Get the element with id="defaultOpen" and click on it
-  document.getElementById('defaultOpen').click()
+  // document.getElementById('defaultOpen').click()
 
   document.querySelector('#changePassword').removeEventListener('click', handleChangePassword)
   document.querySelector('#changePassword').addEventListener('click', handleChangePassword)
@@ -58,11 +61,11 @@ function logOut () {
   document.cookie = 'token='
   window.location = '/'
 }
-async function selectDesktop (event) {
-  event.stopPropagation()
-  const deskName = event.target.innerText
-  window.location = `/${deskName}`
-}
+// async function selectDesktop (event) {
+//   event.stopPropagation()
+//   const deskName = event.target.innerText
+//   window.location = `/${deskName}`
+// }
 function openConfirm () {
   const $confirmForm = document.getElementById('profileDeleteConfirm')
   $confirmForm.style.display = 'flex'
@@ -205,31 +208,31 @@ async function uploadImg (event) {
     }
   }
 }
-function openSection (event) {
-  let i
-  console.log(event.target.id)
-  console.log()
-  let section = ''
-  const tabcontent = document.getElementsByClassName('tabcontent')
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = 'none'
-  }
-  const tablinks = document.getElementsByClassName('tablinks')
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '')
-  }
-  if (event.target.id === 'defaultOpen') {
-    section = 'info'
-  }
-  if (event.target.id === 'profileSeg') {
-    section = 'security'
-  }
-  if (event.target.id === 'profilePreferences') {
-    section = 'preferences'
-  }
-  document.getElementById(section).style.display = 'flex'
-  event.currentTarget.className += ' active'
-}
+// function openSection (event) {
+//   let i
+//   console.log(event.target.id)
+//   console.log()
+//   let section = ''
+//   const tabcontent = document.getElementsByClassName('tabcontent')
+//   for (i = 0; i < tabcontent.length; i++) {
+//     tabcontent[i].style.display = 'none'
+//   }
+//   const tablinks = document.getElementsByClassName('tablinks')
+//   for (i = 0; i < tablinks.length; i++) {
+//     tablinks[i].className = tablinks[i].className.replace(' active', '')
+//   }
+//   if (event.target.id === 'defaultOpen') {
+//     section = 'info'
+//   }
+//   if (event.target.id === 'profileSeg') {
+//     section = 'security'
+//   }
+//   if (event.target.id === 'profilePreferences') {
+//     section = 'preferences'
+//   }
+//   document.getElementById(section).style.display = 'flex'
+//   event.currentTarget.className += ' active'
+// }
 function handleChangePassword () {
   const dialog = document.getElementById('changePasswordDialog')
   if (dialog.style.display === 'none' || dialog.style.display === '') {
@@ -244,7 +247,7 @@ async function changePassword () {
   let body = { oldPassword, newPassword }
   body = JSON.stringify(body)
   console.log(body)
-  const res = await fetch('/changePassword', {
+  const res = await fetch(`${constants.BASE_URL}/changePassword`, {
     method: 'POST',
     headers: {
       'content-Type': 'Application/json'
@@ -276,8 +279,11 @@ export function darHora () {
   setInterval(hora, 60000)
 }
 async function findDuplicates () {
+  const container = document.querySelector('div.results')
   const $raiz = document.getElementById('duplicatesResult')
   const $raiz2 = document.getElementById('brokenLinksResult')
+  const counter = document.getElementById('counter')
+  counter.innerHTML = 'Duplicados:'
   $raiz2.innerHTML = ''
   $raiz.innerHTML = ''
   const data = await fetch(`${constants.BASE_URL}/duplicados`, {
@@ -315,11 +321,16 @@ async function findDuplicates () {
 
     $raiz.appendChild($div)
   })
+  counter.innerHTML = `Duplicados: ${res.length}`
+  container.style.maxHeight = '2500px'
 }
 async function findBrokenLinks () {
+  const container = document.querySelector('div.results')
+  const counter = document.getElementById('counter')
   const $raiz = document.getElementById('duplicatesResult')
   const $raiz2 = document.getElementById('brokenLinksResult')
   $raiz2.innerHTML = ''
+  counter.innerHTML = 'Broken Links:'
   const $ppc = document.querySelector('.progress-pie-chart')
   if ($ppc.classList.contains('fade-off')) {
     $ppc.classList.remove('fade-off')
@@ -336,6 +347,7 @@ async function findBrokenLinks () {
     $raiz.innerHTML = ''
   }
   $ppc.style.display = 'block'
+  container.style.maxHeight = '2500px'
   const data = await fetch(`${constants.BASE_URL}/allLinks`, {
     method: 'GET',
     headers: {
@@ -376,6 +388,7 @@ async function findBrokenLinks () {
   })
   $ppc.classList.add('fade-off')
   $ppc.style.display = 'none'
+  counter.innerHTML = `Broken Links: ${filteredLinks.length}`
 }
 
 function progressCircle () {
@@ -418,4 +431,11 @@ function printLinks (root, link) {
   $div.appendChild($urlInfo)
 
   root.appendChild($div)
+}
+function closeResults () {
+  const container = document.querySelector('div.results')
+  // const duplicates = document.getElementById('duplicatesResult')
+  // const brokens = document.getElementById('brokenLinksResult')
+
+  container.style.maxHeight = 0
 }

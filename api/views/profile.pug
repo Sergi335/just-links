@@ -10,6 +10,16 @@ head
   script(type='module' src='/js/profile.js')
   script(type='module' src='/js/styles.js')
   script(src='/js/search.js')
+body 
+script.
+  if (window.localStorage.getItem('theme')) {
+    const theme = JSON.parse(window.localStorage.getItem('theme'))
+    document.documentElement.classList.add(theme)
+  }
+  if (window.localStorage.getItem('accentColor')) {
+    const color = JSON.parse(window.localStorage.getItem('accentColor'))
+    document.documentElement.style.setProperty('--accentColor', color)
+  }
 include includes/header.pug
 .container#profileContent
   #profileResume
@@ -36,17 +46,26 @@ include includes/header.pug
               span Miembro desde: 
               | #{formatoFinal}
         .estatistics
-          h2 Estadísticas
-          p Número de escritorios: #{escritoriosCount}
-          p Número de paneles: #{panelesCount}
-          p Número de links: #{linksCount}
-          div.statsControls
-            div.groupControl
+          .statsInfo
+            h3 Estadísticas
+            p Escritorios: #{escritoriosCount}
+            p Paneles: #{panelesCount}
+            p Links: #{linksCount}
+          .statsControls
+            .groupControl
               h3 Encontrar Duplicados 
+              svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                path(stroke-linecap='round' stroke-linejoin='round' d='M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z')
               button#duplicates Buscar
-            div.groupControl
+            .groupControl
               h3 Encontrar Links Caidos 
+              svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                path(stroke-linecap='round' stroke-linejoin='round' d='M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z')
               button#brokenLinks Buscar
+        .results
+          .resultsHeader
+            p#counter Duplicados:
+            i.icofont-close
           .progress-pie-chart(data-percent='0')
               .ppc-progress
                 .ppc-progress-fill
@@ -57,31 +76,37 @@ include includes/header.pug
           div#brokenLinksResult
             
       #security.tabcontent
-        h2 Seguridad 
-        p Contraseña
-        p Cambiar contraseña
-        input(type='password' disabled='true' value='password')
-        button#changePassword Cambiar
-        #changePasswordDialog
-          p Introduzca su antigua contraseña
-          input(type='password' id='oldPassword')
-          p Introduzca la nueva contraseña
-          input(type='password' id='newPassword')
-          button#changePasswordSubmit Enviar
-          button#changePasswordCancel Cancelar
-        p Copia de seguridad de tus datos
-        p Crear copia
-        #backupControls
-          button#backup Crear Copia 
-          button#download Descargar
-        p#errorMessage 
-        p#successMessage
-        hr
-        p Restaurar Copia
-        label(for='upFile') Subir Archivo:
-        input#upFile(type='file' name='upFile')
-        p#errorUpMessage 
-        p#successUpMessage
+        .password
+          h3 Seguridad 
+          svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+            path(stroke-linecap='round' stroke-linejoin='round' d='M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z')
+          p Cambiar contraseña
+          input(type='password' disabled='true' value='password')
+          button#changePassword Cambiar
+          #changePasswordDialog
+            p Introduzca su antigua contraseña
+            input(type='password' id='oldPassword')
+            p Introduzca la nueva contraseña
+            input(type='password' id='newPassword')
+            .buttons
+              button#changePasswordSubmit Enviar
+              button#changePasswordCancel Cancelar
+        .backup
+          h3 Copia de seguridad de tus datos
+          p Crear copia
+          #backupControls
+            button#backup Crear Copia 
+            button#download Descargar
+          p#errorMessage 
+          p#successMessage
+          p Restaurar Copia
+          button.upFile
+            label(for='upFile')
+              <i class="icofont-upload-alt"></i>
+              | Subir Archivo
+            input#upFile(type='file' name='upFile')
+          p#errorUpMessage 
+          p#successUpMessage
       #preferences.tabcontent
         button#closeAccount Cerrar Cuenta
         #profileDeleteConfirm 

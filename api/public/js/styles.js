@@ -27,7 +27,7 @@ function loadStyles () {
   if (window.localStorage.getItem('infoColor')) {
     const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
-    color === 'var(--light-bgGradient)'
+    color === 'var(--bgGradient)'
       ? panel.style.borderRadius = '5px'
       : panel.style.borderRadius = '0'
     panel.style.background = color
@@ -72,9 +72,9 @@ function selectInfoColor (event) {
   const panel = document.querySelector('.sideInfo')
   switch (event.target.id) {
     case 'theme':
-      panel.style.background = 'var(--light-bgGradient)'
+      panel.style.background = 'var(--bgGradient)'
       panel.style.borderRadius = '5px'
-      window.localStorage.setItem('infoColor', JSON.stringify('var(--light-bgGradient)'))
+      window.localStorage.setItem('infoColor', JSON.stringify('var(--bgGradient)'))
       break
     case 'transparent':
       panel.style.background = 'transparent'
@@ -98,23 +98,23 @@ function selectAccentColor (event) {
   const color = event.target.id
   switch (color) {
     case 'yellow':
-      document.documentElement.style.setProperty('--light-accentColor', '#ffff00')
+      document.documentElement.style.setProperty('--accentColor', '#ffff00')
       window.localStorage.setItem('accentColor', JSON.stringify('#ffff00'))
       break
     case 'blue':
-      document.documentElement.style.setProperty('--light-accentColor', 'cornflowerblue')
+      document.documentElement.style.setProperty('--accentColor', 'cornflowerblue')
       window.localStorage.setItem('accentColor', JSON.stringify('cornflowerblue'))
       break
     case 'green':
-      document.documentElement.style.setProperty('--light-accentColor', '#00cc66')
+      document.documentElement.style.setProperty('--accentColor', '#00cc66')
       window.localStorage.setItem('accentColor', JSON.stringify('#00cc66'))
       break
     case 'defaultLight':
-      document.documentElement.style.setProperty('--light-accentColor', '#bababa')
+      document.documentElement.style.setProperty('--accentColor', '#bababa')
       window.localStorage.setItem('accentColor', JSON.stringify('#bababa'))
       break
     case 'defaultDark':
-      document.documentElement.style.setProperty('--light-accentColor', '#bf7272')
+      document.documentElement.style.setProperty('--accentColor', '#bf7272')
       window.localStorage.setItem('accentColor', JSON.stringify('#bf7272'))
       break
   }

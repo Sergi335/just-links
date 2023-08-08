@@ -7,7 +7,8 @@ function sidePanel () {
   const element = document.querySelectorAll('div.link')[0]
   if (element && element !== null) {
     element.classList.add('navActive')
-    showLinkInfo(element)
+    // Esto es para edit view
+    // showLinkInfo(element)
   }
 }
 function addPanelEvents () {
@@ -78,6 +79,7 @@ function addPanelEvents () {
     })
   }
 }
+// las dos siguientes en teoría hacen lo mismo
 function closePanel () {
   const panel = document.getElementById('sidepanel')
   // Tiene sentido la comprobación?
@@ -85,15 +87,20 @@ function closePanel () {
     panel.style.display = 'grid'
   } else {
     panel.style.display = 'none'
-    const imagePanel = document.getElementById('linkImages')
-    imagePanel.innerHTML = ''
+    const masonry = document.getElementById('imgMasonry')
+    const videoFrame = document.getElementById('videoFrame')
+    const loader = document.getElementById('liLoader')
+    const imagesHolder = document.getElementById('linkImages')
+    imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
+    videoFrame.src = ''
+    masonry.style.display = 'block'
+    masonry.innerHTML = ''
+    loader.classList.remove('fade-off')
   }
 }
 export function togglePanel (event) {
-  console.log(event.target.parentNode.parentNode)
   const element = event.target.parentNode.parentNode
   const panel = document.getElementById('sidepanel')
-  console.log('Has hecho click')
   // Esta comprobación tiene sentido?
   if (panel.style.display === 'none' || panel.style.display === '') {
     panel.style.display = 'grid'
@@ -103,8 +110,15 @@ export function togglePanel (event) {
   showLinkInfo(element)
 }
 export function navLinkInfos (event) {
-  console.log(event.target)
   event.preventDefault()
+  const loader = document.getElementById('liLoader')
+  loader.classList.remove('fade-off')
+  const masonry = document.getElementById('imgMasonry')
+  masonry.style.display = 'block'
+  const videoFrame = document.getElementById('videoFrame')
+  masonry.innerHTML = ''
+  videoFrame.src = ''
+
   const idHolder = document.getElementById('linkId')
   const links = document.querySelectorAll('div.link')
   const linksIds = []
@@ -116,7 +130,7 @@ export function navLinkInfos (event) {
   panels.forEach(panel => {
     panelsNames.push(panel.innerText)
   })
-  const imagePanel = document.getElementById('linkImages')
+
   let actualPos = linksIds.indexOf(idHolder.innerText)
   if (event.target.nodeName === 'SPAN') {
     console.log('Es enlace')
@@ -127,7 +141,6 @@ export function navLinkInfos (event) {
       }
     })
     element.classList.add('navActive')
-    imagePanel.innerHTML = ''
     showLinkInfo(element)
   }
   if (event.target.id === 'prev') {
@@ -138,7 +151,6 @@ export function navLinkInfos (event) {
         element.nextElementSibling.classList.remove('navActive')
       }
       element.classList.add('navActive')
-      imagePanel.innerHTML = ''
       showLinkInfo(element)
 
       const panel = element.parentNode.id
@@ -150,7 +162,7 @@ export function navLinkInfos (event) {
           break // Rompe el bucle una vez que se encuentra el botón deseado
         }
       }
-    }
+    } // else deshabilitar el boton
   }
   if (event.target.id === 'next') {
     actualPos = actualPos + 1
@@ -160,7 +172,6 @@ export function navLinkInfos (event) {
         element.previousElementSibling.classList.remove('navActive')
       }
       element.classList.add('navActive')
-      imagePanel.innerHTML = ''
       showLinkInfo(element)
 
       const panel = element.parentNode.id
@@ -172,19 +183,18 @@ export function navLinkInfos (event) {
           break // Rompe el bucle una vez que se encuentra el botón deseado
         }
       }
-    }
+    } // else deshabilitar el boton next
   }
 }
 async function showLinkInfo (element) {
-  const loader = document.createElement('div')
-  loader.setAttribute('id', 'liLoader')
-  const loadText = document.createTextNode('Cargando ...')
-  loader.appendChild(loadText)
-  document.getElementById('linkImages').appendChild(loader)
+  const loader = document.getElementById('liLoader')
+  const imagesHolder = document.getElementById('linkImages')
+
   try {
     const id = element.id
     const imgUrl = element.childNodes[0].src
-    const name = element.innerText
+    const name = element.childNodes[1].childNodes[0].innerText
+    // Añadir descripcion
     let panel
 
     if (!document.body.classList.contains('edit')) {
@@ -232,17 +242,10 @@ async function showLinkInfo (element) {
     const notesDiv = document.getElementById('linkNotes')
     notesDiv.innerHTML = notas === undefined || notas === '' ? 'Escribe aquí ...' : notas
 
-    const imagesHolder = document.getElementById('linkImages')
-    const masonry = document.createElement('div')
-    masonry.setAttribute('id', 'imgMasonry')
-    imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
-    imagesHolder.innerHTML = '<iframe id="videoFrame" src="" frameborder="0" width="560" height="340" scrolling="no" allowfullscreen></iframe>'
-    imagesHolder.appendChild(masonry)
-
     if (images !== undefined && images.length > 0) {
+      const videoFrame = document.getElementById('videoFrame')
+      videoFrame.style.display = 'none'
       imagesHolder.style.backgroundImage = "url('')"
-      imagesHolder.innerHTML = '<iframe id="videoFrame" src="" frameborder="0" width="560" height="340" scrolling="no" allowfullscreen></iframe>'
-      imagesHolder.innerHTML += '<div id="imgMasonry"></div>'
       const masonry = document.getElementById('imgMasonry')
       console.log('🚀 ~ file: sidepanel.js:267 ~ showLinkInfo ~ masonry:', masonry)
       images.forEach(img => {
@@ -267,22 +270,34 @@ async function showLinkInfo (element) {
       document.querySelectorAll('#imgMasonry a').forEach(item => {
         item.addEventListener('click', openModal)
       })
+      makeMasonry()
+    } else {
+      const masonry = document.getElementById('imgMasonry')
+      masonry.style.display = 'none'
+      imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
     }
-
     const videoFrame = document.getElementById('videoFrame')
-    videoFrame.style.display = 'none'
-
     const matchedUrl = checkUrlMatch(url)
     if (matchedUrl) {
       imagesHolder.style.backgroundImage = "url('')"
       videoFrame.style.display = 'block'
       videoFrame.src = matchedUrl
+    } else {
+      videoFrame.style.display = 'none'
     }
 
-    makeMasonry(loader)
+    setTimeout(() => {
+      if (loader) {
+        loader.classList.add('fade-off')
+        imagesHolder.style.overflowY = 'auto'
+      }
+    }, 1000)
   } catch (error) {
     console.error(error)
-    loader.style.display = 'none'
+    sendMessage(false, 'Error al recuperar link info')
+    loader.classList.add('fade-off')
+    imagesHolder.style.overflowY = 'auto'
+    // ojo que pasa aqui
   }
 }
 
@@ -362,6 +377,7 @@ function pasteImg () {
             document.getElementById('imgMasonry').appendChild(anchor)
             anchor.addEventListener('click', openModal)
             closer.addEventListener('click', confDeleteImage)
+            document.getElementById('imgMasonry').style.display = 'block'
             fetchImage()
             makeMasonry()
           })
@@ -546,14 +562,12 @@ async function fetchImage () {
   }
 }
 async function deleteImage (event) {
-  console.log(event.target.parentNode)
   const sender = event.target
   const idImg = sender.getAttribute('sender')
-  // seleccionar por sender
   const anchor = document.getElementById(idImg).parentNode
   const imageToDelete = document.getElementById(idImg).src
   const id = document.getElementById('linkId').innerText
-
+  const imagesHolder = document.getElementById('linkImages')
   try {
     let body = {
       image: imageToDelete,
@@ -581,6 +595,7 @@ async function deleteImage (event) {
         }
       } else {
         anchor.remove()
+        imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
         if (document.getElementById('imgMasonry').children.length === 0) {
           document.getElementById('linkImages').style.backgroundImage = "url('../img/placeholderImg.svg')"
         }
@@ -590,8 +605,19 @@ async function deleteImage (event) {
         sendMessage(true, 'Imagen borrada correctamente')
       }
     } else {
-      console.error('Error al subir las imágenes al servidor.')
-      sendMessage(false, 'Error al borrar imagen')
+      const error = await res.json()
+      if (error.error === 'storage/invalid-url' || error.error === 'storage/object-not-found') {
+        anchor.remove()
+        imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
+        const confirmBox = document.getElementById('deleteLinkImgForm')
+        confirmBox.style.display = 'none'
+        makeMasonry()
+        sendMessage(true, 'Referencia eliminada')
+      } else {
+        console.log(error)
+        console.error(error.error)
+        sendMessage(false, error.error)
+      }
     }
 
     // if (res.ok) {
@@ -622,7 +648,7 @@ function openModal (event) {
     const modal = document.getElementById('myModal')
     const img = event.target // event.target
     const modalImg = document.getElementById('img01')
-    modal.style.display = 'block'
+    modal.style.display = 'flex'
     modalImg.src = img.src
 
     const span = document.getElementsByClassName('close')[0]
@@ -643,18 +669,15 @@ function closeConfDeleteImage () {
   const confirmBox = document.getElementById('deleteLinkImgForm')
   confirmBox.style.display = 'none'
 }
-function makeMasonry (loader = '') {
-  setTimeout(() => {
-    // eslint-disable-next-line no-unused-vars, no-undef
-    const masonry = new MiniMasonry({
-      container: '#imgMasonry',
-      baseWidth: 300
-    })
-    // console.log(masonry)
-  }, 100)
-  if (loader) {
-    loader.style.display = 'none'
-  }
+function makeMasonry () {
+  // setTimeout(() => {
+  //   // console.log(masonry)
+  // }, 100)
+  // eslint-disable-next-line no-unused-vars, no-undef
+  return new MiniMasonry({
+    container: '#imgMasonry',
+    baseWidth: 300
+  })
 }
 async function getUrlStatus (url) {
   // console.log('🚀 ~ file: sidepanel.js:644 ~ getUrlStatus ~ url:', url)

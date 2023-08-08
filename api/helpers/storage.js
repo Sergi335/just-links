@@ -148,7 +148,10 @@ const deleteImg = async (req, res) => {
     res.send({ message: 'Imagen eliminada exitosamente' })
   } catch (error) {
     console.error('Error al eliminar la imagen:', error)
-    res.status(500).send({ error: 'Error al eliminar la imagen' })
+    if (error.code === 'storage/invalid-url' || error.code === 'storage/object-not-found') {
+      await deleteImage(imageUrl, user, linkId)
+    }
+    res.status(500).send({ error: error.code })
   }
 }
 async function backup (req, res) {

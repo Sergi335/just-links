@@ -21,7 +21,7 @@ script.
   }
   if (window.localStorage.getItem('accentColor')) {
     const color = JSON.parse(window.localStorage.getItem('accentColor'))
-    document.documentElement.style.setProperty('--light-accentColor', color)
+    document.documentElement.style.setProperty('--accentColor', color)
   }
   if (window.localStorage.getItem('bodyBackground')) {
     const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
