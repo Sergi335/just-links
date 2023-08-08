@@ -570,7 +570,7 @@ button#saveImg {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.9);
     height: -webkit-fill-available;
-    z-index: 4;
+    z-index: 5;
 }
 
 .modal-content {
