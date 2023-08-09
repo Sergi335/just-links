@@ -1381,6 +1381,8 @@ span.description {
 .link a {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    height: 50px;
     padding-left: 12px;
     text-decoration: none;
     color: var(--firstTextColor);
@@ -1395,6 +1397,7 @@ span.description {
 .link img {
     width: 16px;
     margin-left: 15px;
+    margin-top: 1px;
 }
 .link a span:first-child {
     font-size: 1em;
