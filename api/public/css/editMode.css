@@ -359,7 +359,7 @@ iframe#videoFrame {
 }
 
 #sideHeader button {
-    background-color: var(--light-bgColor);
+    background-color: var(--firstButtonColor);
     border: 0;
     padding: 5px 12px;
     cursor: pointer;
@@ -370,8 +370,6 @@ iframe#videoFrame {
     transition: all .3s;
 }
 #sideHeader button:hover {
-    /* background-color: var(--main-hv-color); */
-    box-shadow: 0px 0px 9px var(--light-shadow);
     transition: all .3s;
 }
 #sidepanel h2 {
@@ -384,7 +382,7 @@ iframe#videoFrame {
 }
 button#sendNotes,
 button#saveLinkImage {
-    background-color: var(--light-bgColor);
+    background-color: var(--firstButtonColor);
     padding: 5px 12px;
     border-radius: 5px;
     color: var(--light-textColor);
@@ -396,7 +394,7 @@ button#pasteImg {
     left: 81%;
     border: 0;
     border-radius: 5px;
-    color: #fdfdfd;
+    color: var(--firstTextColor);
     padding: 12px;
 }
 

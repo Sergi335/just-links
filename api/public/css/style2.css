@@ -2,7 +2,7 @@
     --firstColor: white;
     --secondColor: #f3f3f3;
     --thirdColor: #f2f2f2;
-    --fourthColor: #ededed;
+    --fourthColor: #f1f1f1;
     --fifthColor: #ededed;
     --bgGradient: radial-gradient( circle 815px at 23.4% -21.8%, rgb(231 231 231) 0.2%, rgb(242 242 242) 100.2% );
     --accentColor: #bababa;
@@ -14,6 +14,7 @@
     --firstShadow: #50505054;
     --firstBorderColor: #d5d5d5cc;
     --firstHvColor: #e4e4e4;
+    --firstButtonColor: #e3e3e3;
 }
 html.dark {
     --firstColor: #494949;
@@ -31,6 +32,7 @@ html.dark {
     --firstShadow: #0c0c0c;
     --firstBorderColor: #575757cc;
     --firstHvColor: #232323;
+    --firstButtonColor: #313131;
 }
 body {
     background-size: 100%;
@@ -41,7 +43,7 @@ body {
     background-image: var(--bgGradient);
 }
 button {
-    background-color: var(--thirdColor);
+    background-color: var(--firstButtonColor);
     border: 0;
     padding: 8px 19px;
     border-radius: 3px;
@@ -114,12 +116,12 @@ header {
     display: none;
     gap: 2px;
     position: fixed;
-    top: 155px;
+    top: 189px;
     left: 3%;
     flex-direction: column;
-    padding: 17px;
+    padding: 17px 17px 17px 0;
     border-radius: 5px;
-    height: 84vh;
+    height: 79vh;
     border-left: 1px solid var(--firstBorderColor);
     width: 8%;
 }
@@ -170,20 +172,20 @@ div#defaultDark {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    gap: 10px;
-    padding-left: 10px;
-    margin-bottom: 50px;
 }
 .sideInfo .sect {
     flex-direction: column;
+    margin-bottom: 60px;
+    border-left: 4px solid var(--firstBorderColor);
+    padding-left: 10px;
+    position: relative;
+    left: -2px;
 }
 p#saludo {
     font-size: 14px;
     margin: 0;
     font-weight: 500;
     color: var(--firstTextColor);
-    padding-left: 12px;
-    margin-bottom: 10px;
 }
 
 .headRight {
@@ -210,19 +212,31 @@ p#saludo {
 #showMenu {
     display: flex;
 }
-#reloj {
-    font-size: 40px;
-    line-height: 1;
-    /* background-color: var(--secondColor); */
-    padding: 6px;
-    border-radius: 5px;
-    letter-spacing: 4px;
-    color: var(--accentColor);
-    /* border: var(--firstBorder); */
-    font-weight: 600;
-    padding-left: 10px;
+div.deskControls .ui-icon {
+    width: 19px;
 }
-
+div.deskControls {
+    padding: 10px;
+    background-color: var(--firstButtonColor);
+    border-radius: 5px;
+    margin-bottom: 90px;
+    margin-left: 10px;
+    gap: 15px;
+    width: fit-content;
+}
+div.deskInfos {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+#reloj {
+    font-size: 25px;
+    line-height: 1;
+    color: var(--accentColor);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
 .menuColumn,
 .menuLink {
     position: fixed;
@@ -687,33 +701,27 @@ i.icofont-code-alt, i.icofont-font {
     animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 body.profile .tabcontent {
-    flex-direction: row;
+    /* flex-direction: row;
     width: 100%;
     align-items: stretch;
     display: flex;
-    /* gap: 15px; */
+    gap: 15px; */
 }
 body.profile .tabcontent:nth-child(2) {
-    background-image: url(https://images.unsplash.com/photo-1688507383637-78f49f095269?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80);
-    background-size: cover;
-    background-position: bottom;
-    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    width: auto;
 }
-.userInfo {
-    color: var(--accentColor);
+body.profile .tabcontent:nth-child(3) {
+
 }
 .estatistics {
-    width: 40%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: stretch;
-    flex-grow: 1;
-    padding: 50px;
-    background-image: var(--bgGradient);
-    gap: 15px;
+    padding: 25px;
+    border: 1px solid var(--firstBorderColor);
+    border-radius: 5px;
+    margin-top: 55px;
 }
-.statsInfo {
+/*.statsInfo {
     width: 35%;
     background-color: var(--fourthColor);
     border-radius: 5px;
@@ -722,7 +730,7 @@ body.profile .tabcontent:nth-child(2) {
     display: flex;
     flex-direction: column;
     align-items: start;
-}
+} */
 div.password {
     display: flex;
     justify-content: stretch;
@@ -748,13 +756,11 @@ div.backup {
     flex-grow: 1;
 }
 div.info {
-    display: flex;
-    flex-direction: column;
-    width: 65%;
+    padding: 25px;
+    border: 1px solid var(--firstBorderColor);
     border-radius: 5px;
-    padding: 50px;
 }
-.statsControls {
+/* .statsControls {
     display: flex;
     gap: 15px;
     width: 35%;
@@ -770,7 +776,7 @@ div.info {
     justify-content: center;
     align-items: center;
     gap: 15px;
-}
+} */
 #duplicatesResult, #brokenLinksResult {
     display: flex;
     flex-wrap: wrap;
@@ -878,17 +884,24 @@ div#preferences {
     max-width: 100%;
 }
 
-#resultsContainer .link {
+body.profile #resultsContainer .link {
     height: auto;
     display: block;
     padding: 20px 10px;
 }
-#resultsContainer .link a {
+body.profile #resultsContainer .link a {
     flex-direction: row;
     padding-left: 0;
 }
-#resultsContainer .link img {
+body.profile #resultsContainer .link img {
     margin: 0 7px;
+}
+#resultsContainer .link a {
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 9px;
+    padding-left: 0;
 }
 #resultsContainer p {
     display: inline-block;
@@ -921,76 +934,43 @@ div#profile {
 }
 
 .profile-image {
-    position: relative;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    width: fit-content;
+    padding: 15px;
+    border: 1px solid var(--firstBorderColor);
+    border-radius: 5px;
+    box-shadow: var(--secondNeumoShadow);
+}
+div.userInfo {
+    padding: 15px;
+    box-shadow: var(--secondNeumoShadow);
+    border: 1px solid var(--firstColor);
+    border-radius: 5px;
+}
+#preview-image {
+    border-radius: 5px;
     width: 200px;
     height: 200px;
-    overflow: hidden;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    transition: background .5s;
-}
-
-.profile-image .icofont-upload-alt {
-    position: absolute;
-    height: 110px;
-    width: 110px;
-    font-size: 35px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 20px;
-}
-
-.profile-image:hover {
-    background-color: black;
-}
-
-.profile-image:hover #preview-image {
-    opacity: .3;
-}
-
-.profile-image p {
-    font-size: 13px;
-    position: absolute;
-    height: 110px;
-    width: 110px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 9px;
-    font-weight: 700;
-}
-
-#preview-image {
-    width: 100%;
-    height: auto;
     object-fit: cover;
-    position: relative;
-    transition: opacity .5s;
 }
 
 #image-input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
     cursor: pointer;
+    transform: translateX(-144px);
+    opacity: 0;
 }
 
 #profileWrapper {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 50%;
     margin: 0 auto;
+    gap: 50px;
+    flex-direction: column;
 }
 #profileContent {
-    padding-top: 83px;
+    padding-top: 133px;
 }
 body.profile p#saludo, body.profile .sideInfo div, body.profile #showMenu, body.profile #drpEscritorios  {
     display: none;
@@ -1028,6 +1008,7 @@ div.buttons {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 .upFile label {
     position: absolute;
@@ -1074,14 +1055,27 @@ input[type='password'] {
 div#profile button:hover {
     background-color: #f1f1f1;
 }
-
-/* div.userInfo {
-    margin-top: 10px;
-} */
+.profile-image button.upFile {
+    width: 200px;
+    position: relative;
+}
+.profile-image button.upFile .ui-icon {
+    margin-bottom: 3px;
+    width: 19px;
+}
+button#duplicates .ui-icon, button#brokenLinks .ui-icon {
+    width: 16px;
+}
+button#duplicates, button#brokenLinks {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
 .wrapper {
     display: flex;
-    gap: 45px;
-    align-items: center;
+    gap: 35px;
+    flex-direction: column;
 }
 .userInfo p:first-child {
     font-size: 26px;
@@ -1091,19 +1085,14 @@ div#profile button:hover {
     margin-top: 0;
 }
 .tabcontent {
-    /* min-height: 854px; */
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    /* min-width: 435px; */
-    color: var(--secondTextColor);
+    color: var(--firstTextColor);
     flex-wrap: wrap;
 }
 
 .tabcontent h2 {
-    /* font-weight: 400; */
-    font-size: 45px;
-    color: var(--accentColor);
+    font-size: 1.9em;
     margin-top: 0;
 }
 /* Create an active/current "tab button" class */

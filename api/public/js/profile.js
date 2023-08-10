@@ -179,7 +179,7 @@ async function uploadImg (event) {
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const response = await fetch('/uploadImgProfile', {
+      const response = await fetch(`${constants.BASE_URL}/uploadImgProfile`, {
         method: 'POST',
         body: formData
       })
