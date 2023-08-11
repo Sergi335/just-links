@@ -87,8 +87,10 @@ function selectTheme (event) {
   const root = document.documentElement
   if (root.classList.contains('dark')) {
     root.classList.remove('dark')
+    root.classList.add('light')
     window.localStorage.setItem('theme', JSON.stringify('light'))
-  } else {
+  } else if (root.classList.contains('light')) {
+    root.classList.remove('light')
     root.classList.add('dark')
     window.localStorage.setItem('theme', JSON.stringify('dark'))
   }

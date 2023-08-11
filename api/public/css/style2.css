@@ -1,19 +1,19 @@
 :root {
     --firstColor: white;
-    --secondColor: #f3f3f3;
-    --thirdColor: #f2f2f2;
+    --secondColor: #dee1e6;
+    --thirdColor: #f1f3f4;
     --fourthColor: #f1f1f1;
     --fifthColor: #ededed;
-    --bgGradient: radial-gradient( circle 815px at 23.4% -21.8%, rgb(231 231 231) 0.2%, rgb(242 242 242) 100.2% );
+    --bgGradient: #dee1e6;
     --accentColor: #bababa;
     --neumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(239 239 239), 0.3em 1em 2em rgb(0 0 0 / 7%);
     --secondNeumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(239 239 239);
-    --firstTextColor: #4f4f4f;
+    --firstTextColor: #4e4e4e;
     --secondTextColor: #4f4f4f;
     --firstBorder: 1px solid #e8e8e8cc;
     --firstShadow: #50505054;
     --firstBorderColor: #d5d5d5cc;
-    --firstHvColor: #e4e4e4;
+    --firstHvColor: #dee1e6;
     --firstButtonColor: #e3e3e3;
 }
 html.dark {
@@ -42,6 +42,9 @@ body {
     overflow: hidden;
     background-image: var(--bgGradient);
 }
+html.light body {
+    background: var(--thirdColor);
+}
 button {
     background-color: var(--firstButtonColor);
     border: 0;
@@ -66,7 +69,7 @@ header {
     width: 100%;
     position: fixed;
     top: 0;
-    background-image: var(--bgGradient);
+    background: var(--bgGradient);
     height: 83px;
     z-index: 5;
 }
@@ -389,13 +392,16 @@ div.avatar img {
     position: fixed;
     width: -webkit-fill-available;
     top: 133px;
-    background-image: var(--bgGradient);
+    background: var(--bgGradient);
     display: none;
     align-items: center;
     height: -webkit-fill-available;
     /* padding: 30px; */
     z-index: 5;
     color: var(--firstTextColor);
+}
+html.light #sidepanel {
+    background-color: var(--thirdColor);
 }
 #lurl {
     color: var(--accentColor);
@@ -1189,19 +1195,22 @@ li.accordion {
     top: 170px;
     background-color: var(--secondColor);
     min-height: 90px;
-    min-width: 243px;
+    width: 250px;
     border-radius: 5px;
     box-shadow: 0px 3px 19px var(--firstShadow);
     right: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: translateX(335px);
+    transform: translateX(375px);
     transition: transform 0.3s ease-in-out;
-    /* border-left: 25px solid mediumseagreen; */
     z-index: 4;
+    padding: 6px;
 }
-
+#alertCard p {
+    margin-left: 10px;
+    color: var(--firstTextColor);
+}
 #profileDeleteConfirm {
     position: absolute;
     background-color: var(--firstColor);
@@ -1287,9 +1296,14 @@ div.controls button {
 .container::-webkit-scrollbar-thumb {
     background-color: var(--accentColor);
 }
-
+html.light .container::-webkit-scrollbar-thumb {
+    background-color: #dee1e68c;
+}
 .container::-webkit-scrollbar-track {
     background-color: var(--firstColor);
+}
+html.light .container::-webkit-scrollbar-track {
+    background-color: #f1f3f4;
 }
 .cuerpo {
     display: flex;
@@ -1325,6 +1339,9 @@ div.controls button {
     border-radius: 5px;
     /* flex-grow: 1; */
 }
+html.light .envolt {
+    box-shadow: none;
+}
 .link p {
     /* position: absolute; */
     margin-top: 41px;
@@ -1343,6 +1360,10 @@ div.controls button {
     background-color: var(--firstHvColor);
     backdrop-filter: blur(14px);
 }
+html.light .link:hover {
+    background-color: var(--firstHvColor);
+    backdrop-filter: blur(14px);
+}
 span.description {
     display: none;
 }
@@ -1356,10 +1377,19 @@ span.description {
     display: flex;
     align-items: center;
 }
+html.light .link {
+    background-color: var(--firstColor);
+}
 .link:nth-child(even):not(.lastVisited) {
     background-color: var(--fourthColor);
 }
+html.light .link:nth-child(even):not(.lastVisited) {
+    background-color: var(--firstColor);
+}
 .link:nth-child(even):hover {
+    background-color: var(--firstHvColor);
+}
+html.light .link:nth-child(even):hover {
     background-color: var(--firstHvColor);
 }
 .link:last-child {
@@ -1414,6 +1444,11 @@ span.description {
     border-radius: 40px;
     background-color: var(--secondColor);
 }
+html.light .lcontrols:hover {
+    border: 1px solid #a4a4a4cc;
+    border-radius: 40px;
+    background-color: var(--firstColor);
+}
 
 .link:hover .lcontrols {
     display: flex;
@@ -1430,9 +1465,9 @@ span.description {
     align-items: center;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
-    background-image: var(--bgGradient);
+    background: var(--bgGradient);
 }
-html:not(.dark) .headercolumn, html:not(.dark) .link {
+html:not(.dark) .link {
     border-bottom: 1px solid #f3f3f3;
 }
 i.icofont-gear {
@@ -1606,6 +1641,8 @@ i.icofont-scroll-up {
     padding: 24px 24px 0 24px;
     border: var(--firstBorder);
     border-radius: 5px;
+    justify-content: center;
+    align-items: center;
 }
 .deskForm legend, .deskForm label {
     font-weight: bold;
@@ -1619,11 +1656,12 @@ i.icofont-scroll-up {
     border: 0;
     height: 20px;
     margin-bottom: 15px;
-    background-color: var(--secondColor);
+    background-color: var(--thirdColor);
     padding: 9px;
     font-size: 16px;
     font-family: system-ui;
     outline-color: var(--accentColor);
+    width: 60%;
 }
 
 .deskForm button {
@@ -1644,7 +1682,7 @@ i.icofont-scroll-up {
 /* LOADER -----------------------------------*/
 #liLoader {
     display: flex;
-    background-image: var(--bgGradient);
+    background: var(--bgGradient);
     position: absolute;
     width: 100%;
     left: 0;
@@ -1715,7 +1753,6 @@ i.icofont-scroll-up {
     top: 132px;
     border-top: 1px solid var(--firstBorderColor);
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--firstBorderColor);
     transform: translateX(-100%);
     width: 100%;
     height: 100%;
@@ -1723,7 +1760,9 @@ i.icofont-scroll-up {
     transition: transform .5s;
     z-index: 6;
 }
-
+html.light .dropdown-content {
+    background-color: var(--firstColor);
+}
 .dropdown-content a {
     color: var(--firstTextColor);
     padding: 12px 20px;
@@ -1762,6 +1801,9 @@ div.headCenter input[type="text"] {
     border: 1px solid var(--firstBorderColor);
     color: var(--firstTextColor);
     width: 90%;
+}
+html.light div.headCenter input[type="text"] {
+    background-color: var(--thirdColor);
 }
 div.headCenter input[type="text"]::placeholder {
     color: var(--firstTextColor);
@@ -1931,7 +1973,7 @@ div.headCenter input[type="text"]:focus-visible {
         min-height: 490px;
     }
     #sidepanel {
-        top: 131px;
+        top: 130px;
         z-index: 3;
     }
     #linkNotes {

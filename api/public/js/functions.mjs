@@ -90,18 +90,18 @@ export function formatDate (date) {
 
 export function sendMessage (success, message) {
   const card = document.getElementById('alertCard')
-  if (!success) {
-    card.style.borderLeftColor = 'red'
-  } else {
-    card.style.borderLeftColor = 'mediumseagreen'
-  }
-  card.innerText = message
+  // if (!success) {
+  //   card.style.borderLeftColor = 'red'
+  // } else {
+  //   card.style.borderLeftColor = 'mediumseagreen'
+  // }
+  card.childNodes[0].innerText = message
   // Realizar la transformación inicial
   card.style.transform = 'translateX(0px)'
 
   // Después de 2 segundos, volver a la posición inicial
   setTimeout(() => {
-    card.style.transform = 'translateX(335px)'
+    card.style.transform = 'translateX(375px)'
   }, 4000)
 }
 

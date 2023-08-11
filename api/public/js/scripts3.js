@@ -16,7 +16,6 @@ function cargaWeb () {
     const contenedor = document.querySelectorAll('.container')[0]
     contenedor.onscroll = function (event) {
       toggleBotonSubirArriba()
-      // console.log(event.target.scrollTop)
     }
     addContextMenuEvents()
     // Declaramos la variable para pasar a ordenaCols
@@ -31,14 +30,10 @@ function cargaWeb () {
     addLinkEvents($raiz)
     if (window.matchMedia('(min-width: 1536px)').matches) {
       if (!document.body.classList.contains('edit')) {
-        const hijos = $raiz.childNodes
-        hijos.forEach(element => {
-          // ordenaItems(element.childNodes[0].innerText)
-          ordenaItems(element.childNodes[1].id)
-        })
+        const hijos = Array.from($raiz.childNodes)
+        ordenaItems(hijos)
         ordenaCols($raiz)
       }
-
       ordenaDesks()
     }
   }
@@ -199,25 +194,6 @@ function addContextMenuEvents () {
     item.addEventListener('click', moveLinks)
   })
 
-  // // obtener el menu de columna para pasarle el evento mouseleave
-  // const menuC = document.getElementById('menuColumn')
-
-  // // agregamos evento
-  // menuC.addEventListener('mouseleave', function () {
-  //   setTimeout(() => {
-  //     menuC.style.display = 'none'
-  //   }, 500)
-  // })
-
-  // // obtener el menu de link para pasarle el evento mouseleave
-  // const menuL = document.getElementById('menuLink')
-
-  // // agregamos evento
-  // menuL.addEventListener('mouseleave', function () {
-  //   setTimeout(() => {
-  //     menuL.style.display = 'none'
-  //   }, 500)
-  // })
   // Menu mover entre escritorios
   const acc = document.getElementsByClassName('accordion')
   let i
@@ -1543,15 +1519,14 @@ function escondeDialogos (event) {
 
 // Funciones para aplicar Sortablejs
 
-function ordenaItems (panel) {
-  if (panel !== null) {
+function ordenaItems (panels) {
+  if (panels !== null && panels !== undefined) {
     const escritorioActual = document.body.getAttribute('data-desk')
-    const el = []
-    // let order = [];
-    el.push(document.getElementById(`${panel}`))
+    const el = panels.map(panel => (
+      document.getElementById(`${panel.childNodes[1].id}`)
+    ))
     el.forEach(element => {
       const grupo = `Shared${escritorioActual}`
-
       // eslint-disable-next-line no-undef, no-unused-vars
       const sortableList = Sortable.create(element, {
         group: grupo,
@@ -1567,16 +1542,10 @@ function ordenaItems (panel) {
           const listaOrigen = evt.from
           const listaDestino = evt.to
           const newId = listaDestino.attributes[2].nodeValue
-          console.log('🚀 ~ file: scripts3.js:1510 ~ newId:', newId)
-          // console.log(newId);
           const escritorio = document.body.getAttribute('data-desk')
-          // console.log(escritorio);
           const panel = itemEl.parentNode.parentNode.childNodes[0].innerText
-          // console.log(panel);
           const nombre = itemEl.childNodes[1].childNodes[0].innerText
-          console.log(`Nombre: ${nombre}`)
           const oldId = listaOrigen.attributes[2].nodeValue
-          console.log('🚀 ~ file: scripts3.js:1519 ~ oldId:', oldId)
 
           // Si el elemento arrastrado es el último crea un elemento link vacio
           if (document.querySelector(`[data-db="${oldId}"]`).childNodes.length === 0) {
@@ -1604,7 +1573,6 @@ function ordenaItems (panel) {
 
           // Hacemos un fetch a la url /draglinks que ejecuta una funcion que edita el elemento si se ha arrastrado a una columna distinta, si se ha arrastrado a la misma columna devuelve un mensaje indicandolo, lo averigua comparando el oldId y el newId
           let body = { escritorio, name: nombre, newId, oldId, panel }
-          // console.log(body);
           body = JSON.stringify(body)
           const res = await fetch(`${constants.BASE_URL}/draglinks`, {
             method: 'PUT',
@@ -1617,18 +1585,14 @@ function ordenaItems (panel) {
           console.log(json)
 
           const elements = document.querySelectorAll(`[data-db="${newId}"]`)[0].childNodes
-          console.log(elements)
           const id = elements[0].parentNode.getAttribute('data-db')
-          console.log(id)
           const sortedElements = Array.from(elements).sort((a, b) => {
             return a.dataset.orden - b.dataset.orden
           })
-          console.log(sortedElements)
           const names = []
           sortedElements.forEach(element => {
             names.push(element.childNodes[1].childNodes[0].innerText)
           })
-          console.log(names)
           body = names
           body = JSON.stringify({ body })
           // La url /draglink ejecuta una función que actualiza el orden del link en la columna
@@ -1649,123 +1613,99 @@ function ordenaItems (panel) {
           // console.log(primerValor);
           // Si el primer valor es distinto de respuesta se ha arrastrado a otra columna
           if (primerValor !== 'Respuesta') {
-            const groupByPanel = json2.reduce((acc, elem) => {
-              if (acc[elem.panel]) {
-                acc[elem.panel].push(elem)
-              } else {
-                acc[elem.panel] = [elem]
-              }
-              return acc
-            }, {})
-            // console.log(groupByPanel);
-            for (const panel in groupByPanel) {
-              // eslint-disable-next-line no-unused-vars
-              const items = groupByPanel[panel]
-              // eslint-disable-next-line no-unused-vars
-              const $raiz = document.querySelector(`[id="${escritorio}${panel}"]`)
-              // console.log($raiz);
-              // if ($raiz.hasChildNodes()) {
-              //     while ($raiz.childNodes.length >= 1) {
-              //         $raiz.removeChild($raiz.lastChild);
-              //     }
-              //     refreshLinks(items);
-              // }
-              // console.log(items);
-              // console.log(panel);
-              // ordenaItems(panel);
-            }
-            console.log(json)
+            // const groupByPanel = json2.reduce((acc, elem) => {
+            //   if (acc[elem.panel]) {
+            //     acc[elem.panel].push(elem)
+            //   } else {
+            //     acc[elem.panel] = [elem]
+            //   }
+            //   return acc
+            // }, {})
+            // // console.log(groupByPanel);
+            // for (const panel in groupByPanel) {
+            //   // eslint-disable-next-line no-unused-vars
+            //   const items = groupByPanel[panel]
+            //   // eslint-disable-next-line no-unused-vars
+            //   const $raiz = document.querySelector(`[id="${escritorio}${panel}"]`)
+            //   // console.log($raiz);
+            //   // if ($raiz.hasChildNodes()) {
+            //   //     while ($raiz.childNodes.length >= 1) {
+            //   //         $raiz.removeChild($raiz.lastChild);
+            //   //     }
+            //   //     refreshLinks(items);
+            //   // }
+            //   // console.log(items);
+            //   // console.log(panel);
+            //   // ordenaItems(panel);
+            // }
+            // console.log(json)
           } else {
-            // console.log(json);
-            const elements = document.querySelectorAll(`[data-db="${newId}"]`)[0].childNodes
-            console.log(elements)
-            const id = elements[0].parentNode.getAttribute('data-db')
-            console.log(id)
-            const sortedElements = Array.from(elements).sort((a, b) => {
-              return a.dataset.orden - b.dataset.orden
-            })
-            console.log(sortedElements)
-            const names = []
-            sortedElements.forEach(element => {
-              names.push(element.innerText)
-            })
-            console.log(names)
-            let body = names
-            body = JSON.stringify({ body })
-            const res = await fetch(`${constants.BASE_URL}/draglink?idColumna=${id}`, {
-              method: 'PUT',
-              headers: {
-                'content-type': 'application/json'
-              },
-              body
-            })
-            const json = await res.json()
-            console.log(json)
+            // const elements = document.querySelectorAll(`[data-db="${newId}"]`)[0].childNodes
+            // console.log(elements)
+            // const id = elements[0].parentNode.getAttribute('data-db')
+            // console.log(id)
+            // const sortedElements = Array.from(elements).sort((a, b) => {
+            //   return a.dataset.orden - b.dataset.orden
+            // })
+            // console.log(sortedElements)
+            // const names = []
+            // sortedElements.forEach(element => {
+            //   names.push(element.innerText)
+            // })
+            // console.log(names)
+            // let body = names
+            // body = JSON.stringify({ body })
+            // const res = await fetch(`${constants.BASE_URL}/draglink?idColumna=${id}`, {
+            //   method: 'PUT',
+            //   headers: {
+            //     'content-type': 'application/json'
+            //   },
+            //   body
+            // })
+            // const json = await res.json()
+            // console.log(json)
           }
         }
       })
-      // order.push(sortableList.toArray());
-      // var order = sortableList.toArray();
-      // localStorage.setItem(sortableList.options.group.name, order.join('|'));
-      // console.log(sortableList.toArray());
-      // console.log(order);
     })
-    // console.log(el);
   } else {
-    console.log('Panel Null')
+    sendMessage(false, 'Error al recuperar los paneles, las funciones de ordenar los links mediante drag&drop no estan disponibles, contacta con el servicio técnico')
   }
 }
-
 function ordenaCols (element) {
-  // console.log("Se ejecuta ordenacols");
-  // console.log(typeof (element));
-  const arr = []
-  arr.push(element)
-  // console.log(arr);
+  // eslint-disable-next-line no-undef
+  Sortable.create(element, {
+    group: `Grupo${element.id}`,
+    sort: false,
+    dataIdAttr: 'data-id',
+    onEnd: async function (evt) {
+      const itemEl = evt.item
+      console.log(itemEl)
+      const escritorio = document.body.getAttribute('data-desk')
+      const elements = document.getElementById(`${escritorio}Cols`).childNodes
+      console.log(elements)
 
-  arr.forEach(element => {
-    // eslint-disable-next-line no-undef, no-unused-vars
-    const sortablelist2 = Sortable.create(element, {
-
-      group: `Grupo${element.id}`,
-      sort: false,
-      dataIdAttr: 'data-id',
-      onEnd: async function (evt) {
-        const itemEl = evt.item
-        console.log(itemEl)
-        const escritorio = document.body.getAttribute('data-desk')
-        const elements = document.getElementById(`${escritorio}Cols`).childNodes
-        console.log(elements)
-
-        const sortedElements = Array.from(elements).sort((a, b) => {
-          return a.dataset.orden - b.dataset.orden
-        })
-        console.log(sortedElements)
-        const names = []
-        sortedElements.forEach(element => {
-          names.push(element.childNodes[1].dataset.db)
-        })
-        console.log(names)
-        let body = names
-        body = JSON.stringify({ body })
-        const res = await fetch(`${constants.BASE_URL}/dragcol?escritorio=${escritorio}`, {
-          method: 'PUT',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body
-        })
-        const json = await res.json()
-        console.log(json)
-      }
-
-    })
-    // console.log(sortablelist2);
-    // var order = sortablelist2.toArray();
-    // localStorage.setItem(sortablelist2.options.group.name, order.join('|'));
-    // console.log(sortablelist2.toArray());
-
-    // Habrá que hacer un getItems y que lo añada al final o cualquier ostia
+      const sortedElements = Array.from(elements).sort((a, b) => {
+        return a.dataset.orden - b.dataset.orden
+      })
+      console.log(sortedElements)
+      const names = []
+      sortedElements.forEach(element => {
+        names.push(element.childNodes[1].dataset.db)
+      })
+      console.log(names)
+      let body = names
+      body = JSON.stringify({ body })
+      const res = await fetch(`${constants.BASE_URL}/dragcol?escritorio=${escritorio}`, {
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body
+      })
+      const json = await res.json()
+      console.log(json)
+    }
   })
 }
 function ordenaDesks () {
