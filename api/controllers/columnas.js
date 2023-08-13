@@ -74,30 +74,29 @@ const deleteColItem = async (req, res) => {
   console.log(body)
   const user = req.user.name
   console.log(user)
+  const col = await columnasModel.find({ _id: `${body.id}`, user })
   const linksinCol = await linksModel.deleteMany({ idpanel: `${body.id}`, user })
   const data = await columnasModel.deleteOne({ _id: `${body.id}`, user })
-  const lista = await columnasModel.find({ escritorio: `${body.escritorio}`, user }).sort({ order: 1 })
   console.log(data)
   console.log(linksinCol)
-  res.send(lista)
+  res.send(col)
 }
 const editColItem = async (req, res) => {
   const { body } = req
   const user = req.user.name
   console.log(body)
   try {
-    await columnasModel.findOneAndUpdate(
+    const editedCol = await columnasModel.findOneAndUpdate(
       { _id: `${body.id}`, user }, // El filtro para buscar el documento
-      { $set: { name: `${body.nombre}` } }, // La propiedad a actualizar
-      { new: true } // Opciones adicionales (en este caso, devuelve el documento actualizado)
+      { $set: { name: `${body.nombre}` } }
     )
     // Actualizamos los Links
     const filtroL = { idpanel: `${body.id}`, user } // Filtrar documentos
     const actualizacionL = { $set: { panel: `${body.nombre}` } } // Actualizar
 
     await linksModel.updateMany(filtroL, actualizacionL)
-    const lista = await columnasModel.find({ escritorio: `${body.escritorio}`, user })
-    res.send(lista)
+    // const lista = await columnasModel.find({ escritorio: `${body.escritorio}`, user })
+    res.send(editedCol)
   } catch (error) {
     console.log(error) // Manejo de errores
     res.send(error)

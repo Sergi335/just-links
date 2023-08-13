@@ -302,3 +302,32 @@ export function openTab (event) {
   document.querySelector(`.tabcontent[orden="${tabName}"]`).style.display = 'grid'
   event.currentTarget.className += ' active'
 }
+export function sortSideInfo (list) {
+  // Seleccionamos todos los elementos con la clase 'sect' y los almacenamos en 'sideBlocks'
+  const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+  const desk = document.body.getAttribute('data-desk')
+  // Inicializamos un contador para rastrear la posición en la lista 'list'
+  let counter = 0
+
+  // Iteramos a través de cada elemento en 'sideBlocks'
+  for (let i = 0; i < sideBlocks.length; i++) {
+    // Obtenemos todos los nodos hijos del elemento actual en 'sideBlocks'
+    const childNodes = sideBlocks[i].childNodes
+
+    // Iteramos a través de los nodos hijos
+    for (const node of childNodes) {
+      // Verificamos si el nodo es un elemento HTML (no un nodo de texto, comentario, etc.)
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        // Actualizamos el contenido de texto del nodo con el valor de 'list[counter]'
+        node.innerText = list[counter]
+        // Establecemos el atributo 'id' del nodo con el valor de 'list[counter]'
+        node.id = `Side${desk}${list[counter]}`
+        // Incrementamos el contador para pasar al siguiente valor en 'list'
+        counter++
+      }
+    }
+  }
+
+  // Imprimimos la lista actualizada para verificar
+  console.log(list)
+}

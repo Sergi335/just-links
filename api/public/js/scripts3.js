@@ -1,4 +1,4 @@
-import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath } from './functions.mjs'
+import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath, sortSideInfo } from './functions.mjs'
 import { togglePanel, navLinkInfos } from './sidepanel.js'
 
 document.addEventListener('DOMContentLoaded', cargaWeb)
@@ -421,6 +421,8 @@ export async function editColumn (name, desk, idPanel) {
       sendMessage(false, `${firstKey}, ${firstValue}`)
     }
   } else {
+    const sidePanel = document.getElementById(`Side${desk}${res.name}`)
+    sidePanel.innerText = nombre
     sendMessage(true, 'Nombre Cambiado!!')
   }
 }
@@ -478,6 +480,13 @@ async function createColumn () {
       item.removeEventListener('click', moveLinks)
       item.addEventListener('click', moveLinks)
     })
+    const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+    const lastSideBlock = sideBlocks.at(-1)
+    const newChild = document.createElement('a')
+    newChild.setAttribute('id', `Side${escritorio}${nombre}`)
+    newChild.innerText = `${nombre}`
+    lastSideBlock.appendChild(newChild)
+    console.log(lastSideBlock)
     // Ojo
     refreshColumns(res)
     const dialog = document.getElementById('addColForm')
@@ -522,6 +531,14 @@ async function deleteColumn () {
       if (columns) {
         columns[0].click()
       }
+    }
+    const sidePanel = document.getElementById(`Side${escritorio}${res[0].name}`)
+    const sideParent = sidePanel.parentNode
+    console.log(`Side${escritorio}${res[0].name}`)
+    console.log(sidePanel)
+    sidePanel.remove()
+    if (sideParent.childElementCount === 0) {
+      sideParent.remove()
     }
     sendMessage(true, 'Columna Borrada!!')
     const dialog = document.getElementById('deleteColForm')
@@ -645,9 +662,10 @@ async function refreshColumns (json) {
     $envolt.appendChild($columna)
 
     $raiz.appendChild($envolt)
-
+    const container = document.getElementById(`${escritorioActual}Cols`)
+    const hijos = Array.from(container.childNodes)
     addColumnEvents()
-    ordenaItems(nombre)
+    ordenaItems(hijos)
     ordenaCols($raiz)
   } else {
     const $raiz = document.querySelector('.tab')
@@ -1163,6 +1181,7 @@ async function pasteLink (event) {
                   const raiz = event.target.parentNode.childNodes[1].innerText
                   const $raiz = document.querySelector(`[data-db="${raiz}"]`)
                   const url = text
+                  console.log(typeof url, url.length)
                   async function procesarEnlace () {
                     const nombre = await getNameByUrl(text)
                     const escritorio = document.body.getAttribute('data-desk')
@@ -1693,6 +1712,11 @@ function ordenaCols (element) {
       sortedElements.forEach(element => {
         names.push(element.childNodes[1].dataset.db)
       })
+      const sortedNames = sortedElements.map(elem => (
+        elem.childNodes[0].innerText
+      ))
+      sortSideInfo(sortedNames)
+      console.log(sortedNames)
       console.log(names)
       let body = names
       body = JSON.stringify({ body })

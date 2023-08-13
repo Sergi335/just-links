@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', loadStyles)
 
 function loadStyles () {
   addActiveClass()
+  sideInfo()
   const backgrounds = document.querySelectorAll('.miniatures')
   backgrounds.forEach(back => {
     back.removeEventListener('click', selectBackground)
@@ -32,6 +33,11 @@ function loadStyles () {
       : panel.style.borderRadius = '0'
     panel.style.background = color
   }
+  const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+  sideBlocks.forEach(panel => {
+    panel.removeEventListener('click', putIntoView)
+    panel.addEventListener('click', putIntoView)
+  })
 }
 function addActiveClass () {
   // Pasar a select desktop
@@ -133,4 +139,55 @@ function showMenu () {
       menu.style.transform = 'translateX(-100%)'
     }
   }
+}
+function sideInfo () {
+  const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+  sideBlocks[0].classList.add('sectActive')
+  const elements = sideBlocks.map(el => (
+    {
+      el,
+      mappedEls: Array.from(el.children).map(item => (document.getElementById(`${item.id}`)))
+    }
+  ))
+  // console.log(elements)
+  const contenedor = document.body
+  contenedor.onscroll = function (event) {
+    // Por cada panel izquierdo recogemos las props de cada elemento mapeado
+    elements.forEach(targ => {
+      const props = targ.mappedEls.map(elem => (
+        elem.getBoundingClientRect()
+      ))
+      // console.log(targ.mappedEls)
+      // cogemos el primero por que todos están a la misma altura
+      const elementTopPosition = props[0].top
+      // de las props cogemos el valor bottom
+      // const elementMaxBottomPosition = props.map(elem => (
+      // elem.bottom
+      // ))
+      // Y seleccionamos el mayor de cada panel
+      // const maxBottom = Math.max(...elementMaxBottomPosition)
+      // console.log(maxBottom)
+      // console.log(elementMaxBottomPosition)
+      // si la posicion de la parte superior de la fila es mayor a 141 y menor a 1414 o la posicion bottom maxima de cada columna es mayor a 141 o menor a 1414
+      if ((elementTopPosition >= 141 && elementTopPosition <= 1141)) { // pero que sea de la row
+        targ.el.classList.add('sectActive')
+        //  quitarsela al resto
+      } else {
+        targ.el.classList.remove('sectActive')
+      }
+    })
+  }
+}
+function putIntoView (event) {
+  console.log(event.target)
+  event.preventDefault()
+  // const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+  const escritorio = document.body.getAttribute('data-desk')
+  const element = document.getElementById(`${escritorio}${event.target.innerText}`)
+  element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  element.parentNode.classList.add('sideInfoSelectedCol')
+  setTimeout(() => {
+    element.parentNode.classList.remove('sideInfoSelectedCol')
+  }, 1000)
+  console.log(element)
 }
