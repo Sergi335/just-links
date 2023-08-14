@@ -17,14 +17,15 @@
           - const subarray = columnas.slice(i, i + tamanoSubarray)
           - subarrays.push(subarray)
         - var contador = {}
-        each item in subarrays
-          .sect
-            each it in item
-              - var elem = it.name
-              if contador.hasOwnProperty(elem)
-                - var numero = contador[elem] + 1
-                - contador[elem] = numero
-                a(id=`Side${escritorioSelected}${it.name}${numero}`)= it.name
-              else
-                - contador[elem] = 1
-                a(id=`Side${escritorioSelected}${it.name}`)= it.name
+        #sectContainer
+          each item in subarrays
+            .sect
+              each it in item
+                - var elem = it.name
+                if contador.hasOwnProperty(elem)
+                  - var numero = contador[elem] + 1
+                  - contador[elem] = numero
+                  a(id=`Side${escritorioSelected}${it.name}${numero}`)= it.name
+                else
+                  - contador[elem] = 1
+                  a(id=`Side${escritorioSelected}${it.name}`)= it.name

@@ -11,7 +11,7 @@
     --firstTextColor: #4e4e4e;
     --secondTextColor: #4f4f4f;
     --firstBorder: 1px solid #e8e8e8cc;
-    --firstShadow: #50505054;
+    --firstShadow: #5050501a;
     --firstBorderColor: #d5d5d5cc;
     --firstHvColor: #dee1e6;
     --firstButtonColor: #e3e3e3;
@@ -36,14 +36,19 @@ html.dark {
     --firstButtonColor: #313131;
 }
 
+html {
+
+    overflow: auto;
+    scrollbar-gutter: stable;
+
+}
+
 body {
     background-size: 100%;
     background-attachment: fixed;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    margin: 0;
-    /* overflow: hidden; */
     background-image: var(--bgGradient);
-    scrollbar-gutter: both-edges;
+    margin-top: 157px;
 }
 
 html.light body {
@@ -77,6 +82,7 @@ header {
     width: 100%;
     position: fixed;
     top: 0;
+    left: 0;
     background: var(--bgGradient);
     height: 83px;
     z-index: 5;
@@ -183,6 +189,15 @@ header {
     text-align: left;
 }
 
+#selectCols {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    margin-top: 30px;
+}
+
 #theme {
     background: var(--bgGradient);
 }
@@ -237,9 +252,11 @@ div#defaultDark {
     background-color: var(--firstButtonColor);
     border-left-color: var(--accentColor) !important;
 }
+
 .sideInfoSelectedCol {
     box-shadow: 0px 0px 16px var(--accentColor) !important;
 }
+
 p#saludo {
     font-size: 14px;
     margin: 0;
@@ -456,6 +473,7 @@ div.avatar img {
     position: fixed;
     width: -webkit-fill-available;
     top: 133px;
+    left: 0;
     background: var(--bgGradient);
     display: none;
     align-items: center;
@@ -1174,12 +1192,6 @@ input[type='password'] {
     border-radius: 3px;
 }
 
-.active {
-    /* border: 1px solid #ddd; */
-    border-bottom: 3px solid var(--accentColor);
-    background-color: var(--firstHvColor);
-}
-
 /* Change background color of buttons on hover */
 div#profile button:hover {
     background-color: #f1f1f1;
@@ -1424,12 +1436,6 @@ div.controls button {
     font-family: montserrat;
     font-weight: 400;
     align-items: center;
-}
-
-.container {
-    padding: 120px 0;
-    /* overflow-y: auto;
-    max-height: 90vh; */
 }
 
 /* Ancho de la barra de desplazamiento */
@@ -1997,7 +2003,8 @@ i.icofont-scroll-up {
     justify-content: center;
     font-size: 14px;
     position: absolute;
-    top: 132px;
+    top: 133px;
+    left: 0;
     border-top: 1px solid var(--firstBorderColor);
     flex-wrap: wrap;
     transform: translateX(-100%);
@@ -2021,6 +2028,7 @@ html.light .dropdown-content {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 1.3em;
+    border-bottom: 3px solid transparent;
 }
 
 .dropdown-content a:hover {
@@ -2154,7 +2162,6 @@ div.headCenter input[type="text"]:focus-visible {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    margin-top: 40px;
 }
 
 .selectBackground img {
@@ -2174,9 +2181,6 @@ div.headCenter input[type="text"]:focus-visible {
 }
 
 @media (min-width: 1536px) {
-    body {
-        background-repeat: no-repeat;
-    }
 
     .headRightSub>div {
         gap: 15px;
@@ -2213,31 +2217,33 @@ div.headCenter input[type="text"]:focus-visible {
         justify-content: start;
         flex-direction: row;
         padding: 50px;
+        opacity: 0;
+        transition: opacity .5s;
     }
 
-    .container {
-        padding: 145px 0;
+    #sectContainer {
+        flex-direction: column;
     }
 
     .dropdown-content {
         display: flex;
-        position: sticky;
+        position: fixed;
         transform: none;
         height: auto;
         width: auto;
         z-index: 1;
         top: 83px;
+        left: 0;
+        width: 100%;
     }
-
+    .dropdown-content a.active {
+        border-bottom-color: var(--accentColor);
+        background-color: var(--firstHvColor);
+    }
     .dropdown-content a {
         max-width: 180px;
         font-size: 14px;
     }
-
-    .envolt {
-        width: 390px;
-    }
-
     .sidePanelA2 {
         display: flex;
     }

@@ -235,7 +235,7 @@ div.textHolder.skeleton {
 
 body.edit #sidepanel.maximized {
     display: grid;
-    grid-template-rows: 60px 33vh 1fr;
+    grid-template-rows: 60px 50vh 1fr;
     grid-template-columns: 50% 50%;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
@@ -467,6 +467,7 @@ body.edit .cuerpoInt {
     padding: 15px;
     overflow: hidden;
     background-color: var(--firstHvColor);
+    box-shadow: inset 1px 2px 15px 5px var(--firstShadow);
 }
 .icofont-expand {
     cursor: pointer;

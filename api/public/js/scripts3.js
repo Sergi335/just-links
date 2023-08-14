@@ -36,6 +36,7 @@ function cargaWeb () {
       }
       ordenaDesks()
     }
+    $raiz.style.opacity = 1
   }
 }
 

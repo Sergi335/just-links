@@ -121,6 +121,7 @@ const deleteDeskItem = async (req, res) => {
 }
 const testTemplates = async (req, res) => {
   const escritorio = req.params.nombre
+  console.log('🚀 ~ file: escritorios.js:124 ~ testTemplates ~ escritorio:', escritorio)
   const { user, mode } = req.cookies
   // User new? if si crear dummy content
   const [userData] = await usersModel.find({ name: `${user}` })
@@ -153,7 +154,7 @@ const testTemplates = async (req, res) => {
 
   const existeEscritorio = await escritoriosModel.findOne({ name: escritorio, user })
   if (existeEscritorio === null) {
-    console.log('No exite escritorio')
+    console.log('No exite escritorioooo')
     // crear 404 y enviar
     res.status(404).send({ error: 'not found' })
     return
