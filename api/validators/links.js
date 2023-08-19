@@ -17,7 +17,7 @@ const validateEditLink = [
   }
 ]
 const validateCreateLink = [
-  check('nombre')
+  check('name')
     .exists()
     .notEmpty()
     .isLength({ min: 1, max: 235 }),

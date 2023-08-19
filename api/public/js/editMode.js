@@ -3,20 +3,17 @@ import { openTab } from './functions.mjs'
 document.addEventListener('DOMContentLoaded', editMode)
 
 function editMode () {
-  console.log('Hay JS de edit mode')
   const columnas = document.querySelectorAll('.tablinks')
   columnas.forEach(col => {
     col.removeEventListener('click', openTab)
     col.addEventListener('click', openTab)
   })
-  const desk = document.body.getAttribute('data-desk')
-  document.body.setAttribute('data-desk', `${desk}`)
+  // const desk = document.body.getAttribute('data-desk')
+  // document.body.setAttribute('data-desk', `${desk}`)
   const $raiz = document.querySelector('.tab')
   const hijos = $raiz.childNodes
-  // console.log(hijos)
   hijos.forEach(element => {
-    // console.log(element)
-    ordenaItemsEdit(element.innerText)
+    ordenaItemsEdit(element.innerHTML)
   })
   ordenaColsEdit($raiz)
   // Get the element with id="defaultOpen" and click on it
@@ -26,7 +23,6 @@ function editMode () {
   const enlaces = document.querySelectorAll('.icofont-external')
   enlaces.forEach(enlace => {
     enlace.addEventListener('click', (event) => {
-      console.log(event.target.parentNode.parentNode.childNodes[1].href)
       const link = event.target.parentNode.parentNode.childNodes[1].href
       window.open(link, '_blank')
     })
@@ -38,9 +34,9 @@ function editMode () {
   expandIcon.addEventListener('click', expandPanel)
   const skeleton = document.querySelector('.skeleton-loader')
   skeleton.style.opacity = '0'
-  skeleton.style.display = 'none'
+  skeleton.style.visibility = 'hidden'
   const content = document.querySelector('.cuerpoInt')
-  content.style.display = 'flex'
+  content.style.visibility = 'visible'
   content.style.opacity = '1'
 }
 
@@ -85,7 +81,6 @@ function ordenaItemsEdit (panel) {
     const escritorioActual = document.body.getAttribute('data-desk')
     // console.log(escritorioActual)
     const el = []
-    // console.log(`${escritorioActual}${panel}`)
     el.push(document.getElementById(`edit${escritorioActual}${panel}`).childNodes[0])
     // console.log(el)
     el.forEach(element => {

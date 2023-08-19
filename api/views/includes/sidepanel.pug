@@ -1,8 +1,28 @@
 #sidepanel
+  #imgContainer
+    #linkImages(contenteditable='false')
+      #liLoader
+        span.loader
+      #frameWrapper
+        iframe(id='videoFrame' src='' frameborder='0' scrolling='no' allowfullscreen='')
+      #imgMasonry
+    button#pasteImg Pegar Imágen
   #sideHeader
     h2 Link Info
-    button#prev Anterior 
-    button#next Siguiente
+    button#prev(disabled)
+      | Anterior 
+      svg.ui-icon-button.icon-tabler.icon-tabler-arrow-big-left-lines-filled(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
+        path(stroke='none' d='M0 0h24v24H0z' fill='none')
+        path(d='M9.586 4l-6.586 6.586a2 2 0 0 0 0 2.828l6.586 6.586a2 2 0 0 0 2.18 .434l.145 -.068a2 2 0 0 0 1.089 -1.78v-2.586h2a1 1 0 0 0 1 -1v-6l-.007 -.117a1 1 0 0 0 -.993 -.883l-2 -.001v-2.585a2 2 0 0 0 -3.414 -1.414z' stroke-width='0' fill='currentColor')
+        path(d='M21 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor')
+        path(d='M18 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor')
+    button#next
+      svg.ui-icon-button.icon-tabler.icon-tabler-arrow-big-right-lines-filled(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
+        path(stroke='none' d='M0 0h24v24H0z' fill='none')
+        path(d='M12.089 3.634a2 2 0 0 0 -1.089 1.78l-.001 2.585l-1.999 .001a1 1 0 0 0 -1 1v6l.007 .117a1 1 0 0 0 .993 .883l1.999 -.001l.001 2.587a2 2 0 0 0 3.414 1.414l6.586 -6.586a2 2 0 0 0 0 -2.828l-6.586 -6.586a2 2 0 0 0 -2.18 -.434l-.145 .068z' stroke-width='0' fill='currentColor')
+        path(d='M3 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor')
+        path(d='M6 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor') 
+      | Siguiente
     #closeContainer
       i#sideClose.icofont-close
     p#linkId
@@ -11,7 +31,9 @@
       p Nombre:&nbsp;
         span#lname 
       p Panel:&nbsp;
-        span#lpanel 
+        span#lpanel
+      p Descripción:&nbsp;
+        span#ldesc  
       p.url Url:&nbsp;
         a#lurl(target='_blank') 
       p Activo:&nbsp;
@@ -20,34 +42,28 @@
         span#ladded
       p Icono:&nbsp; 
         img#limage(title='Cambiar icono')
-    #imgOptions
-      .imgOptionsWrapper 
-        img#option1(src='img/opcion1.svg')
-        img#option2(src='img/opcion2.png')
-        img#option3(src='img/opcion3.png')
-        img#option4(src='img/opcion4.svg')
-        img#option5(src='img/opcion5.svg')
-        img#option6(src='img/opcion6.svg')
-        img#option7(src='img/opcion7.ico')
-      .imgOptionsControls
-        input#upLinkImg(type='file' accept='image/*')
+      #imgOptions
+        .imgOptionsWrapper 
+          img#option1(src='/img/opcion1.svg')
+          img#option2(src='/img/opcion2.png')
+          img#option3(src='/img/opcion3.png')
+          img#option4(src='/img/opcion4.svg')
+          img#option5(src='/img/opcion5.svg')
+          img#option6(src='/img/opcion6.svg')
+          img#option7(src='/img/opcion7.png')
+          button#option8 Auto
+        .imgOptionsControls
+          input#upLinkImg(type='file' accept='image/*')
+          svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+            path(stroke-linecap='round' stroke-linejoin='round' d='M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15')
+          button#saveLinkImage Guardar
+    #notesContainer
+      p Notas:&nbsp;
+      #linkNotes(contenteditable='true') Escribe aqu&iacute;
+      #textControls
+        i.icofont-code-alt
+        i.icofont-font
+        i.icofont-delete-alt.ui-icon
         svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
-          path(stroke-linecap='round' stroke-linejoin='round' d='M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15')
-        button#saveLinkImage Guardar
-  #notesContainer
-    p Notas:&nbsp;
-    #linkNotes(contenteditable='true') Escribe aqu&iacute;
-    #textControls
-      i.icofont-code-alt
-      i.icofont-font
-      i.icofont-delete-alt.ui-icon
-      svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
-        path(stroke-linecap='round' stroke-linejoin='round' d='M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z')
-      button#sendNotes Guardar
-  #imgContainer
-    #linkImages(contenteditable='false')
-      #liLoader
-        span.loader
-      iframe(id='videoFrame' src='' frameborder='0' width='560' height='340' scrolling='no' allowfullscreen='')
-      #imgMasonry
-    button#pasteImg Pegar Imágen
+          path(stroke-linecap='round' stroke-linejoin='round' d='M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z')
+        button#sendNotes Guardar

@@ -4,7 +4,7 @@ const { usersModel } = require('../models/index')
 
 const authMiddleware = async (req, res, next) => {
   try {
-    // console.log(req.cookies.token)
+    console.log(req.cookies)
     if (!req.cookies.token) {
       handleHttpError(res, 'NOT_TOKEN', 401)
       return
@@ -23,7 +23,8 @@ const authMiddleware = async (req, res, next) => {
 
     next()
   } catch (e) {
-    handleHttpError(res, 'NOT_SESSION', 401)
+    // handleHttpError(res, 'NOT_SESSION', 401)
+    res.redirect('/')
   }
 }
 

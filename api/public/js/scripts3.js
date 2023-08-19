@@ -1,5 +1,6 @@
 import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath, sortSideInfo } from './functions.mjs'
 import { togglePanel, navLinkInfos } from './sidepanel.js'
+import { groupBy, putIntoView } from './styles.js'
 
 document.addEventListener('DOMContentLoaded', cargaWeb)
 document.addEventListener('click', escondeDialogos)
@@ -8,13 +9,14 @@ document.addEventListener('click', escondeDialogos)
  * Función que carga los eventos en la web
  */
 function cargaWeb () {
-  if (window.location.pathname !== '/api/profile') {
+  if (window.location.pathname !== '/profile') {
+    // testImages()
     addDesktopEvents()
     darHora()
     handleDbClick()
     handleSimpleClick()
-    const contenedor = document.querySelectorAll('.container')[0]
-    contenedor.onscroll = function (event) {
+    // const contenedor = document.querySelectorAll('.container')[0]
+    document.onscroll = function (event) {
       toggleBotonSubirArriba()
     }
     addContextMenuEvents()
@@ -379,16 +381,16 @@ function changeLayout (event) {
     console.log('Entro al if')
     if (getCookieValue('mode') === 'edit') {
       document.cookie = 'mode=normal'
-      window.location = `/${deskName}`
+      window.location = `/desktop/${deskName}`
       console.log('Modo normal')
     } else if (getCookieValue('mode') === 'normal') {
       document.cookie = 'mode=edit'
-      window.location = `/${deskName}`
+      window.location = `/desktop/${deskName}`
       console.log('Modo edit')
     }
   } else {
     document.cookie = 'mode=edit'
-    window.location = `/${deskName}`
+    window.location = `/desktop/${deskName}`
     console.log('Entro al else')
   }
 }
@@ -663,8 +665,24 @@ async function refreshColumns (json) {
     $envolt.appendChild($columna)
 
     $raiz.appendChild($envolt)
+    if (window.localStorage.getItem('columnWidth')) {
+      $envolt.style.width = JSON.parse(window.localStorage.getItem('columnWidth'))
+    } else {
+      $envolt.style.width = constants.COLUMN_WIDTH
+    }
     const container = document.getElementById(`${escritorioActual}Cols`)
     const hijos = Array.from(container.childNodes)
+    const elements = Array.from(document.querySelectorAll('.sect'))
+    if (window.localStorage.getItem('columns')) {
+      groupBy(elements, Number(JSON.parse(window.localStorage.getItem('columns'))))
+    } else {
+      groupBy(elements, constants.COLUMN_COUNT)
+    }
+    const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+    sideBlocks.forEach(panel => {
+      panel.removeEventListener('click', putIntoView)
+      panel.addEventListener('click', putIntoView)
+    })
     addColumnEvents()
     ordenaItems(hijos)
     ordenaCols($raiz)
@@ -825,7 +843,7 @@ async function createLink () {
   const columna = document.body.getAttribute('data-panel')
   const nombre = document.querySelector('#linkName').value.trim()
   const linkURL = document.querySelector('#linkURL').value.trim()
-  const imgURL = `https://www.google.com/s2/favicons?domain=${linkURL}`
+  const imgURL = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${linkURL}&size=64`
   const dbID = document.getElementById('linkSubmit').getAttribute('sender')
   // Seleccionamos columna por id, por si hay dos con el mismo nombre
   let $raiz
@@ -841,7 +859,7 @@ async function createLink () {
   console.log(orden)
 
   // Declaramos el body para enviar
-  const body = { nombre, URL: linkURL, imgURL, escritorio, columna, id: dbID, orden }
+  const body = { name: nombre, URL: linkURL, imgURL, escritorio, panel: columna, idpanel: dbID, orden }
   const params = {
     url: `${constants.BASE_URL}/links`,
     method: 'POST',
@@ -931,12 +949,15 @@ async function deleteLink () {
  * @param {} event
  */
 async function moveLinks (event) {
+  const menu = document.getElementById('menuLink')
+  const menuVisible = menu.style.display === 'block'
+  menu.style.display = menuVisible ? 'none' : 'block'
   if (document.body.classList.contains('edit')) {
     moveLinksEdit(event)
   } else {
     // Recogemos el id del panel de origen -> Correcto
     const panelOrigenId = document.body.getAttribute('idpanel')
-    // Recogemos el nombre del panel de destino -> Es el de origen, ver si afecta en server
+    // Recogemos el nombre del panel de destino
     const panelDestinoNombre = event.target.innerText
     // Declaramos la variable para recoger el id del panel destino -> Correcto
     let panelDestinoId
@@ -1191,13 +1212,13 @@ async function pasteLink (event) {
                     orden = orden + 1
                     console.log(orden)
                     const json = {
-                      id: raiz,
-                      nombre,
+                      idpanel: raiz,
+                      name: nombre,
                       URL: url,
-                      imgURL: `https://www.google.com/s2/favicons?domain=${url}`,
+                      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
                       orden,
                       escritorio,
-                      columna
+                      panel: columna
                     }
                     const params = {
                       url: `${constants.BASE_URL}/links`,
@@ -1251,13 +1272,13 @@ async function pasteLink (event) {
                     orden = orden + 1
                     console.log(orden)
                     const json = {
-                      id: raiz,
-                      nombre,
+                      idpanel: raiz,
+                      name: nombre,
                       URL: url,
-                      imgURL: `https://www.google.com/s2/favicons?domain=${url}`,
+                      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
                       orden,
                       escritorio,
-                      columna
+                      panel: columna
                     }
                     const params = {
                       url: `${constants.BASE_URL}/links`,
@@ -1764,13 +1785,13 @@ function ordenaDesks () {
 
 function logOut () {
   console.log('Cierra sesión')
-  document.cookie = 'token='
-  window.location = `${constants.BASE_URL}`
+  document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
+  window.location = '/'
 }
 // Funcion ir a perfil
 function profile () {
   console.log('Has hecho click')
-  window.location = '/api/profile'
+  window.location = '/profile'
 }
 function mostrarMenu (event) {
   event.preventDefault() // Evitar el menú contextual predeterminado del navegador
@@ -2049,14 +2070,12 @@ function setLastVisited (event) {
   }
 }
 function scrollToTop () {
-  const contenedor = document.querySelectorAll('.container')[0]
-  contenedor.scrollTop = 0
-  // document.documentElement.scrollTop = 0
+  window.scroll(top)
 }
 function toggleBotonSubirArriba () {
   const btnSubirArriba = document.getElementById('btnSubirArriba')
-  const contenedor = document.querySelectorAll('.container')[0]
-  if (contenedor.scrollTop > 20) {
+  // const contenedor = document.querySelectorAll('.container')[0]
+  if (window.scrollY > 20) {
     btnSubirArriba.style.opacity = 1
     btnSubirArriba.style.visibility = 'visible'
   } else {
@@ -2068,3 +2087,19 @@ function hidePanels () {
   const panels = document.querySelector('.cuerpoInt')
   panels.classList.toggle('visiblePanels')
 }
+
+// async function testImages () {
+//   const links = document.querySelectorAll('.link')
+//   links.forEach(async link => {
+//     const res = await fetch(`/api/linkStatus?url=${link.childNodes[0].src}`)
+//     if (!res.ok) {
+//       console.log('Error al recuperar datos')
+//     }
+//     const data = await res.json()
+//     const { status } = data
+//     console.log(status)
+//     if (status === 'clientErr' || status === 'serverErr') {
+//       link.childNodes[0].src = 'img/opcion4.svg'
+//     }
+//   })
+// }

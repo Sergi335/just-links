@@ -81,10 +81,9 @@ window.onload = function () {
           console.log(token)
           const user = data.user
           console.log(user[0].name)
-          // document.cookie = `token=${token}; path=/; expires=Thu, 01 Jan 2024 00:00:00 UTC; domain=tudominio.com; secure;`;
           document.cookie = `token=${token}`
           document.cookie = `user=${user[0].name}`
-          window.location = '/inicio'
+          window.location = '/desktop/inicio'
         }
       })
       .catch(function (error) {

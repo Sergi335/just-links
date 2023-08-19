@@ -36,8 +36,10 @@ const setNotes = async (req, res) => {
  */
 const setLinkImg = async (url, user, linkId) => {
   const urlObj = new URL(url)
+  console.log('🚀 ~ file: links.js:39 ~ setLinkImg ~ urlObj:', urlObj)
   const dominio = 'firebasestorage.googleapis.com'
-  if (urlObj.hostname === dominio) {
+  const dominio2 = 't1.gstatic.com'
+  if (urlObj.hostname === dominio || urlObj.hostname === dominio2) {
     try {
       const imagePath = url
       await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
@@ -239,20 +241,12 @@ const getItemsCount = async (req, res) => {
  */
 const createItem = async (req, res) => {
   const { body } = req
-  // console.log(body);
   const user = req.user.name
-  const objeto = {}
-  objeto.name = body.nombre
+  const objeto = { ...body, user }
   if (body.nombre === undefined) {
     console.log('Hay que consultar el nombre')
   }
-  objeto.URL = body.URL
-  objeto.imgURL = body.imgURL
-  objeto.escritorio = body.escritorio
-  objeto.panel = body.columna
-  objeto.idpanel = body.id
-  objeto.orden = body.orden
-  objeto.user = user
+
   // Find idpanel si estaba vacio cambiar flag a false
   const count = await linksModel.find({ idpanel: objeto.idpanel, user })
   if (count.length === 0) {
@@ -261,16 +255,6 @@ const createItem = async (req, res) => {
   } else {
     console.log('No estaba vacia')
   }
-  // const findDuplicate = await linksModel.find({ name: body.nombre, idpanel: body.id, user })
-  // console.log(findDuplicate)
-  // console.log(findDuplicate.length)
-  // if (findDuplicate.length === 0) {
-  //   const data = await linksModel.create(objeto)
-  //   res.send(data)
-  // } else {
-  //   const err = { error: 'El link ya existe en esta columna' }
-  //   res.send(err)
-  // }
   const data = await linksModel.create(objeto)
   res.send(data)
   // Obtener los paneles del escritorio
@@ -394,22 +378,31 @@ const moveItem = async (req, res) => {
     await linksModel.findOneAndUpdate({ name: body.name, idpanel: body.panelOrigenId, user }, { $set: { idpanel: body.panelDestinoId, panel: body.panelDestinoNombre, orden: body.orden, escritorio: body.escritorio } })
     const link = await linksModel.find({ name: body.name, idpanel: body.panelDestinoId, user, escritorio: body.escritorio })
     const count = await linksModel.find({ idpanel: body.panelOrigenId, user })
+    const countDest = await linksModel.find({ idpanel: body.panelDestinoId, user })
     if (count.length === 0) {
       console.log('Estaba vacia')
       await columnasModel.findOneAndUpdate({ _id: body.panelOrigenId }, { $set: { vacio: true } })
     } else {
       console.log('No se queda vacia')
     }
+    if (countDest.length >= 1) {
+      await columnasModel.findOneAndUpdate({ _id: body.panelDestinoId }, { $set: { vacio: false } })
+    }
     res.send(link[0])
   } else {
     await linksModel.findOneAndUpdate({ name: body.name, idpanel: body.panelOrigenId, user }, { $set: { idpanel: body.panelDestinoId, panel: body.panelDestinoNombre, orden: body.orden } })
     const link = await linksModel.find({ name: body.name, idpanel: body.panelDestinoId, user })
     const count = await linksModel.find({ idpanel: body.panelOrigenId, user })
+    const countDest = await linksModel.find({ idpanel: body.panelDestinoId, user })
+    console.log('🚀 ~ file: links.js:409 ~ moveItem ~ countDest:', countDest)
     if (count.length === 0) {
       console.log('Estaba vacia')
       await columnasModel.findOneAndUpdate({ _id: body.panelOrigenId }, { $set: { vacio: true } })
     } else {
       console.log('No se queda vacia')
+    }
+    if (countDest.length >= 1) {
+      await columnasModel.findOneAndUpdate({ _id: body.panelDestinoId }, { $set: { vacio: false } })
     }
     res.send(link[0])
   }
@@ -535,5 +528,4 @@ const encontrarDuplicadosPorURL = async (req, res) => {
     res.send({ error })
   }
 }
-
 module.exports = { getItemsCount, getItems, createItem, deleteItem, editItem, editdragItem, actualizarOrdenElementos, getNameByUrl, moveItem, getItem, setNotes, setLinkImg, setImages, deleteImage, obtenerStatus, encontrarDuplicadosPorURL, getAllItems }

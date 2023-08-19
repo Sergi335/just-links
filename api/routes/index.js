@@ -14,11 +14,12 @@ const { displayUserProfile } = require('../controllers/users')
 const { searchLinks } = require('../controllers/searchController')
 const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl } = require('../helpers/storage')
 
-router.get('/', (req, res) => {
+router.get('/', authMiddleware, (req, res) => {
   res.render('landing.pug')
 })
 
-router.get('/:nombre', authMiddleware, testTemplates)
+router.get('/desktop/:nombre', authMiddleware, testTemplates)
+router.get('/profile', authMiddleware, displayUserProfile)
 router.get('/api/cagadas', cagadasFix)
 
 router.get('/api/linkStatus', authMiddleware, obtenerStatus)
@@ -34,7 +35,6 @@ router.get('/api/escritorios', getDeskItems)
 router.get('/api/sidepanel', authMiddleware, getSidePanel)
 router.get('/api/search', authMiddleware, searchLinks)
 router.get('/api/deleteUser', authMiddleware, eliminaUsuario)
-router.get('/api/profile', authMiddleware, displayUserProfile)
 router.get('/api/downloadBackup', authMiddleware, downloadBackup)
 router.get('/api/getBackground', authMiddleware, getBackgroundUrl)
 router.post('/api/changePassword', authMiddleware, cambiaPassword)

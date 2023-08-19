@@ -2,7 +2,9 @@ import { editColumn } from './scripts3.js'
 
 export const constants = {
   BASE_URL: '/api',
-  BACKGROUNDS_URL: '/img/'
+  BACKGROUNDS_URL: '/img/',
+  COLUMN_WIDTH: '390px',
+  COLUMN_COUNT: 4
 }
 
 function hora () {

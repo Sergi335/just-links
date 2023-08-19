@@ -7,7 +7,7 @@ function loadStyles () {
     if (!document.body.classList.contains('edit')) {
       sideInfo()
       handleResize()
-      handleSelectColsAtStart()
+      setColsAtStart()
     }
   }
   const backgrounds = document.querySelectorAll('.miniatures')
@@ -191,7 +191,7 @@ function sideInfo () {
     })
   }
 }
-function putIntoView (event) {
+export function putIntoView (event) {
   console.log(event.target)
   event.preventDefault()
   // const sideBlocks = Array.from(document.querySelectorAll('.sect'))
@@ -234,7 +234,7 @@ function handleResize () {
   }
 }
 
-function groupBy (elements, numberCols) {
+export function groupBy (elements, numberCols) {
   // console.log('Agrupamos por ' + numberCols)
   // console.log(elements)
   if (Array.isArray(elements) === false) throw new Error('El parámetro debe ser un array')
@@ -273,30 +273,35 @@ function handleSelectCols (event) {
       col.style.width = '100%'
     })
     groupBy(elements, 1)
+    window.localStorage.setItem('columnWidth', JSON.stringify('100%'))
   }
   if (event.target.value === '2') {
     columns.forEach(col => {
       col.style.width = '48%'
     })
     groupBy(elements, 2)
+    window.localStorage.setItem('columnWidth', JSON.stringify('48%'))
   }
   if (event.target.value === '3') {
     columns.forEach(col => {
       col.style.width = '30%'
     })
     groupBy(elements, 3)
+    window.localStorage.setItem('columnWidth', JSON.stringify('30%'))
   }
   if (event.target.value === '4') {
     columns.forEach(col => {
       col.style.width = '390px'
     })
     groupBy(elements, 4)
+    window.localStorage.setItem('columnWidth', JSON.stringify('390px'))
   }
   if (event.target.value === '5') {
     columns.forEach(col => {
       col.style.width = '300px'
     })
     groupBy(elements, 5)
+    window.localStorage.setItem('columnWidth', JSON.stringify('300px'))
   }
   const sideBlocks = Array.from(document.querySelectorAll('.sect'))
   sideBlocks.forEach(panel => {
@@ -306,47 +311,28 @@ function handleSelectCols (event) {
   window.localStorage.setItem('columns', JSON.stringify(event.target.value))
 }
 
-function handleSelectColsAtStart () {
+function setColsAtStart () {
+  const selector = document.getElementById('colsSelect')
+  const elements = Array.from(document.querySelectorAll('.sect'))
+  const columns = document.querySelectorAll('.envolt')
   if (window.localStorage.getItem('columns')) {
-    const cols = JSON.parse(window.localStorage.getItem('columns'))
-    const elements = Array.from(document.querySelectorAll('.sect'))
-    const columns = document.querySelectorAll('.envolt')
-    if (cols === '1') {
-      columns.forEach(col => {
-        col.style.width = '100%'
-      })
-      groupBy(elements, 1)
-    }
-    if (cols === '2') {
-      columns.forEach(col => {
-        col.style.width = '48%'
-      })
-      groupBy(elements, 2)
-    }
-    if (cols === '3') {
-      columns.forEach(col => {
-        col.style.width = '30%'
-      })
-      groupBy(elements, 3)
-    }
-    if (cols === '4') {
-      columns.forEach(col => {
-        col.style.width = '390px'
-      })
-      groupBy(elements, 4)
-    }
-    if (cols === '5') {
-      columns.forEach(col => {
-        col.style.width = '300px'
-      })
-      groupBy(elements, 5)
-    }
-    const selector = document.getElementById('colsSelect')
-    selector.value = cols
-    const sideBlocks = Array.from(document.querySelectorAll('.sect'))
-    sideBlocks.forEach(panel => {
-      panel.removeEventListener('click', putIntoView)
-      panel.addEventListener('click', putIntoView)
+    selector.value = JSON.parse(window.localStorage.getItem('columns'))
+    groupBy(elements, Number(JSON.parse(window.localStorage.getItem('columns'))))
+  } else {
+    selector.value = constants.COLUMN_COUNT
+  }
+  if (window.localStorage.getItem('columnWidth')) {
+    columns.forEach(col => {
+      col.style.width = JSON.parse(window.localStorage.getItem('columnWidth'))
+    })
+  } else {
+    columns.forEach(col => {
+      col.style.width = constants.COLUMN_WIDTH
     })
   }
+  const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+  sideBlocks.forEach(panel => {
+    panel.removeEventListener('click', putIntoView)
+    panel.addEventListener('click', putIntoView)
+  })
 }

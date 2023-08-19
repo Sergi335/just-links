@@ -17,9 +17,13 @@ function searchLinks (query) {
     const searchInput = document.getElementById('searchInput')
     if (!resultsContainer.contains(event.target) && event.target !== searchInput) {
       resultsContainer.innerHTML = ''
+      resultsContainer.style.display = 'none'
       searchInput.value = ''
     }
   }
+  const searchInput = document.getElementById('searchInput')
+  const { left, width } = searchInput.getBoundingClientRect()
+  console.log(left)
   const resultsContainer = document.getElementById('resultsContainer')
   fetch(`/api/search?query=${query}`)
     .then(response => response.json())
@@ -69,6 +73,8 @@ function searchLinks (query) {
         resultsContainer.appendChild($div)
       })
       resultsContainer.style.display = 'flex'
+      resultsContainer.style.left = `${left}px`
+      resultsContainer.style.width = `${width - 2}px`
       document.addEventListener('click', handleClickOutside)
     })
     .catch(error => {

@@ -2,8 +2,7 @@ import { formatDate, sendMessage, checkUrlMatch } from './functions.mjs'
 document.addEventListener('DOMContentLoaded', sidePanel)
 
 function sidePanel () {
-  // console.log('Hay sidepanel')
-  if (window.location.pathname !== '/api/profile') addPanelEvents()
+  if (window.location.pathname !== '/profile') addPanelEvents()
   const element = document.querySelectorAll('div.link')[0]
   if (element && element !== null) {
     element.classList.add('navActive')
@@ -58,6 +57,10 @@ function addPanelEvents () {
   document.querySelectorAll('#imgOptions img').forEach(item => {
     item.addEventListener('click', changeLinkImg)
   })
+  const opt8 = document.getElementById('option8')
+  opt8.removeEventListener('click', changeLinkImg)
+  opt8.addEventListener('click', changeLinkImg)
+
   document.querySelector('#upLinkImg').addEventListener('change', changeLinkImg)
   document.querySelector('#saveLinkImage').removeEventListener('click', fetchLinkImage)
   document.querySelector('#saveLinkImage').addEventListener('click', fetchLinkImage)
@@ -81,35 +84,36 @@ function addPanelEvents () {
     })
   }
 }
-// las dos siguientes en teoría hacen lo mismo
 function closePanel () {
   const panel = document.getElementById('sidepanel')
-  // Tiene sentido la comprobación?
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'grid'
-  } else {
-    panel.style.display = 'none'
-    const masonry = document.getElementById('imgMasonry')
-    const videoFrame = document.getElementById('videoFrame')
-    const loader = document.getElementById('liLoader')
-    const imagesHolder = document.getElementById('linkImages')
-    imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
-    videoFrame.src = ''
-    masonry.style.display = 'block'
-    masonry.innerHTML = ''
-    loader.classList.remove('fade-off')
-  }
+  const masonry = document.getElementById('imgMasonry')
+  const videoFrame = document.getElementById('videoFrame')
+  const loader = document.getElementById('liLoader')
+
+  panel.style.display = 'none'
+  // document.documentElement.style.overflow = 'auto'
+  masonry.style.backgroundImage = 'var(--placeholderImg)'
+  videoFrame.src = ''
+  masonry.innerHTML = ''
+  loader.classList.remove('fade-off')
 }
 export function togglePanel (event) {
   const element = event.target.parentNode.parentNode
-  const panel = document.getElementById('sidepanel')
-  // Esta comprobación tiene sentido?
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'grid'
-  } else {
-    panel.style.display = 'none'
-  }
   showLinkInfo(element)
+  const panel = document.getElementById('sidepanel')
+  const links = document.querySelectorAll('div.link')
+  const buttonNext = document.getElementById('next')
+  const buttonPrev = document.getElementById('prev')
+  const linksIds = []
+  links.forEach(item => {
+    linksIds.push(item.id)
+  })
+  const actualPos = linksIds.indexOf(event.target.parentNode.parentNode.id)
+
+  actualPos > 0 ? buttonPrev.disabled = false : buttonPrev.disabled = true
+  actualPos === linksIds.length - 1 ? buttonNext.disabled = true : buttonNext.disabled = false
+
+  panel.style.display = 'flex'
 }
 export function navLinkInfos (event) {
   event.preventDefault()
@@ -132,71 +136,65 @@ export function navLinkInfos (event) {
   panels.forEach(panel => {
     panelsNames.push(panel.innerText)
   })
-
+  const buttonNext = document.getElementById('next')
+  const buttonPrev = document.getElementById('prev')
   let actualPos = linksIds.indexOf(idHolder.innerText)
+  // Navegación directa al clicar enlace en edit mode
   if (event.target.nodeName === 'SPAN') {
-    console.log('Es enlace')
     const element = event.target.parentNode.parentNode
+    showLinkInfo(element)
     links.forEach(link => {
-      if (link.classList.contains('navActive')) {
-        link.classList.remove('navActive')
-      }
+      if (link.classList.contains('navActive')) link.classList.remove('navActive')
     })
     element.classList.add('navActive')
-    showLinkInfo(element)
+    buttonPrev.disabled = false
   }
+  // Navegación alante y atrás con los botones
   if (event.target.id === 'prev') {
     actualPos = actualPos - 1
-    if (actualPos >= 0) {
-      const element = document.getElementById(linksIds[actualPos])
-      if (element.nextElementSibling) {
-        element.nextElementSibling.classList.remove('navActive')
+    buttonNext.disabled = false
+    if (actualPos === 0) buttonPrev.disabled = true
+    const element = document.getElementById(linksIds[actualPos])
+    showLinkInfo(element)
+    if (element.nextElementSibling) element.nextElementSibling.classList.remove('navActive')
+    element.classList.add('navActive')
+    const panel = element.parentNode.id
+    const buttons = document.querySelectorAll('button.tablinks')
+    for (const button of buttons) {
+      if (button.id === panel) {
+        button.click()
+        break // Rompe el bucle una vez que se encuentra el botón deseado
       }
-      element.classList.add('navActive')
-      showLinkInfo(element)
-
-      const panel = element.parentNode.id
-      // console.log(panel)
-      const buttons = document.querySelectorAll('button.tablinks')
-      for (const button of buttons) {
-        if (button.id === panel) {
-          button.click()
-          break // Rompe el bucle una vez que se encuentra el botón deseado
-        }
-      }
-    } // else deshabilitar el boton
+    }
   }
   if (event.target.id === 'next') {
     actualPos = actualPos + 1
-    if (actualPos <= linksIds.length) {
-      const element = document.getElementById(linksIds[actualPos])
-      if (element.previousElementSibling) {
-        element.previousElementSibling.classList.remove('navActive')
+    if (actualPos === linksIds.length - 1) buttonNext.disabled = true
+    buttonPrev.disabled = false
+    const element = document.getElementById(linksIds[actualPos])
+    if (element.previousElementSibling) {
+      element.previousElementSibling.classList.remove('navActive')
+    }
+    element.classList.add('navActive')
+    showLinkInfo(element)
+    const panel = element.parentNode.id
+    const buttons = document.querySelectorAll('button.tablinks')
+    for (const button of buttons) {
+      if (button.id === panel) {
+        button.click()
+        break // Rompe el bucle una vez que se encuentra el botón deseado
       }
-      element.classList.add('navActive')
-      showLinkInfo(element)
-
-      const panel = element.parentNode.id
-      // console.log(panel)
-      const buttons = document.querySelectorAll('button.tablinks')
-      for (const button of buttons) {
-        if (button.id === panel) {
-          button.click()
-          break // Rompe el bucle una vez que se encuentra el botón deseado
-        }
-      }
-    } // else deshabilitar el boton next
+    }
   }
 }
 async function showLinkInfo (element) {
   const loader = document.getElementById('liLoader')
   const imagesHolder = document.getElementById('linkImages')
-
+  console.log(element)
   try {
     const id = element.id
     const imgUrl = element.childNodes[0].src
     const name = element.childNodes[1].childNodes[0].innerText
-    // Añadir descripcion
     let panel
 
     if (!document.body.classList.contains('edit')) {
@@ -230,6 +228,9 @@ async function showLinkInfo (element) {
     const nameHolder = document.getElementById('lname')
     nameHolder.innerText = name
 
+    const descHolder = document.getElementById('ldesc')
+    descHolder.innerText = json.data[0].description
+
     const panelHolder = document.getElementById('lpanel')
     panelHolder.innerText = panel
 
@@ -247,9 +248,9 @@ async function showLinkInfo (element) {
     if (images !== undefined && images.length > 0) {
       const videoFrame = document.getElementById('videoFrame')
       videoFrame.style.display = 'none'
-      imagesHolder.style.backgroundImage = "url('')"
       const masonry = document.getElementById('imgMasonry')
-      console.log('🚀 ~ file: sidepanel.js:267 ~ showLinkInfo ~ masonry:', masonry)
+      masonry.style.backgroundImage = "url('')"
+
       images.forEach(img => {
         const image = document.createElement('img')
         image.src = img
@@ -275,17 +276,18 @@ async function showLinkInfo (element) {
       makeMasonry()
     } else {
       const masonry = document.getElementById('imgMasonry')
-      masonry.style.display = 'none'
-      imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
+      masonry.style.backgroundImage = 'var(--placeholderImg)'
     }
     const videoFrame = document.getElementById('videoFrame')
+    const frameWrapper = document.getElementById('frameWrapper')
     const matchedUrl = checkUrlMatch(url)
     if (matchedUrl) {
-      imagesHolder.style.backgroundImage = "url('')"
+      frameWrapper.style.backgroundImage = "url('')"
       videoFrame.style.display = 'block'
       videoFrame.src = matchedUrl
     } else {
       videoFrame.style.display = 'none'
+      frameWrapper.style.backgroundImage = 'var(--placeholderVid)'
     }
 
     setTimeout(() => {
@@ -390,6 +392,7 @@ function pasteImg () {
 }
 async function changeLinkImg (event) {
   console.log(event.target)
+  const url = document.getElementById('lurl').href
   const previewImage = document.getElementById('limage')
   // const imageH = document.getElementById('sideHeadImg')
   const imageInput = document.getElementById('upLinkImg')
@@ -433,7 +436,12 @@ async function changeLinkImg (event) {
   }
   if (event.target.id === 'option7') {
     console.log('Subimos imagen7')
-    previewImage.src = '/img/opcion7.ico'
+    previewImage.src = '/img/opcion7.png'
+    // imageH.src = 'img/opcion3.png'
+  }
+  if (event.target.id === 'option8') {
+    console.log('Subimos imagen8')
+    previewImage.src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`
     // imageH.src = 'img/opcion3.png'
   }
 }
@@ -446,10 +454,10 @@ async function fetchLinkImage () {
   console.log(linkId)
   console.log(`Subimos la imagen ${src}`)
   console.log(src.indexOf('img'))
-  if (src.indexOf('img') === -1) {
+  const imageInput = document.getElementById('upLinkImg')
+  const file = imageInput.files[0]
+  if (file) {
     // const file = src
-    const imageInput = document.getElementById('upLinkImg')
-    const file = imageInput.files[0]
     const formData = new FormData()
     formData.append('linkImg', file)
     formData.append('linkId', linkId)
@@ -597,9 +605,9 @@ async function deleteImage (event) {
         }
       } else {
         anchor.remove()
-        imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
+        imagesHolder.style.backgroundImage = 'var(--placeholderImg)'
         if (document.getElementById('imgMasonry').children.length === 0) {
-          document.getElementById('linkImages').style.backgroundImage = "url('../img/placeholderImg.svg')"
+          document.getElementById('linkImages').style.backgroundImage = 'var(--placeholderImg)'
         }
         const confirmBox = document.getElementById('deleteLinkImgForm')
         confirmBox.style.display = 'none'
@@ -610,7 +618,7 @@ async function deleteImage (event) {
       const error = await res.json()
       if (error.error === 'storage/invalid-url' || error.error === 'storage/object-not-found') {
         anchor.remove()
-        imagesHolder.style.backgroundImage = "url('../img/placeholderImg.svg')"
+        imagesHolder.style.backgroundImage = 'var(--placeholderImg)'
         const confirmBox = document.getElementById('deleteLinkImgForm')
         confirmBox.style.display = 'none'
         makeMasonry()
