@@ -173,14 +173,18 @@ function addLinkEvents ($raiz) {
   }
 }
 function addContextMenuEvents () {
-  // Obtener todos los elementos de la página en los que quieres habilitar el menú emergente
-  const elementos = document.querySelectorAll('.cuerpoInt')
-
-  // Agrega un event listener a cada elemento
-  elementos.forEach(function (elemento) {
-    elemento.addEventListener('contextmenu', mostrarMenu)
+  // Obtener todos los elementos de la página en los que hay que habilitar el menú emergente
+  const headers = document.querySelectorAll('.headercolumn')
+  headers.forEach(head => {
+    head.removeEventListener('contextmenu', mostrarMenu)
+    head.addEventListener('contextmenu', mostrarMenu)
   })
-
+  const links = document.querySelectorAll('.link')
+  links.forEach(link => {
+    link.removeEventListener('contextmenu', mostrarMenu)
+    link.addEventListener('contextmenu', mostrarMenu)
+  })
+  // Añadir buttons de editmode
   // Obtener los elementos del submenu mover columna
   const menuMoveColItems = document.querySelectorAll('#destDesk li')
 
@@ -1415,6 +1419,7 @@ function refreshLinks (json) {
     $div.childNodes[0].click()
     $div.classList.add('navActive')
   }
+  $div.addEventListener('contextmenu', mostrarMenu)
 }
 
 // funciones auxiliares para mostrar/ocultar cuadros de diálogo
@@ -1793,9 +1798,8 @@ function profile () {
   console.log('Has hecho click')
   window.location = '/profile'
 }
-function mostrarMenu (event) {
-  event.preventDefault() // Evitar el menú contextual predeterminado del navegador
-  // escondeDialogos()
+export function mostrarMenu (event) {
+  event.preventDefault()
   const forms = [...document.querySelectorAll('.deskForm'), document.getElementById('menuMoveTo')]
   forms.forEach(form => {
     if (form.style.display === 'flex' || form.style.display === 'block') {
@@ -1804,156 +1808,88 @@ function mostrarMenu (event) {
   })
   // Detectar si se hizo clic con el botón derecho del ratón
   if (event.button === 2) {
-    if (event.target.nodeName === 'H2' || event.target.nodeName === 'BUTTON' ||
-    event.target.classList.contains('headercolumn')) {
-      const menu = document.getElementById('menuColumn')
-      menu.style.display = 'block'
+    if (event.currentTarget.classList.contains('headercolumn')) {
+      // Primero ocultamos el menu link, si está visible
       const menuL = document.getElementById('menuLink')
-      const visible = menuL.style.display === 'block'
-      if (visible) {
+      if (menuL.style.display === 'block') {
         menuL.style.display = 'none'
       }
-      // Obtener la posición del ratón
-      const posX = event.clientX
-      const posY = event.clientY
-
-      // Posicionar el menú emergente cerca de la posición del ratón
-      menu.style.left = posX + 'px'
-      menu.style.top = posY + 'px'
       // Obtener la información del elemento en el que se hizo clic
-      const elemento = event.target
-      console.log(elemento)
-      let colId
-      if (event.target.nodeName === 'H2') {
-        colId = elemento.parentNode.parentNode.childNodes[1].dataset.db
-      } else if (event.target.nodeName === 'BUTTON') {
-        colId = elemento.dataset.db
-      } else {
-        console.log('entro')
-        colId = elemento.parentNode.childNodes[1].dataset.db
-        console.log(colId)
-      }
-      // console.log(elemento.parentNode.childNodes[1].dataset)
-      const informacion = elemento.textContent // Otra propiedad del elemento que desees mostrar
+      const elemento = event.currentTarget
+      const colId = elemento.parentNode.childNodes[1].dataset.db
       const botonConfBorrar = document.getElementById('confDeletecolSubmit')
       botonConfBorrar.setAttribute('sender', colId)
+
       // Actualizar el contenido del menú emergente con la información relevante
+      const informacion = elemento.textContent
       const info = document.getElementById('infoC')
       info.textContent = informacion
       document.body.setAttribute('data-panel', informacion.trim())
+
       // Actualizar el contenido del menú emergente con la información relevante
       const contenidoMenu = document.getElementById('elementoC')
-      if (event.target.nodeName === 'H2') {
-        contenidoMenu.textContent = elemento.parentNode.parentNode.childNodes[1].dataset.db
-      } else if (event.target.nodeName === 'BUTTON') {
-        contenidoMenu.textContent = elemento.dataset.db
-      } else {
-        contenidoMenu.textContent = elemento.parentNode.childNodes[1].dataset.db
-      }
-    }
-    if (event.target.nodeName === 'IMG' || event.target.classList.contains('title') || event.target.classList.contains('description')) {
-      const menu = document.getElementById('menuLink')
-      menu.style.display = 'block'
-      const menuC = document.getElementById('menuColumn')
-      const visible = menuC.style.display === 'block'
-      if (visible) {
-        menuC.style.display = 'none'
-      }
+      contenidoMenu.textContent = colId
+      // Luego mostramos el menu columna
+      const menu = document.getElementById('menuColumn')
       // Obtener la posición del ratón
       const posX = event.clientX
       const posY = event.clientY
-
+      console.log('🚀 ~ file: scripts3.js:1840 ~ event.target.classList.contains ~ posY:', posY)
       // Posicionar el menú emergente cerca de la posición del ratón
       menu.style.left = posX + 'px'
       menu.style.top = posY + 'px'
-      if (event.target.nodeName === 'IMG') {
-        document.body.setAttribute('data-link', event.target.parentNode.id)
-        if (!document.body.classList.contains('edit')) {
-          const elemento = event.target.parentNode
-          // quitar el edit del id en edit
-          document.body.setAttribute('idPanel', elemento.parentNode.dataset.db)
-          // Cojer nombre de otro sitio en edit
-          document.body.setAttribute('data-panel', elemento.parentNode.parentNode.previousSibling.childNodes[0].innerText)
-          // Puede que a partir de aqui este bien
-          const informacion = elemento.childNodes[1].childNodes[0].textContent
-          const infoDesc = elemento.childNodes[1].childNodes[1].textContent
-          const info = document.getElementById('infoL')
-          const infoDescHolder = document.getElementById('infoD')
-          info.textContent = informacion
-          infoDescHolder.textContent = infoDesc
-          // Actualizar el contenido del menú emergente con la información relevante
-          const contenidoMenu = document.getElementById('elementoL')
-          contenidoMenu.textContent = elemento.childNodes[1].href
-        } else {
-          const elemento = event.target.parentNode
-          console.log(elemento.parentNode.parentNode.dataset.db)
-          // quitar el edit del id en edit
-          let id = elemento.parentNode.dataset.db
-          id = id.replace(/edit/g, '')
-          console.log('🚀 ~ file: scripts3.js:1717 ~ mostrarMenu ~ id:', id)
-          document.body.setAttribute('idPanel', id)
-          // Cojer nombre de otro sitio en edit
-          let nombreCol = elemento.parentNode.id
-          const desk = document.body.getAttribute('data-desk')
-          nombreCol = nombreCol.replace(new RegExp(desk, 'g'), '')
-          console.log('🚀 ~ file: scripts3.js:1721 ~ mostrarMenu ~ nombreCol:', nombreCol)
-          document.body.setAttribute('data-panel', nombreCol)
-          // Puede que a partir de aqui este bien
-          const informacion = elemento.childNodes[1].childNodes[0].textContent
-          const infoDesc = elemento.childNodes[1].childNodes[1].textContent
-          const info = document.getElementById('infoL')
-          const infoDescHolder = document.getElementById('infoD')
-          info.textContent = informacion
-          infoDescHolder.textContent = infoDesc
-          // Actualizar el contenido del menú emergente con la información relevante
-          const contenidoMenu = document.getElementById('elementoL')
-          contenidoMenu.textContent = elemento.childNodes[1].href
-        }
-      } else {
-        document.body.setAttribute('data-link', event.target.parentNode.parentNode.id)
-        if (!document.body.classList.contains('edit')) {
-          // Obtener la información del elemento en el que se hizo clic
-          const elemento = event.target
-          // console.log(elemento.parentNode.parentNode.dataset.db)
-          document.body.setAttribute('idPanel', elemento.parentNode.parentNode.parentNode.dataset.db)
-          document.body.setAttribute('data-panel', elemento.parentNode.parentNode.parentNode.previousSibling.childNodes[0].innerText)
-          const informacion = elemento.parentNode.childNodes[0].textContent // Otra propiedad del elemento que desees mostrar
-          const infoDesc = elemento.parentNode.childNodes[1].textContent
-          // Actualizar el contenido del menú emergente con la información relevante
-          const info = document.getElementById('infoL')
-          const infoDescHolder = document.getElementById('infoD')
-          info.textContent = informacion
-          infoDescHolder.textContent = infoDesc
-          // Actualizar el contenido del menú emergente con la información relevante
-          const contenidoMenu = document.getElementById('elementoL')
-          contenidoMenu.textContent = elemento.parentNode.href
-        } else {
-          // Obtener la información del elemento en el que se hizo clic
-          const elemento = event.target
-          // console.log(elemento.parentNode.parentNode.dataset.db)
-          // quitar el edit del id en edit
-          let id = elemento.parentNode.parentNode.parentNode.dataset.db
-          id = id.replace(/edit/g, '')
-          console.log('🚀 ~ file: scripts3.js:1717 ~ mostrarMenu ~ id:', id)
-          document.body.setAttribute('idPanel', id)
-          // Cojer nombre de otro sitio en edit
-          let nombreCol = elemento.parentNode.parentNode.id
-          const desk = document.body.getAttribute('data-desk')
-          nombreCol = nombreCol.replace(new RegExp(desk, 'g'), '')
-          console.log('🚀 ~ file: scripts3.js:1721 ~ mostrarMenu ~ nombreCol:', nombreCol)
-          document.body.setAttribute('data-panel', nombreCol)
-          const informacion = elemento.parentNode.parentNode.childNodes[1].childNodes[0].textContent // Otra propiedad del elemento que desees mostrar
-          const infoDesc = elemento.parentNode.parentNode.childNodes[1].childNodes[1].textContent
-          // Actualizar el contenido del menú emergente con la información relevante
-          const info = document.getElementById('infoL')
-          const infoDescHolder = document.getElementById('infoD')
-          infoDescHolder.textContent = infoDesc
-          info.textContent = informacion
-          // Actualizar el contenido del menú emergente con la información relevante
-          const contenidoMenu = document.getElementById('elementoL')
-          contenidoMenu.textContent = elemento.parentNode.href
-        }
+      menu.style.display = 'block'
+    }
+    if (event.currentTarget.classList.contains('link')) {
+      const elemento = event.currentTarget
+      document.body.setAttribute('data-link', elemento.id)
+      // Primero ocultamos el menu columna si esta visible
+      const menuC = document.getElementById('menuColumn')
+      if (menuC.style.display === 'block') {
+        menuC.style.display = 'none'
       }
+      if (!document.body.classList.contains('edit')) {
+        // quitar el edit del id en edit
+        document.body.setAttribute('idPanel', elemento.parentNode.dataset.db)
+        document.body.setAttribute('data-panel', elemento.parentNode.parentNode.childNodes[0].innerText)
+        const informacion = elemento.childNodes[1].childNodes[0].textContent
+        const infoDesc = elemento.childNodes[1].childNodes[1].textContent
+        const info = document.getElementById('infoL')
+        const infoDescHolder = document.getElementById('infoD')
+        info.textContent = informacion
+        infoDescHolder.textContent = infoDesc
+        // Actualizar el contenido del menú emergente con la información relevante
+        const contenidoMenu = document.getElementById('elementoL')
+        contenidoMenu.textContent = elemento.childNodes[1].href
+      } else {
+        // quitar el edit del id en edit
+        let id = elemento.parentNode.dataset.db
+        id = id.replace(/edit/g, '')
+        document.body.setAttribute('idPanel', id)
+        let nombreCol = elemento.parentNode.id
+        const desk = document.body.getAttribute('data-desk')
+        nombreCol = nombreCol.replace(new RegExp(desk, 'g'), '')
+        document.body.setAttribute('data-panel', nombreCol)
+        // Puede que a partir de aqui este bien
+        const informacion = elemento.childNodes[1].childNodes[0].textContent
+        const infoDesc = elemento.childNodes[1].childNodes[1].textContent
+        const info = document.getElementById('infoL')
+        const infoDescHolder = document.getElementById('infoD')
+        info.textContent = informacion
+        infoDescHolder.textContent = infoDesc
+        // Actualizar el contenido del menú emergente con la información relevante
+        const contenidoMenu = document.getElementById('elementoL')
+        contenidoMenu.textContent = elemento.childNodes[1].href
+      }
+      // Mostramos el menu
+      const menu = document.getElementById('menuLink')
+      // Obtener la posición del ratón
+      const posX = event.clientX
+      const posY = event.clientY
+      // Posicionar el menú emergente cerca de la posición del ratón
+      menu.style.left = posX + 'px'
+      menu.style.top = posY + 'px'
+      menu.style.display = 'block'
     }
   }
 }
