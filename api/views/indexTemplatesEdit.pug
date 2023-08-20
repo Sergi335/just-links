@@ -12,7 +12,7 @@ head
   script(defer src='/js/MiniMasonry.js-master/build/minimasonry.min.js')
   script(defer type='module' src='/js/editMode.js')
   script(defer type='module' src='/js/scripts3.js')
-  script(defer src='/js/search.js')
+  script(defer type='module' src='/js/search.js')
   script(defer type='module' src='/js/sidepanel.js')
   script(defer type='module' src='/js/functions.mjs')
   script(defer type='module' src='/js/styles.js')
@@ -112,7 +112,7 @@ include includes/header.pug
                       span.title #{link.name}
                       span.description #{link.description}
                     .lcontrols
-                      span.icofont-external
+                      span.ui-icon.icofont-external
               if val.vacio == true
                 .link(orden='0')
           //- include includes/sidepanel.pug
@@ -128,7 +128,7 @@ include includes/header.pug
                       span.title #{link.name}
                       span.description #{link.description}
                     .lcontrols
-                      span.icofont-external
+                      span.ui-icon.icofont-external
               if val.vacio == true
                 .link(orden='0')
       include includes/sidepanel.pug

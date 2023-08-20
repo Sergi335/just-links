@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const { columnasModel, linksModel } = require('../models/index')
 
 /**
@@ -69,17 +70,63 @@ const createColItem = async (req, res) => {
   const lista = await columnasModel.find({ escritorio: `${body.escritorio}`, _id: data._id })
   res.send(lista)
 }
+// const deleteColItem = async (req, res) => {
+//   console.time('myFunction')
+//   const { body } = req
+//   const user = req.user.name
+//   try {
+//     // Buscamos la columna que nos pasan por el body
+//     const column = await columnasModel.findOne({ _id: `${body.id}`, user })
+//     // Borramos los links asociados a la columna
+//     const columnLinks = await linksModel.deleteMany({ idpanel: `${body.id}`, user })
+//     const deleteResponse = await columnasModel.deleteOne({ _id: `${body.id}`, user })
+//     console.log('🚀 ~ file: columnas.js:81 ~ deleteColItem ~ columnLinks:', columnLinks)
+//     console.log('🚀 ~ file: columnas.js:82 ~ deleteColItem ~ deleteResponse:', deleteResponse)
+//     console.log(column.escritorio)
+//     // find by user y escritorio y pasar a ordenar
+//     res.send(column)
+//     console.timeEnd('myFunction')
+//   } catch (error) {
+//     res.send({ error: error.message })
+//     console.timeEnd('myFunction')
+//   }
+// }
 const deleteColItem = async (req, res) => {
+  console.time('myFunction')
   const { body } = req
-  console.log(body)
   const user = req.user.name
-  console.log(user)
-  const col = await columnasModel.find({ _id: `${body.id}`, user })
-  const linksinCol = await linksModel.deleteMany({ idpanel: `${body.id}`, user })
-  const data = await columnasModel.deleteOne({ _id: `${body.id}`, user })
-  console.log(data)
-  console.log(linksinCol)
-  res.send(col)
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+    // Buscamos la columna que nos pasan por el body
+    const column = await columnasModel.findOne({ _id: `${body.id}`, user }).session(session)
+    // Borramos los links asociados a la columna
+    await linksModel.deleteMany({ idpanel: `${body.id}`, user }).session(session)
+    // Borramos la columna
+    await columnasModel.deleteOne({ _id: `${body.id}`, user }).session(session)
+    await session.commitTransaction()
+    session.endSession()
+
+    console.log(column.escritorio)
+
+    // find by user y escritorio y pasar a ordenar
+    res.send(column)
+    const columnsLeft = await columnasModel.find({ escritorio: column.escritorio, user }).sort({ order: 1 })
+    console.log('🚀 ~ file: columnas.js:116 ~ deleteColItem ~ columnsLeft:', columnsLeft)
+    const columsLeftIds = columnsLeft.map(col => (
+      col._id
+    ))
+    console.log('🚀 ~ file: columnas.js:120 ~ deleteColItem ~ columsLeftIds:', columsLeftIds)
+    actualizarOrdenColumnasLocal(columsLeftIds, column.escritorio)
+    console.timeEnd('myFunction')
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    res.send({ error: error.message })
+    console.timeEnd('myFunction')
+  }
 }
 const editColItem = async (req, res) => {
   const { body } = req
@@ -125,6 +172,7 @@ const moveColumns = async (req, res) => {
 
   res.send({ response })
 }
+// Recibe las columnas que están actualmente en el escritorio por orden y recibe el escritorio donde están -> USER
 const actualizarOrdenColumnas = async (req, res) => {
   try {
     const elementos = req.body.body
@@ -170,6 +218,51 @@ const actualizarOrdenColumnas = async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Error al actualizar los elementos' })
+  }
+}
+const actualizarOrdenColumnasLocal = async (elementos, escritorio) => {
+  try {
+    console.log(elementos)
+    console.log(escritorio)
+
+    if (!escritorio) {
+      return { message: 'Falta el parámetro "escritorio"' }
+    }
+
+    // Creamos un mapa para almacenar el orden actual de los elementos
+    const ordenActual = new Map()
+    let orden = 0
+    elementos.forEach((elemento) => {
+      ordenActual.set(elemento, orden)
+      orden++
+    })
+    console.log(ordenActual)
+
+    // Actualizamos el campo "orden" de cada elemento en la base de datos
+    const updates = elementos.map(async (elemento) => {
+      const orden = ordenActual.get(elemento)
+      console.log(elemento)
+      try {
+        const updatedElement = await columnasModel.findOneAndUpdate(
+          { _id: elemento, escritorio },
+          { order: orden },
+          { new: true }
+        )
+
+        if (!updatedElement) {
+          console.warn(`No se encontró el elemento con _id=${elemento} y escritorio=${escritorio}`)
+        }
+      } catch (error) {
+        console.error(`Error al actualizar el elemento con _id=${elemento} y escritorio=${escritorio}: ${error}`)
+      }
+    })
+    await Promise.all(updates)
+
+    // Enviamos la respuesta
+    return { message: 'Elementos actualizados correctamente' }
+  } catch (error) {
+    console.error(error)
+    return { message: 'Error al actualizar los elementos' }
   }
 }
 

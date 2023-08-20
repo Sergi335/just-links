@@ -185,6 +185,11 @@ function addContextMenuEvents () {
     link.addEventListener('contextmenu', mostrarMenu)
   })
   // Añadir buttons de editmode
+  const buttons = document.querySelectorAll('.tablinks')
+  buttons.forEach(button => {
+    button.removeEventListener('contextmenu', mostrarMenu)
+    button.addEventListener('contextmenu', mostrarMenu)
+  })
   // Obtener los elementos del submenu mover columna
   const menuMoveColItems = document.querySelectorAll('#destDesk li')
 
@@ -447,8 +452,7 @@ async function createColumn () {
     $raiz0 = document.getElementById(`${escritorio}Cols`)
   }
 
-  let orden = $raiz0.childNodes.length
-  orden = orden - 1
+  const orden = $raiz0.childNodes.length // es + 1 en edit por lo menos
   console.log(orden)
 
   const body = { nombre, escritorio, orden }
@@ -507,8 +511,7 @@ async function createColumn () {
 async function deleteColumn () {
   const escritorio = document.body.getAttribute('data-desk')
   const elementoId = document.getElementById('confDeletecolSubmit').getAttribute('sender')
-
-  const body = { id: elementoId, escritorio: `${escritorio}` }
+  const body = { id: elementoId }
   const params = {
     url: `${constants.BASE_URL}/columnas`,
     method: 'DELETE',
@@ -539,9 +542,9 @@ async function deleteColumn () {
         columns[0].click()
       }
     }
-    const sidePanel = document.getElementById(`Side${escritorio}${res[0].name}`)
+    const sidePanel = document.getElementById(`Side${escritorio}${res.name}`)
     const sideParent = sidePanel.parentNode
-    console.log(`Side${escritorio}${res[0].name}`)
+    console.log(`Side${escritorio}${res.name}`)
     console.log(sidePanel)
     sidePanel.remove()
     if (sideParent.childElementCount === 0) {
@@ -690,6 +693,7 @@ async function refreshColumns (json) {
     addColumnEvents()
     ordenaItems(hijos)
     ordenaCols($raiz)
+    $headerColumn.addEventListener('contextmenu', mostrarMenu)
   } else {
     const $raiz = document.querySelector('.tab')
     const orden = $raiz.childElementCount
@@ -777,8 +781,8 @@ async function refreshColumns (json) {
  * Función para editar un link refact xx
  */
 async function editLink () {
+  // como podemos indicar que el edit viene del search?
   const id = document.body.getAttribute('data-link')
-  // const escritorio = document.body.getAttribute('data-desk')
   const description = document.querySelector('#editlinkDescription').value.trim()
   const nombre = document.querySelector('#editlinkName').value.trim()
   const linkURL = document.querySelector('#editlinkURL').value.trim()
@@ -810,16 +814,21 @@ async function editLink () {
     dialog.style.display = visible ? 'none' : 'flex'
     if (!document.body.classList.contains('edit')) {
       const $raiz = document.querySelector(`[data-db="${dbID}"]`)
-      const arr = Array.from($raiz.childNodes)
-      console.log(arr)
-      // si permitimos mismo nombre esto habrá que cambiarlo tmb (elementp.id?)
-      const elementoAEditar = arr.find((elemento) => elemento.id === id)
-      if (elementoAEditar) {
-        console.log(elementoAEditar)
-        elementoAEditar.querySelector('img').src = res.imgURL
-        elementoAEditar.querySelector('a').href = res.URL
-        elementoAEditar.querySelector('.title').innerText = nombre
-        elementoAEditar.querySelector('.description').innerText = description
+      if ($raiz) {
+        const arr = Array.from($raiz.childNodes)
+        console.log(arr)
+        // si permitimos mismo nombre esto habrá que cambiarlo tmb (elementp.id?)
+        const elementoAEditar = arr.find((elemento) => elemento.id === id)
+        if (elementoAEditar) {
+          console.log(elementoAEditar)
+          elementoAEditar.querySelector('img').src = res.imgURL
+          elementoAEditar.querySelector('a').href = res.URL
+          elementoAEditar.querySelector('.title').innerText = nombre
+          elementoAEditar.querySelector('.description').innerText = description
+        }
+      } else {
+        // ha sido editado desde la lista de resultados de búsqueda
+        sendMessage(true, 'Link Editado Correctamente')
       }
     } else {
       const $raiz = document.querySelector(`[data-db="edit${dbID}"]`)
@@ -926,21 +935,25 @@ async function deleteLink () {
     } else {
       $raiz = document.querySelector(`[data-db="edit${id}"]`)
     }
-
-    console.log($raiz.childNodes)
-    const arr = Array.from($raiz.childNodes)
-    console.log(arr)
-    const elementoABorrar = arr.find((elemento) => elemento.id === linkId)
-    if (elementoABorrar) {
-      elementoABorrar.remove()
+    if ($raiz) {
+      console.log($raiz.childNodes)
+      const arr = Array.from($raiz.childNodes)
+      console.log(arr)
+      const elementoABorrar = arr.find((elemento) => elemento.id === linkId)
+      if (elementoABorrar) {
+        elementoABorrar.remove()
+      }
+      if (res.length === 0) {
+        console.log('Era el último')
+        const $div = document.createElement('div')
+        $div.setAttribute('class', 'link')
+        $raiz.appendChild($div)
+      }
+    } else {
+      // Se ha borrado desde la lista de resultados de busqueda
+      sendMessage(true, 'Enlace Borrado!')
     }
 
-    if (res.length === 0) {
-      console.log('Era el último')
-      const $div = document.createElement('div')
-      $div.setAttribute('class', 'link')
-      $raiz.appendChild($div)
-    }
     const dialog = document.getElementById('deleteLinkForm')
     const visible = dialog.style.display === 'flex'
     console.log(visible)
@@ -1730,7 +1743,7 @@ function ordenaCols (element) {
       const escritorio = document.body.getAttribute('data-desk')
       const elements = document.getElementById(`${escritorio}Cols`).childNodes
       console.log(elements)
-
+      // Esto no parece estar funcionando pero al final devuelve el orden actual de los elementos y eso es correcto
       const sortedElements = Array.from(elements).sort((a, b) => {
         return a.dataset.orden - b.dataset.orden
       })
@@ -1798,6 +1811,7 @@ function profile () {
   console.log('Has hecho click')
   window.location = '/profile'
 }
+// handleShowContextMenu y dividir en dos cols y links
 export function mostrarMenu (event) {
   event.preventDefault()
   const forms = [...document.querySelectorAll('.deskForm'), document.getElementById('menuMoveTo')]
@@ -1808,7 +1822,7 @@ export function mostrarMenu (event) {
   })
   // Detectar si se hizo clic con el botón derecho del ratón
   if (event.button === 2) {
-    if (event.currentTarget.classList.contains('headercolumn')) {
+    if (event.currentTarget.classList.contains('headercolumn') || event.currentTarget.classList.contains('tablinks')) {
       // Primero ocultamos el menu link, si está visible
       const menuL = document.getElementById('menuLink')
       if (menuL.style.display === 'block') {
@@ -1849,9 +1863,16 @@ export function mostrarMenu (event) {
         menuC.style.display = 'none'
       }
       if (!document.body.classList.contains('edit')) {
-        // quitar el edit del id en edit
-        document.body.setAttribute('idPanel', elemento.parentNode.dataset.db)
-        document.body.setAttribute('data-panel', elemento.parentNode.parentNode.childNodes[0].innerText)
+        // if elemnto padre es el contenedor de resultados, buscar el idpanel de otra forma
+        if (elemento.parentNode.id === 'resultsContainer') {
+          const idPanel = elemento.childNodes[5].innerText.replace('idpanel: ', '')
+          const panel = elemento.childNodes[3].innerText.replace('Panel: ', '')
+          document.body.setAttribute('idPanel', idPanel)
+          document.body.setAttribute('data-panel', panel)
+        } else {
+          document.body.setAttribute('idPanel', elemento.parentNode.dataset.db)
+          document.body.setAttribute('data-panel', elemento.parentNode.parentNode.childNodes[0].innerText)
+        }
         const informacion = elemento.childNodes[1].childNodes[0].textContent
         const infoDesc = elemento.childNodes[1].childNodes[1].textContent
         const info = document.getElementById('infoL')
@@ -1929,9 +1950,7 @@ async function handleSubmitMove () {
   console.log(panelOrigenId)
   const panelDestinoNombre = destination.id
   console.log(panelDestinoNombre)
-  let panelOldChildCount = document.querySelector(`[data-db="${panelOrigenId}"]`)
-  panelOldChildCount = panelOldChildCount.childNodes.length
-  console.log(panelOldChildCount)
+
   const escritorio = document.body.getAttribute('destination-desk')
   const res = await fetch(`${constants.BASE_URL}/columnas?escritorio=${escritorio}`, {
     method: 'GET',
@@ -1957,6 +1976,14 @@ async function handleSubmitMove () {
         panelDestinoId = col._id
       }
     })
+    let panelOldChildCount = document.querySelector(`[data-db="${panelOrigenId}"]`)
+    if (panelOldChildCount) {
+      panelOldChildCount = panelOldChildCount.childNodes.length
+    } else {
+      // TODO
+      panelOldChildCount = 0
+    }
+    console.log(panelOldChildCount)
     const body = { panelOrigenId, panelDestinoId, panelDestinoNombre, name: linkName, orden: panelOldChildCount + 1, escritorio }
     console.log(body)
     const params = {
@@ -1974,7 +2001,7 @@ async function handleSubmitMove () {
     const links = document.querySelectorAll('div.link')
     if (links) {
       links.forEach(element => {
-      // problema con duplicados, meter id de base de datos como id de elemento
+        // problema con duplicados, meter id de base de datos como id de elemento
         if (element.id === res._id) {
           console.log('Hay coincidencia con el enviado del servidor')
           console.log(element.id)
@@ -1991,6 +2018,7 @@ async function handleSubmitMove () {
       menu.style.display = 'none'
     }
   }
+  sendMessage(true, 'Link Movido!')
 }
 function setLastVisited (event) {
   const links = document.querySelectorAll('div.link')

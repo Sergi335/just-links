@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', sidePanel)
 function sidePanel () {
   if (window.location.pathname !== '/profile') addPanelEvents()
   const element = document.querySelectorAll('div.link')[0]
+  console.log('🚀 ~ file: sidepanel.js:7 ~ sidePanel ~ element:', element)
   if (element && element !== null) {
     element.classList.add('navActive')
     // Esto es para edit view
@@ -190,11 +191,10 @@ export function navLinkInfos (event) {
 async function showLinkInfo (element) {
   const loader = document.getElementById('liLoader')
   const imagesHolder = document.getElementById('linkImages')
-  console.log(element)
   try {
     const id = element.id
     const imgUrl = element.childNodes[0].src
-    const name = element.childNodes[1].childNodes[0].innerText
+    const nombre = element.childNodes[1].childNodes[0].innerHTML
     let panel
 
     if (!document.body.classList.contains('edit')) {
@@ -214,7 +214,6 @@ async function showLinkInfo (element) {
         'content-type': 'application/json'
       }
     })
-
     const json = await res.json()
     const notas = json.data[0].notes
     const images = json.data[0].images
@@ -226,7 +225,7 @@ async function showLinkInfo (element) {
     imageHolder.src = imgUrl
 
     const nameHolder = document.getElementById('lname')
-    nameHolder.innerText = name
+    nameHolder.innerText = nombre
 
     const descHolder = document.getElementById('ldesc')
     descHolder.innerText = json.data[0].description

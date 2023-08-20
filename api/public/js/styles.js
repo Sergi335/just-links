@@ -34,10 +34,6 @@ function loadStyles () {
   if (window.localStorage.getItem('infoColor')) {
     // const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
-    // color === 'var(--bgGradient)'
-    //   ? panel.style.borderRadius = '5px'
-    //   : panel.style.borderRadius = '0'
-    // panel.style.background = color
     selectInfoColor(undefined, color)
   }
   if (window.localStorage.getItem('buttonTextColor')) {

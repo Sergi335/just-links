@@ -127,7 +127,7 @@ function ordenaItemsEdit (panel) {
 }
 function expandPanel () {
   const panel = document.querySelector('#sidepanel')
-  const cuerpo = document.querySelector('.cuerpoInt')
+  // onst cuerpo = document.querySelector('.cuerpoInt')
   const tab = document.querySelector('.tab')
   const theTabcontents = Array.from(document.querySelectorAll('.tabcontent'))
   let tabcontent = theTabcontents.filter(tab => {
@@ -144,8 +144,7 @@ function expandPanel () {
     tabcontent.classList.remove('selected')
     panel.style.position = 'initial'
     panel.classList.remove('maximized')
-    panel.style.width = '42%'
-    cuerpo.style.backdropFilter = 'blur(40px)'
+    panel.style.width = '45%'
     makeMasonry()
     setTimeout(function () {
       tabcontent.style.display = 'grid'
@@ -154,7 +153,6 @@ function expandPanel () {
   } else {
     panel.classList.add('maximized')
     panel.style.width = '100vw'
-    cuerpo.style.backdropFilter = 'none'
     panel.style.position = 'fixed'
     panel.style.top = '127px'
     panel.style.left = '0'
