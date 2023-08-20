@@ -1,3 +1,4 @@
+import { mostrarMenu } from './scripts3.js'
 window.onload = function () {
   // console.log('Hay búsqueda')
   const searchInput = document.getElementById('searchInput')
@@ -36,10 +37,16 @@ function searchLinks (query) {
       data.forEach(result => {
         const $div = document.createElement('div')
         $div.setAttribute('class', 'link')
+        $div.setAttribute('id', `${result._id}`)
         const $img = document.createElement('img')
         $img.setAttribute('src', `${result.imgURL}`)
+        $div.appendChild($img)
         const linkElement = document.createElement('a')
-        linkElement.appendChild($img)
+        const nameSpan = document.createElement('span')
+        const descSpan = document.createElement('span')
+        nameSpan.setAttribute('class', 'title')
+        descSpan.setAttribute('class', 'description')
+        descSpan.innerText = result.description
         // Separa el título en fragmentos que contengan la coincidencia
         const titleFragments = result.name.split(new RegExp(`(${query})`, 'gi'))
         // Recorre los fragmentos y crea nodos de texto y elementos <mark> según corresponda
@@ -48,12 +55,14 @@ function searchLinks (query) {
             const markElement = document.createElement('mark')
             markElement.style.backgroundColor = 'yellow'
             markElement.textContent = fragment
-            linkElement.appendChild(markElement)
+            nameSpan.appendChild(markElement)
           } else {
             const textNode = document.createTextNode(fragment)
-            linkElement.appendChild(textNode)
+            nameSpan.appendChild(textNode)
           }
         })
+        linkElement.appendChild(nameSpan)
+        linkElement.appendChild(descSpan)
         linkElement.setAttribute('target', '_blank')
         linkElement.href = result.URL
         const $columnInfo = document.createElement('p')
@@ -71,6 +80,7 @@ function searchLinks (query) {
         $div.appendChild($urlInfo)
 
         resultsContainer.appendChild($div)
+        $div.addEventListener('contextmenu', mostrarMenu)
       })
       resultsContainer.style.display = 'flex'
       resultsContainer.style.left = `${left}px`

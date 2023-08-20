@@ -4,12 +4,14 @@
     --thirdColor: #f1f3f4;
     --fourthColor: #f1f1f1;
     --fifthColor: #ededed;
-    --bgGradient: radial-gradient(circle 815px at 23.4% -21.8%, rgb(222 225 230 / 62%) 0.2%, rgb(222 225 230) 100.2%);
+    /* --bgGradient: radial-gradient(circle 815px at 23.4% -21.8%, rgb(222 225 230 / 62%) 0.2%, rgb(222 225 230) 100.2%); */
+    --bgGradient: radial-gradient(circle, rgba(222,225,230,1) 0%, rgba(222,225,230,1) 100%);
     --accentColor: #bababa;
     --neumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(239 239 239), 0.3em 1em 2em rgb(0 0 0 / 7%);
     --secondNeumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(239 239 239);
     --firstTextColor: #4e4e4e;
     --secondTextColor: #4f4f4f;
+    --buttonTextColor: #4e4e4e;
     --firstBorder: 1px solid #e8e8e8cc;
     --firstShadow: #5050501a;
     --firstBorderColor: #d5d5d5cc;
@@ -21,15 +23,18 @@
 
 html.dark {
     --firstColor: #494949;
-    --secondColor: #414141;
-    --thirdColor: #313131;
+    /* --secondColor: #313131; */
+    --secondColor: #31313185;
+    --thirdColor: #414141;
     --fourthColor: #2d2d2d;
     --fifthColor: #292929;
-    --bgGradient: radial-gradient(circle 815px at 23.4% -21.8%, rgb(64 64 64) 0.2%, rgb(33 33 33) 100.2%);
+    /* --bgGradient: radial-gradient(circle 815px at 23.4% -21.8%, rgb(64 64 64) 0.2%, rgb(33 33 33) 100.2%); */
+    --bgGradient: url('/img/fondo.png');
     --accentColor: #bf7272;
     --neumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(68 68 68), 0.3em 1em 2em rgba(0, 0, 0, 0.3);
     --secondNeumoShadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(68 68 68);
     --firstTextColor: #e2e2e2;
+    --buttonTextColor: #4e4e4e;
     --secondTextColor: #b1b1b1;
     --firstBorder: 1px solid #323232cc;
     --firstShadow: #0c0c0c;
@@ -48,7 +53,7 @@ html {
 }
 
 body {
-    background-size: cover;
+    /* background-size: cover; */
     background-attachment: fixed;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-image: var(--bgGradient);
@@ -56,7 +61,8 @@ body {
 }
 
 html.light body {
-    background: var(--thirdColor);
+    background-image: radial-gradient(circle, rgba(241,243,244,1) 0%, rgba(241,243,244,1) 100%);
+    background-size: cover;
 }
 
 button {
@@ -67,7 +73,10 @@ button {
     border: 0;
     padding: 8px 19px;
     border-radius: 3px;
-    color: var(--firstTextColor);
+    color: var(--buttonTextColor);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color .6s;
 }
@@ -76,9 +85,14 @@ button:hover {
     background-color: var(--firstHvColor);
     box-shadow: var(--secondNeumoShadow);
     transition: background-color .3s;
+    color: var(--accentColor);
+}
+button:hover .ui-icon-button {
+    color: var(--accentColor);
 }
 button:disabled {
     opacity: .5;
+    cursor: not-allowed;
 }
 .ui-icon {
     width: 24px;
@@ -93,8 +107,17 @@ button:disabled {
 }
 .ui-icon-button {
     width: 20px;
-    color: var(--firstTextColor);
+    color: var(--buttonTextColor);
     cursor: pointer;
+}
+input[type='text'] {
+    height: 34px;
+    padding-left: 11px;
+    background-color: var(--thirdColor);
+    border-radius: 5px;
+    border: 1px solid var(--firstBorderColor);
+    color: var(--firstTextColor);
+    outline: none;
 }
 .container.modals {
     padding: 0;
@@ -338,7 +361,7 @@ div.deskInfos {
 .menuColumn,
 .menuLink {
     position: fixed;
-    background: var(--firstColor);
+    background: var(--fourthColor);
     border: 1px solid #8080806e;
     display: none;
     font-size: .8rem;
@@ -348,7 +371,7 @@ div.deskInfos {
     border-radius: 5px;
     padding: 15px 0;
     color: var(--firstTextColor);
-    z-index: 1;
+    z-index: 7;
 }
 
 .menuColumn p,
@@ -389,7 +412,7 @@ div.deskInfos {
     position: absolute;
     left: 215px;
     top: 163px;
-    background-color: var(--firstColor);
+    background-color: var(--fourthColor);
     padding: 18px 0;
     display: none;
     box-shadow: 0px 5px 21px var(--firstShadow);
@@ -409,7 +432,7 @@ div.deskInfos {
     position: absolute;
     left: 215px;
     top: 100px;
-    background-color: var(--firstColor);
+    background-color: var(--fourthColor);
     display: none;
     box-shadow: 0px 5px 21px var(--firstShadow);
     border-radius: 5px;
@@ -466,6 +489,11 @@ div.avatar img {
 
 #resultsContainer .link {
     background-color: transparent;
+    gap: 8px;
+    flex-wrap: wrap;
+    height: auto;
+    border-bottom: 1px solid var(--firstBorderColor);
+    padding-bottom: 10px;
 }
 
 #resultsContainer .link:nth-child(even):not(.lastVisited) {
@@ -734,8 +762,7 @@ body.profile #resultsContainer .link img {
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    gap: 9px;
-    padding-left: 0;
+    width: 90%;
 }
 #resultsContainer .link:hover, #resultsContainer .link:nth-child(even):not(.lastVisited):hover {
     background-color: var(--firstHvColor);
@@ -743,13 +770,15 @@ body.profile #resultsContainer .link img {
 #resultsContainer p {
     display: inline-block;
     margin: 8px;
-    font-size: 12px;
     font-style: italic;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 27%;
     overflow: hidden;
     color: var(--firstTextColor);
+    background-color: var(--fifthColor);
+    padding: 8px;
+    border-radius: 35px;
 }
 
 body.profile div.tab#profile {
@@ -812,10 +841,6 @@ div.userInfo {
     flex-direction: column;
 }
 
-#profileContent {
-    padding-top: 133px;
-}
-
 body.profile p#saludo,
 body.profile .sideInfo div,
 body.profile #showMenu,
@@ -854,7 +879,6 @@ div.buttons {
 
 .upFile {
     margin-top: 15px;
-    width: 29%;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -976,24 +1000,21 @@ body.profile .sideInfo {
 
 #menuMoveTo {
     position: fixed;
-    top: 22%;
-    left: 39%;
-    background-color: var(--firstColor);
-    max-height: 250px;
-    border-radius: 15px;
+    top: 121px;
+    right: 0;
+    background-image: var(--bgGradient);
+    height: -webkit-fill-available;
     padding: 50px 0px 100px 0px;
     display: none;
-    min-width: 440px;
-    box-shadow: inset 0 0 1em rgb(16 15 15 / 18%), 0 0 0 2px rgb(163 163 163), 0.3em 1em 2em rgba(0, 0, 0, 0.3);
+    min-width: 443px;
+    box-shadow: 0px 6px 20px var(--firstShadow);
 }
 
 #menuMoveTo ul {
     list-style-type: none;
     cursor: pointer;
-    max-height: 236px;
     overflow-y: scroll;
     padding: 0;
-    background-color: var(--thirdColor);
     color: var(--firstTextColor);
     padding-left: 30px;
 }
@@ -1036,7 +1057,12 @@ body.profile .sideInfo {
     justify-content: space-evenly;
     margin-top: 45px;
 }
-
+#elementoC, #infoD, #elementoL {
+    display: none;
+}
+#infoC, #infoL {
+    background-color: var(--accentColor);
+}
 i.icofont-folder {
     margin-left: 5px;
 }
@@ -1226,7 +1252,7 @@ html.light .container::-webkit-scrollbar-track {
     width: 100%;
     margin-bottom: 65px;
     height: fit-content;
-    box-shadow: var(--neumoShadow);
+    /* box-shadow: var(--neumoShadow); */
     /* background-image: var(--bgGradient); */
     border-radius: 5px;
     transition: box-shadow .5s;
@@ -1541,8 +1567,7 @@ i.icofont-scroll-up {
     min-width: 525px;
     height: auto;
     top: 15%;
-    background-color: var(--firstColor);
-    display: flex;
+    background-image: var(--bgGradient);
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -1550,20 +1575,30 @@ i.icofont-scroll-up {
     left: 50%;
     transform: translate(-50%, 0);
     display: none;
-    z-index: 4;
+    z-index: 7;
     padding: 50px;
     border-radius: 15px;
-    border: 3px solid white;
-    box-shadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(255, 255, 255), 0.3em 1em 2em rgba(0, 0, 0, 0.3);
+    gap: 15px;
+    /* border: 3px solid white;
+    box-shadow: inset 0 0 1em rgb(141 141 141 / 10%), 0 0 0 2px rgb(255, 255, 255), 0.3em 1em 2em rgba(0, 0, 0, 0.3); */
 }
-
+#editDeskForm {
+    align-items: flex-start;
+    top: 129px;
+    border-radius: 0;
+    height: -webkit-fill-available;
+    right: 0;
+    left: initial;
+    transform: none;
+    max-width: min-content;
+}
 .deskForm fieldset {
     display: flex;
     flex-direction: column;
     width: 100%;
     gap: 12px;
     padding: 24px 24px 0 24px;
-    border: var(--firstBorder);
+    border: 1px solid var(--firstBorderColor);
     border-radius: 5px;
     justify-content: center;
     align-items: center;
@@ -1575,36 +1610,13 @@ i.icofont-scroll-up {
     color: var(--firstTextColor);
 }
 
-.deskForm h2 {
+.deskForm h3, .deskForm h2 {
     color: var(--firstTextColor);
-}
-
-.deskForm input[type='text'] {
-    border: 0;
-    height: 20px;
-    margin-bottom: 15px;
-    background-color: var(--thirdColor);
-    padding: 9px;
-    font-size: 16px;
-    font-family: system-ui;
-    outline-color: var(--accentColor);
-    width: 60%;
-}
-
-.deskForm button {
-    background-color: var(--accentColor);
-    border: 0;
-    padding: 7px 12px;
-    cursor: pointer;
-    border-radius: 3px;
-    color: #ffffff;
-    font-family: system-ui;
-    min-width: 100px;
 }
 
 .deskForm form {
     display: flex;
-    flex-direction: column;
+    gap: 15px;
 }
 
 /* W3C SCHOOLS -----------------------------------*/
@@ -1675,13 +1687,6 @@ html.light .dropdown-content {
 }
 
 div.headCenter input[type="text"] {
-    height: 34px;
-    border: 0;
-    padding-left: 11px;
-    background-color: var(--secondColor);
-    border-radius: 5px;
-    border: 1px solid var(--firstBorderColor);
-    color: var(--firstTextColor);
     width: 90%;
 }
 

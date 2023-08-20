@@ -32,12 +32,17 @@ function loadStyles () {
   document.getElementById('showMenu').addEventListener('click', showMenu)
 
   if (window.localStorage.getItem('infoColor')) {
-    const panel = document.querySelector('.sideInfo')
+    // const panel = document.querySelector('.sideInfo')
     const color = JSON.parse(window.localStorage.getItem('infoColor'))
-    color === 'var(--bgGradient)'
-      ? panel.style.borderRadius = '5px'
-      : panel.style.borderRadius = '0'
-    panel.style.background = color
+    // color === 'var(--bgGradient)'
+    //   ? panel.style.borderRadius = '5px'
+    //   : panel.style.borderRadius = '0'
+    // panel.style.background = color
+    selectInfoColor(undefined, color)
+  }
+  if (window.localStorage.getItem('buttonTextColor')) {
+    const color = JSON.parse(window.localStorage.getItem('buttonTextColor'))
+    document.documentElement.style.setProperty('--buttonTextColor', color)
   }
   const sideBlocks = Array.from(document.querySelectorAll('.sect'))
   sideBlocks.forEach(panel => {
@@ -85,19 +90,27 @@ async function selectBackground (event) {
     window.localStorage.setItem('bodyBackground', '')
   }
 }
-function selectInfoColor (event) {
-  console.log(event.target.id)
+function selectInfoColor (event, style) {
+  const currentStyle = event?.target.id || style
   const panel = document.querySelector('.sideInfo')
-  switch (event.target.id) {
+  switch (currentStyle) {
     case 'theme':
       panel.style.background = 'var(--bgGradient)'
+      panel.style.backdropFilter = 'none'
       panel.style.borderRadius = '5px'
-      window.localStorage.setItem('infoColor', JSON.stringify('var(--bgGradient)'))
+      window.localStorage.setItem('infoColor', JSON.stringify('theme'))
       break
     case 'transparent':
       panel.style.background = 'transparent'
+      panel.style.backdropFilter = 'none'
       panel.style.borderRadius = '0'
       window.localStorage.setItem('infoColor', JSON.stringify('transparent'))
+      break
+    case 'blur':
+      panel.style.background = 'transparent'
+      panel.style.backdropFilter = 'blur(15px)'
+      panel.style.borderRadius = '5px'
+      window.localStorage.setItem('infoColor', JSON.stringify('blur'))
       break
   }
 }
@@ -119,23 +132,33 @@ function selectAccentColor (event) {
   switch (color) {
     case 'yellow':
       document.documentElement.style.setProperty('--accentColor', '#ffff00')
+      document.documentElement.style.setProperty('--buttonTextColor', '#4e4e4e')
       window.localStorage.setItem('accentColor', JSON.stringify('#ffff00'))
+      window.localStorage.setItem('buttonTextColor', JSON.stringify('#4e4e4e'))
       break
     case 'blue':
       document.documentElement.style.setProperty('--accentColor', 'cornflowerblue')
+      document.documentElement.style.setProperty('--buttonTextColor', '#ffffff')
       window.localStorage.setItem('accentColor', JSON.stringify('cornflowerblue'))
+      window.localStorage.setItem('buttonTextColor', JSON.stringify('#ffffff'))
       break
     case 'green':
       document.documentElement.style.setProperty('--accentColor', '#00cc66')
+      document.documentElement.style.setProperty('--buttonTextColor', '#1a1a1a')
       window.localStorage.setItem('accentColor', JSON.stringify('#00cc66'))
+      window.localStorage.setItem('buttonTextColor', JSON.stringify('#1a1a1a'))
       break
     case 'defaultLight':
       document.documentElement.style.setProperty('--accentColor', '#bababa')
+      document.documentElement.style.setProperty('--buttonTextColor', '#1a1a1a')
       window.localStorage.setItem('accentColor', JSON.stringify('#bababa'))
+      window.localStorage.setItem('buttonTextColor', JSON.stringify('#1a1a1a'))
       break
     case 'defaultDark':
       document.documentElement.style.setProperty('--accentColor', '#bf7272')
+      document.documentElement.style.setProperty('--buttonTextColor', '#ffffff')
       window.localStorage.setItem('accentColor', JSON.stringify('#bf7272'))
+      window.localStorage.setItem('buttonTextColor', JSON.stringify('#ffffff'))
       break
   }
 }
