@@ -1,79 +1,86 @@
 doctype html
 html.light
-head
-  meta(charset='UTF-8')
-  meta(http-equiv='X-UA-Compatible' content='IE=edge')
-  meta(name='viewport' content='width=device-width, initial-scale=1.0')
-  title Just Links - #{escritorioSelectedFormat}
-  link(rel='shortcut icon' href='/img/favicon.ico' type='image/x-icon')
-  link(rel='stylesheet' href='/css/style2.css')
-  link(rel='stylesheet' href='/css/sidepanel.css')
-  link(rel='stylesheet' href='/css/icofont/icofont.min.css')
-  script(src='/js/MiniMasonry.js-master/build/minimasonry.min.js')
-  script(type='module' src='/js/scripts3.js')
-  script(type='module' src='/js/search.js')
-  script(type='module' src='/js/sidepanel.js')
-  script(type='module' src='/js/functions.mjs')
-  script(type='module' src='/js/styles.js')
-body(data-desk= escritorioSelected)
-script.
-  if (window.localStorage.getItem('theme')) {
-    const theme = JSON.parse(window.localStorage.getItem('theme'))
-    document.documentElement.classList.add(theme)
-  }
-  if (window.localStorage.getItem('accentColor')) {
-    const color = JSON.parse(window.localStorage.getItem('accentColor'))
-    document.documentElement.style.setProperty('--accentColor', color)
-  }
-  if (window.localStorage.getItem('bodyBackground')) {
-    const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
-    document.body.style.backgroundImage = `url(${url})`
-  }
-include includes/header.pug
-.container
-  div(id=escritorioSelected + 'Cols' class='cuerpoInt' data-id='columns')
-    - var contador = {}
-    each val in columnas
-      .envolt(orden= `${val.order}`)
-        .headercolumn
-          h2.ctitle= val.name
-        
-        - var item = val.name
-        if contador.hasOwnProperty(item)
-          - var numero = contador[item] + 1
-          - contador[item] = numero
-          div(id=escritorioSelected + val.name + numero, class='columna', data-db=`${val._id}`)
-            each link in links
-              if link.idpanel == val._id
-                .link(id=`${link._id}` orden= `${link.orden}`)
-                  img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
-                  a(href= `${link.URL}` target='_blank' title= `${link.name}`)
-                    span.title #{link.name}
-                    span.description #{link.description}
-                  .lcontrols
-                    span.icofont-ui-edit.showPanel
-            if val.vacio == true
-              .link(orden='0')
-        else
-          - contador[item] = 1
-          div(id=escritorioSelected + val.name, class='columna', data-db=`${val._id}`)
-            each link in links
-              if link.idpanel == val._id
-                .link(id=`${link._id}` orden= `${link.orden}`)
-                  img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
-                  a(href= `${link.URL}` target='_blank' title= `${link.name}`)
-                    span.title #{link.name}
-                    span.description #{link.description}
-                  .lcontrols
-                    span.icofont-ui-edit.showPanel
-            if val.vacio == true
-              .link(orden='0')
-include includes/forms.pug
-include includes/sideinfo.pug
-include includes/sidepanel.pug
-#resultsContainer
-#myModal.modal
-    span.close &times;
-    img#img01.modal-content
-    #caption
-script(src='/js/Sortable-master/Sortable.min.js')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Just Links - #{escritorioSelectedFormat}
+    link(rel='shortcut icon' href='/img/favicon.ico' type='image/x-icon')
+    link(rel='stylesheet' href='/css/style2.css')
+    link(rel='stylesheet' href='/css/sidepanel.css')
+    link(rel='stylesheet' href='/css/icofont/icofont.min.css')
+    script(src='/js/MiniMasonry.js-master/build/minimasonry.min.js')
+    script(type='module' src='/js/scripts3.js')
+    script(type='module' src='/js/search.js')
+    script(type='module' src='/js/sidepanel.js')
+    script(type='module' src='/js/functions.mjs')
+    script(type='module' src='/js/styles.js')
+  body(data-desk= escritorioSelected)
+  script.
+    if (window.localStorage.getItem('theme')) {
+      const theme = JSON.parse(window.localStorage.getItem('theme'))
+      document.documentElement.classList.remove('light')
+      document.documentElement.classList.add(theme)
+    }
+    if (window.localStorage.getItem('accentColor')) {
+      const color = JSON.parse(window.localStorage.getItem('accentColor'))
+      document.documentElement.style.setProperty('--accentColor', color)
+    }
+    if (window.localStorage.getItem('bodyBackground')) {
+      const url = JSON.parse(window.localStorage.getItem('bodyBackground'))
+      document.body.style.backgroundImage = `url(${url})`
+    }
+  include includes/header.pug
+  .container
+    div(id=escritorioSelected + 'Cols' class='cuerpoInt' data-id='columns')
+      - var contador = {}
+      each val in columnas
+        .envolt(orden= `${val.order}`)
+          .headercolumn
+            h2.ctitle= val.name
+          
+          - var item = val.name
+          if contador.hasOwnProperty(item)
+            - var numero = contador[item] + 1
+            - contador[item] = numero
+            div(id=escritorioSelected + val.name + numero, class='columna', data-db=`${val._id}`)
+              each link in links
+                if link.idpanel == val._id
+                  .link(id=`${link._id}` orden= `${link.orden}`)
+                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                    a(href= `${link.URL}` target='_blank' title= `${link.name}`)
+                      span.title #{link.name}
+                      span.description #{link.description}
+                    .lcontrols
+                      span.icofont-ui-edit.showPanel
+                    .expandControl
+                      svg.ui-icon-menu.w-6.h-6(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                        path(stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5')
+              if val.vacio == true
+                .link(orden='0')
+          else
+            - contador[item] = 1
+            div(id=escritorioSelected + val.name, class='columna', data-db=`${val._id}`)
+              each link in links
+                if link.idpanel == val._id
+                  .link(id=`${link._id}` orden= `${link.orden}`)
+                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                    a(href= `${link.URL}` target='_blank' title= `${link.name}`)
+                      span.title #{link.name}
+                      span.description #{link.description}
+                    .lcontrols
+                      span.icofont-ui-edit.showPanel
+                    .expandControl
+                      svg.ui-icon-menu.w-6.h-6(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                        path(stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5')
+              if val.vacio == true
+                .link(orden='0')
+  include includes/forms.pug
+  include includes/sideinfo.pug
+  include includes/sidepanel.pug
+  #resultsContainer
+  #myModal.modal
+      span.close &times;
+      img#img01.modal-content
+      #caption
+  script(src='/js/Sortable-master/Sortable.min.js')

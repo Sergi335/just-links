@@ -36,6 +36,7 @@ const compruebaUsuario = async (req, res) => {
     objeto.password = body.password
     const dataUser = await usersModel.find({ name: `${body.name}` })
     const oldPass = dataUser[0].password
+    console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ dataUser:', dataUser)
     // console.log(dataUser[0].password)
     const resultado = await compare(objeto.password, oldPass)
     if (!resultado) {
@@ -46,7 +47,6 @@ const compruebaUsuario = async (req, res) => {
         token: await tokenSign(dataUser[0]),
         user: dataUser
       }
-      console.log(dataUser)
       res.send(data)
     }
   } catch (e) {

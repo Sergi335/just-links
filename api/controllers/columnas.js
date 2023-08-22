@@ -49,10 +49,11 @@ const setOrder = async (req, res) => {
  * @param {*} res
  */
 const getColItems = async (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*')
   const params = req.query.escritorio
   const data = await columnasModel.find({ escritorio: `${params}` }).sort({ order: 1 })
   console.log(params)
-  res.send(data)
+  res.json(data)
 }
 const createColItem = async (req, res) => {
   const { body } = req
@@ -70,27 +71,6 @@ const createColItem = async (req, res) => {
   const lista = await columnasModel.find({ escritorio: `${body.escritorio}`, _id: data._id })
   res.send(lista)
 }
-// const deleteColItem = async (req, res) => {
-//   console.time('myFunction')
-//   const { body } = req
-//   const user = req.user.name
-//   try {
-//     // Buscamos la columna que nos pasan por el body
-//     const column = await columnasModel.findOne({ _id: `${body.id}`, user })
-//     // Borramos los links asociados a la columna
-//     const columnLinks = await linksModel.deleteMany({ idpanel: `${body.id}`, user })
-//     const deleteResponse = await columnasModel.deleteOne({ _id: `${body.id}`, user })
-//     console.log('🚀 ~ file: columnas.js:81 ~ deleteColItem ~ columnLinks:', columnLinks)
-//     console.log('🚀 ~ file: columnas.js:82 ~ deleteColItem ~ deleteResponse:', deleteResponse)
-//     console.log(column.escritorio)
-//     // find by user y escritorio y pasar a ordenar
-//     res.send(column)
-//     console.timeEnd('myFunction')
-//   } catch (error) {
-//     res.send({ error: error.message })
-//     console.timeEnd('myFunction')
-//   }
-// }
 const deleteColItem = async (req, res) => {
   console.time('myFunction')
   const { body } = req

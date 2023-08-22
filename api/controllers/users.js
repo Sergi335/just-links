@@ -55,5 +55,19 @@ const updateProfileImage = async (url, user) => {
     // Maneja el caso de usuario no encontrado de alguna manera apropiada
   }
 }
+const editAditionalInfo = async (req, res) => {
+  const { body } = req
+  const user = req.user.name
+  try {
+    const data = await usersModel.findOneAndUpdate({ name: user }, { $set: { realName: body.realName } })
+    if (data) {
+      res.json({ data })
+    } else {
+      res.json({ error: 'Usuario no encontrado' })
+    }
+  } catch (error) {
+    res.json(error)
+  }
+}
 
-module.exports = { displayUserProfile, updateProfileImage }
+module.exports = { displayUserProfile, updateProfileImage, editAditionalInfo }

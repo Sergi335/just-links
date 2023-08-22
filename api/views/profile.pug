@@ -9,7 +9,7 @@ head
   link(rel='stylesheet' href='/css/icofont/icofont.min.css')
   script(type='module' src='/js/profile.js')
   script(type='module' src='/js/styles.js')
-  script(src='/js/search.js')
+  script(type='module' src='/js/search.js')
 body 
 script.
   if (window.localStorage.getItem('theme')) {
@@ -32,21 +32,32 @@ include includes/header.pug
         .info
           h2 Información
           .wrapper
-            .profile-image
-              - if (userImg)
-                img#preview-image(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
-              - else
-                img#preview-image(src='img/avatar.svg' alt='Default Image')
-              button.upFile
-                label(for='image-input')
-                  svg.ui-icon-button.icon.icon-tabler.icon-tabler-camera-plus(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
-                    path(stroke='none' d='M0 0h24v24H0z' fill='none')
-                    path(d='M12 20h-7a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v3.5')
-                    path(d='M16 19h6')
-                    path(d='M19 16v6')
-                    path(d='M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0')
-                  | Subir Imagen
-                input#image-input(type='file' accept='image/*' name='image-input')
+            .aditionalInfo
+              .profile-image
+                - if (userImg)
+                  img#preview-image(src=userImg onerror="this.onerror=null; this.src='img/avatar.svg'")
+                - else
+                  img#preview-image(src='img/avatar.svg' alt='Default Image')
+                button.upFile
+                  label(for='image-input')
+                    svg.ui-icon-button.icon.icon-tabler.icon-tabler-camera-plus(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
+                      path(stroke='none' d='M0 0h24v24H0z' fill='none')
+                      path(d='M12 20h-7a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v3.5')
+                      path(d='M16 19h6')
+                      path(d='M19 16v6')
+                      path(d='M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0')
+                    | Subir Imagen
+                  input#image-input(type='file' accept='image/*' name='image-input')
+              .otherInfo 
+                form#otherInfoForm
+                  label(for="realName") Nombre: 
+                  input(type="text", name="realName", value=`${userData[0].realName}`)
+                  label(for="website") Sitio Web:
+                  input(type="text", name="website", value=`${userData[0].website}`)
+                  label(for="aboutMe") Sobre mí:
+                  textarea(name="aboutMe", cols="30", rows="10" value=`${userData[0].about}`) 
+                  button#editOtherInfo(type='submit')   
+                    | Cambiar
             .userInfo 
               p #{user}
               p #{userData[0].email}

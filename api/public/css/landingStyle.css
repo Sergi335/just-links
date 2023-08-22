@@ -1,63 +1,154 @@
 header {
-
     display: flex;
-
-    background-color: #ccc;
-
+    color: white;
     height: 80px;
-
     justify-content: space-between;
-
     align-items: center;
-
     padding: 0 55px;
+    border-radius: 8px;
 }
-
+body {
+    background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(100,43,115,1) 0%, rgba(4,0,4,1) 90% );
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
 section {
-
     height: 80vh;
-
-    background-color: darkgray;
-}
-
-#loginForm form {
-
-    position: absolute;
-
-    top: 35%;
-
-    left: 37%;
-
     display: flex;
-
     flex-direction: column;
-
-    background-color: white;
-
-    padding: 50px;
-
-    border-radius: 22px;
-
+    justify-content: center;
+    align-items: center;
+}
+section h1 {
+    font-size: 78px;
+    color: white;
+    margin-bottom: 0;
+}
+#heroSection {
+    height: auto;
+    padding-top: 160px;
+}
+#heroSection p {
+    font-size: 25px;
+    color: chocolate;
+    margin-bottom: 95px;
+}
+.logos {
+    display: flex;
+    margin-top: 95px;
+}
+.logos img {
+    width: 90px;
+}
+#btnStart {
+    border: 0;
+    font-size: 22px;
+    padding: 20px 42px;
+    border-radius: 37px;
+    background-color: gold;
+    cursor: pointer;
+}
+.bold {
+    font-weight: bolder;
+}
+.mono {
+    font-family: monospace;
+}
+header .logo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+header .logo svg {
+    fill: aliceblue;
+}
+header .logo div {
+    display: flex;
+    flex-direction: column;
+}
+ul#menu {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+#loginPage {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     display: none;
+}
+#forms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 33%;
+    flex-direction: column;
+    background-color: white;
+    height: 70vh;
+    border-radius: 15px;
+}
+#loginForm, #registerForm {
+    gap: 70px;
+    display: flex;
+    flex-direction: column;
+}
+#registerForm {
+    display: none;
+}
+#loginForm form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
 }
 
 #registerForm form {
-
-    position: absolute;
-
-    top: 35%;
-
-    left: 37%;
-
     display: flex;
-
     flex-direction: column;
-
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+button#googleSignIn {
+    border: 1px solid #ccc;
     background-color: white;
-
-    padding: 50px;
-
-    border-radius: 22px;
-
-    display: none;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 35px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#googleSignIn img {
+    width: 30px;
+}
+#loginControls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#backHome {
+    margin-top: 112px;
+}
+input[type='submit'] {
+    border: 0;
+    font-size: 20px;
+    padding: 8px 48px;
+    background-color: #437fed;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+input[type='text'], input[type='password'], input[type='email'] {
+    width: 100%;
+    height: 32px;
+    border: 0;
+    padding-left: 16px;
+    border-radius: 5px;
+    background-color: #e8f0fe;
 }

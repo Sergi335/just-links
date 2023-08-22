@@ -2,12 +2,26 @@ import { constants } from './functions.mjs'
 document.addEventListener('DOMContentLoaded', loadStyles)
 
 function loadStyles () {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    if (event.matches) {
+      console.log('entramos')
+      document.documentElement.classList.remove('light')
+      document.documentElement.classList.add('dark')
+    } else {
+      console.log('entramos')
+      document.documentElement.classList.remove('dark')
+      document.documentElement.classList.add('light')
+    }
+  })
   addActiveClass()
   if (window.matchMedia('(min-width: 1536px)').matches) {
-    if (!document.body.classList.contains('edit')) {
+    if (!document.body.classList.contains('edit') && window.location.pathname !== '/profile') {
       sideInfo()
       handleResize()
       setColsAtStart()
+      const selectCols = document.getElementById('colsSelect')
+      selectCols.removeEventListener('change', handleSelectCols)
+      selectCols.addEventListener('change', handleSelectCols)
     }
   }
   const backgrounds = document.querySelectorAll('.miniatures')
@@ -48,9 +62,11 @@ function loadStyles () {
   window.removeEventListener('resize', handleResize)
   window.addEventListener('resize', handleResize)
 
-  const selectCols = document.getElementById('colsSelect')
-  selectCols.removeEventListener('change', handleSelectCols)
-  selectCols.addEventListener('change', handleSelectCols)
+  const carets = document.querySelectorAll('.expandControl')
+  carets.forEach(caret => {
+    caret.removeEventListener('click', handleLinkHeight)
+    caret.addEventListener('click', handleLinkHeight)
+  })
 }
 function addActiveClass () {
   // Pasar a select desktop
@@ -354,4 +370,15 @@ function setColsAtStart () {
     panel.removeEventListener('click', putIntoView)
     panel.addEventListener('click', putIntoView)
   })
+}
+function handleLinkHeight (event) {
+  console.log(event.currentTarget)
+  const link = event.currentTarget.parentNode
+  const anchor = link.childNodes[1]
+  // const description = anchor.childNodes[1]
+  const svg = event.currentTarget.childNodes[0]
+  svg.classList.toggle('rotate180')
+  anchor.classList.toggle('anchorHeight')
+  link.classList.toggle('linkHeight')
+  // description.classList.toggle('opacityIn')
 }

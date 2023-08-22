@@ -7,7 +7,8 @@ function cargaProfile () {
   document.body.classList.add('profile')
   const clsAccButton = document.getElementById('closeAccount')
   clsAccButton.addEventListener('click', openConfirm)
-
+  document.getElementById('otherInfoForm').removeEventListener('submit', editOtherInfo)
+  document.getElementById('otherInfoForm').addEventListener('submit', editOtherInfo)
   // Agregar evento de clic al botón de ir a perfil
   document.querySelector('#profile').removeEventListener('click', profile)
   document.querySelector('#profile').addEventListener('click', profile)
@@ -438,4 +439,32 @@ function closeResults () {
   // const brokens = document.getElementById('brokenLinksResult')
 
   container.style.maxHeight = 0
+}
+async function editOtherInfo (event) {
+  event.preventDefault()
+  console.log(event.target)
+  const getFormValues = form => (
+    Object.fromEntries(
+      new FormData(form)
+    )
+  )
+  const form = document.getElementById('otherInfoForm')
+  const body = getFormValues(form)
+  console.log(body)
+  console.log(JSON.stringify(body))
+  fetch('/api/userAditionalInfo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  }).then(response => {
+    if (response.ok) {
+      return response.json()
+    } else {
+      console.log('Error en response')
+    }
+  }).then(data => {
+    console.log(data)
+  })
 }

@@ -1,4 +1,4 @@
-import { darHora, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath, sortSideInfo } from './functions.mjs'
+import { darHora, saludo, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath, sortSideInfo } from './functions.mjs'
 import { togglePanel, navLinkInfos } from './sidepanel.js'
 import { groupBy, putIntoView } from './styles.js'
 
@@ -10,35 +10,31 @@ document.addEventListener('click', escondeDialogos)
  */
 function cargaWeb () {
   if (window.location.pathname !== '/profile') {
+    const deskName = document.body.getAttribute('data-desk')
+    const $columnsRoot = document.getElementById(`${deskName}Cols`)
+    const columns = Array.from($columnsRoot.childNodes)
     // testImages()
     addDesktopEvents()
     darHora()
+    saludo()
     handleDbClick()
     handleSimpleClick()
-    // const contenedor = document.querySelectorAll('.container')[0]
-    document.onscroll = function (event) {
+    addContextMenuEvents()
+    addColumnEvents()
+    // Locura que si no llamas a ordenacols dos veces en dos funciones distintas(cierto?), no funciona, tocatelos
+    addLinkEvents($columnsRoot)
+    // Esto debe estar en profile tmb
+    document.onscroll = () => {
       toggleBotonSubirArriba()
     }
-    addContextMenuEvents()
-    // Declaramos la variable para pasar a ordenaCols
-    const desk = document.body.getAttribute('data-desk')
-
-    // Añadimos los eventos de columnas
-    addColumnEvents()
-
-    // Añadimos los eventos de los links
-    // Locura que si no llamas a ordenacols dos veces en dos funciones distintas(cierto?), no funciona, tocatelos
-    const $raiz = document.getElementById(`${desk}Cols`)
-    addLinkEvents($raiz)
     if (window.matchMedia('(min-width: 1536px)').matches) {
       if (!document.body.classList.contains('edit')) {
-        const hijos = Array.from($raiz.childNodes)
-        ordenaItems(hijos)
-        ordenaCols($raiz)
+        ordenaItems(columns)
+        ordenaCols($columnsRoot)
       }
       ordenaDesks()
     }
-    $raiz.style.opacity = 1
+    $columnsRoot.style.opacity = 1
   }
 }
 
@@ -48,12 +44,6 @@ function cargaWeb () {
  * Carga los manejadores de eventos para la manipulación de escritorios
  */
 function addDesktopEvents () {
-  // Agregar evento click a cada elemento de la lista de de selección escritorios
-  // document.querySelectorAll('.deskList').forEach(item => {
-  //   item.removeEventListener('click', selectDesktop)
-  //   item.addEventListener('click', selectDesktop)
-  // })
-
   // Agregar evento de clic al botón para agregar una columna
   document.querySelector('#addCol').removeEventListener('click', toggleDialogColumn)
   document.querySelector('#addCol').addEventListener('click', toggleDialogColumn)
@@ -125,9 +115,6 @@ function addColumnEvents () {
   })
   document.querySelector('#colSubmit').removeEventListener('click', createColumn)
   document.querySelector('#colSubmit').addEventListener('click', createColumn)
-
-  // document.querySelector('#editcolSubmit').removeEventListener('click', editColumn)
-  // document.querySelector('#editcolSubmit').addEventListener('click', editColumn)
 
   document.querySelector('#confDeletecolSubmit').removeEventListener('click', deleteColumn)
   document.querySelector('#confDeletecolSubmit').addEventListener('click', deleteColumn)
@@ -320,8 +307,9 @@ async function createDesktop () {
       sendMessage(false, `${firstKey}, ${firstValue}`)
     }
   } else {
-    window.location = `/${name}`
+    window.location = `/desktop/${name}`
     // Mensaje exito despues
+    // sacar a constante /desktop/
   }
 }
 /**
@@ -1199,8 +1187,10 @@ async function moveLinksEdit (event) {
  */
 async function pasteLink (event) {
   const menu = document.getElementById('menuColumn')
-  const visible = menu.style.display === 'block'
-  visible ? menu.style.display = 'none' : menu.style.display = 'block'
+  const visible = menu.style.display === 'flex'
+  if (visible) {
+    menu.style.display = 'none'
+  }
   // lee el contenido del portapapeles entonces ...
   navigator.clipboard.read().then((clipboardItems) => {
     // por cada clipboardItem ...
@@ -1216,17 +1206,22 @@ async function pasteLink (event) {
                 console.log(text)
                 // Si tiene un enlace
                 if (text.indexOf('http') === 0) {
-                  console.log('Tiene un enlace')
                   const raiz = event.target.parentNode.childNodes[1].innerText
                   const $raiz = document.querySelector(`[data-db="${raiz}"]`)
+                  const urls = text.match(/https?:\/\/[^\s]+/g)
+                  if (urls.length > 1) {
+                    console.log('entramos')
+                    pasteMultipleLinks(urls, raiz)
+                    return
+                  }
+                  console.log('Tiene un enlace')
                   const url = text
                   console.log(typeof url, url.length)
                   async function procesarEnlace () {
                     const nombre = await getNameByUrl(text)
                     const escritorio = document.body.getAttribute('data-desk')
                     const columna = document.body.getAttribute('data-panel')
-                    let orden = $raiz.childNodes.length
-                    orden = orden + 1
+                    const orden = $raiz.childNodes.length
                     console.log(orden)
                     const json = {
                       idpanel: raiz,
@@ -1328,6 +1323,45 @@ async function pasteLink (event) {
       }
     }
   })
+}
+async function pasteMultipleLinks (array, idpanel) {
+  const escritorio = document.body.getAttribute('data-desk')
+  const columna = document.body.getAttribute('data-panel')
+  const body = {
+    idpanel,
+    escritorio,
+    panel: columna,
+    data: array
+  }
+  if (Array.isArray(array)) {
+    const params = {
+      url: `${constants.BASE_URL}/multlinks`,
+      method: 'POST',
+      options: {
+        contentType: 'application/json'
+      },
+      body
+    }
+    const res = await fetchS(params)
+    console.log(res)
+    // if res = error y loader de progreso
+    let $raiz
+    if (!document.body.classList.contains('edit')) {
+      $raiz = document.querySelector(`[data-db="${res[0].idpanel}"]`)
+    } else {
+      $raiz = document.querySelector(`[data-db="edit${res[0].idpanel}"]`)
+    }
+    if ($raiz.hasChildNodes()) {
+      while ($raiz.childNodes.length > 0) {
+        $raiz.removeChild($raiz.lastChild)
+      }
+    }
+    res.forEach(link => {
+      refreshLinks(link)
+    })
+  } else {
+    sendMessage(false, 'El parametro debe ser un Array')
+  }
 }
 /**
  * Función para scrapear el titulo de una pag desde el server
@@ -1468,9 +1502,10 @@ function toggleDialogLink (event) {
 }
 function toggleDialogEditLink (event) {
   const menu = document.getElementById('menuLink')
-  const menuVisible = menu.style.display === 'block'
-  menu.style.display = menuVisible ? 'none' : 'block'
-
+  const menuVisible = menu.style.display === 'flex'
+  if (menuVisible) {
+    menu.style.display = 'none'
+  }
   const url = event.target.parentNode.childNodes[1].innerText
   const linkName = event.target.parentNode.childNodes[2].innerText
   const linkDescription = event.target.parentNode.childNodes[3].innerText
@@ -1496,8 +1531,10 @@ function toggleDeleteDialogLink (event) {
   // nombre panel escritorio id
   console.log(event.target)
   const menu = document.getElementById('menuLink')
-  const menuVisible = menu.style.display === 'block'
-  menu.style.display = menuVisible ? 'none' : 'block'
+  const menuVisible = menu.style.display === 'flex'
+  if (menuVisible) {
+    menu.style.display = 'none'
+  }
   // const nombre = event.target.parentNode.childNodes[2].innerText
   const panelId = document.body.getAttribute('idpanel')
   const panel = document.body.getAttribute('data-panel')
@@ -1545,7 +1582,7 @@ function escondeDeleteDeskDialog () {
   dialog.style.display = visible ? 'none' : 'flex'
 }
 function escondeDialogos (event) {
-  if (window.location.pathname !== '/api/profile') {
+  if (window.location.pathname !== '/profile') {
     const cuadros = [
       ...document.querySelectorAll('.deskForm'),
       document.getElementById('addDesk'),
@@ -1804,6 +1841,7 @@ function ordenaDesks () {
 function logOut () {
   console.log('Cierra sesión')
   document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
+  document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
   window.location = '/'
 }
 // Funcion ir a perfil
@@ -1825,7 +1863,7 @@ export function mostrarMenu (event) {
     if (event.currentTarget.classList.contains('headercolumn') || event.currentTarget.classList.contains('tablinks')) {
       // Primero ocultamos el menu link, si está visible
       const menuL = document.getElementById('menuLink')
-      if (menuL.style.display === 'block') {
+      if (menuL.style.display === 'flex') {
         menuL.style.display = 'none'
       }
       // Obtener la información del elemento en el que se hizo clic
@@ -1852,14 +1890,14 @@ export function mostrarMenu (event) {
       // Posicionar el menú emergente cerca de la posición del ratón
       menu.style.left = posX + 'px'
       menu.style.top = posY + 'px'
-      menu.style.display = 'block'
+      menu.style.display = 'flex'
     }
     if (event.currentTarget.classList.contains('link')) {
       const elemento = event.currentTarget
       document.body.setAttribute('data-link', elemento.id)
       // Primero ocultamos el menu columna si esta visible
       const menuC = document.getElementById('menuColumn')
-      if (menuC.style.display === 'block') {
+      if (menuC.style.display === 'flex') {
         menuC.style.display = 'none'
       }
       if (!document.body.classList.contains('edit')) {
@@ -1910,7 +1948,7 @@ export function mostrarMenu (event) {
       // Posicionar el menú emergente cerca de la posición del ratón
       menu.style.left = posX + 'px'
       menu.style.top = posY + 'px'
-      menu.style.display = 'block'
+      menu.style.display = 'flex'
     }
   }
 }

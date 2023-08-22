@@ -2,52 +2,54 @@ window.onload = function () {
   const btnStart = document.getElementById('btnStart')
   btnStart.addEventListener('click', () => {
     console.log('Has hecho click')
-    const logBlock = document.querySelector('#loginForm form')
-    const regBlock = document.querySelector('#registerForm form')
-    const visible = logBlock.style.display === 'flex'
+    const homePage = document.getElementById('homepage')
+    const loginPage = document.getElementById('loginPage')
 
-    logBlock.style.display = visible ? 'none' : 'flex'
+    homePage.style.display = 'none'
+    loginPage.style.display = 'flex'
+    document.body.style.overflow = 'hidden'
+    // const logBlock = document.querySelector('#loginForm form')
+    // const regBlock = document.querySelector('#registerForm form')
+    // const visible = logBlock.style.display === 'flex'
 
-    if (regBlock.style.display === 'flex') {
-      regBlock.style.display = 'none'
-    }
+    // logBlock.style.display = visible ? 'none' : 'flex'
+
+    // if (regBlock.style.display === 'flex') {
+    //   regBlock.style.display = 'none'
+    // }
   })
 
   const btnChangeForm = document.querySelector('#loginForm a')
-
-  btnChangeForm.addEventListener('click', () => {
-    console.log('Has hecho click')
-    const logBlock = document.querySelector('#loginForm form')
-    const visible = logBlock.style.display === 'flex'
-    logBlock.style.display = visible ? 'none' : 'flex'
-    const regBlock = document.querySelector('#registerForm form')
-    regBlock.style.display = 'flex'
-  })
   const btnChangeForm2 = document.querySelector('#registerForm a')
 
+  btnChangeForm.addEventListener('click', () => {
+    const logBlock = document.querySelector('#loginForm')
+    const regBlock = document.querySelector('#registerForm')
+    logBlock.style.display = 'none'
+    regBlock.style.display = 'flex'
+  })
+
   btnChangeForm2.addEventListener('click', () => {
-    console.log('Has hecho click')
-    const regBlock = document.querySelector('#registerForm form')
-    const visible = regBlock.style.display === 'flex'
-    regBlock.style.display = visible ? 'none' : 'flex'
-    const logBlock = document.querySelector('#loginForm form')
+    const regBlock = document.querySelector('#registerForm')
+    const logBlock = document.querySelector('#loginForm')
+    regBlock.style.display = 'none'
     logBlock.style.display = 'flex'
   })
 
+  /**
+   * Login
+   */
   document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault() // Evita que el formulario se envíe de forma predeterminada
+    event.preventDefault()
 
-    // Obtén los valores de los campos del formulario
     const nick = document.getElementById('loginName').value
     const password = document.getElementById('loginPass').value
 
-    // Crea un objeto con los datos del formulario
     const formData = {
       name: nick,
       password
     }
 
-    // Realiza la solicitud fetch para enviar los datos del formulario
     fetch('/login', {
       method: 'POST',
       headers: {
@@ -56,13 +58,10 @@ window.onload = function () {
       body: JSON.stringify(formData)
     })
       .then(function (response) {
-        // Maneja la respuesta de la solicitud fetch
         if (response.ok) {
-          // La solicitud fue exitosa
           console.log(response)
           return response.json()
         } else {
-          // La solicitud falló
           throw new Error('Error en la solicitud')
         }
       })
@@ -155,5 +154,21 @@ window.onload = function () {
         // Maneja los errores
         console.error(error)
       })
+  })
+  document.getElementById('googleSignIn').addEventListener('click', () => {
+    fetch('/signWithGoogle', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json()
+      } else {
+        throw new Error('Error en la solicitud')
+      }
+    }).then(data => {
+      console.log(data)
+    })
   })
 }

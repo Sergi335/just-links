@@ -1,7 +1,8 @@
 .sideInfo
       .deskInfos
         span#reloj
-        p#saludo Buenos días #{user}
+        p#saludo Buenos días 
+          span#user= user
         p#deskTitle.deskTitle= escritorioSelectedFormat
       .deskControls
         svg#hidePanels.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')

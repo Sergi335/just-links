@@ -1,0 +1,34 @@
+// const { getAuth, getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup } = require('firebase/auth')
+const { getAuth, signInWithPopup, GoogleAuthProvider } = require('firebase/auth')
+const { initializeApp } = require('firebase/app')
+const { firebaseConfig } = require('../config/firebase')
+
+const app = initializeApp(firebaseConfig)
+
+const loginWithGoogle = (req, res) => {
+  const auth = getAuth()
+  const provider = new GoogleAuthProvider()
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const token = credential.accessToken
+      // The signed-in user info.
+      const user = result.user
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+      res.send(user, token, credential)
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      // The email of the user's account used.
+      const email = error.customData.email
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error)
+      // ...
+      res.send(errorCode, errorMessage, email, credential)
+    })
+}
+
+module.exports = { loginWithGoogle }

@@ -128,6 +128,20 @@ const getNameByUrl = async (req, res) => {
       console.log('Hubo un error al obtener el título de la página:', error)
     })
 }
+const getNameByUrlLocal = async (url) => {
+  try {
+    const response = await axios.get(url)
+    const html = response.data
+    const $ = cheerio.load(html)
+    const title = $('title').text()
+    console.log('El título de la página es: ' + title)
+    return title
+  } catch (error) {
+    const altTitle = new URL(url).host
+    console.log('Hubo un error al obtener el título de la página:', error)
+    return altTitle // Lanzar el error para manejarlo en la función llamante
+  }
+}
 /**
  * Funcion emergencia creada para actualizar la db con el campo orden de cada
  * link en cada panel, no se usa.
@@ -198,8 +212,7 @@ const setOrder2 = async (desk, panel) => {
     return lista
   } catch (error) {
     console.error(error)
-    // eslint-disable-next-line no-undef
-    res.status(500).send('Error interno del servidor')
+    return error
   }
 }
 /**
@@ -275,6 +288,49 @@ const createItem = async (req, res) => {
     }
   }
 }
+const createMultipleItems = async (req, res) => {
+  const { body } = req
+  const user = req.user.name
+  const links = body.data
+  const count = await linksModel.find({ idpanel: body.idpanel, user })
+
+  if (count.length === 0) {
+    console.log('Estaba vacia')
+    await columnasModel.findOneAndUpdate({ _id: body.idpanel, user }, { $set: { vacio: false } })
+  } else {
+    console.log('No estaba vacia')
+  }
+
+  if (Array.isArray(body.data)) {
+    try {
+      console.log(body.data)
+      let counter = 0
+
+      for (const link of links) {
+        const name = await getNameByUrlLocal(link)
+        const object = {
+          name,
+          user,
+          URL: link,
+          imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${link}&size=64`,
+          escritorio: body.escritorio,
+          panel: body.panel,
+          idpanel: body.idpanel,
+          orden: count.length + counter
+        }
+        counter++
+        console.log(object)
+        await linksModel.create(object)
+      }
+      const data = await linksModel.find({ idpanel: body.idpanel, user })
+      res.send(data)
+      setOrder2(body.escritorio, body.idpanel)
+    } catch (error) {
+      res.send({ error: error.message })
+    }
+  }
+}
+
 /**
  * Actualizar enlace al arrastrar entre columnas
  * @param {*} req
@@ -528,4 +584,4 @@ const encontrarDuplicadosPorURL = async (req, res) => {
     res.send({ error })
   }
 }
-module.exports = { getItemsCount, getItems, createItem, deleteItem, editItem, editdragItem, actualizarOrdenElementos, getNameByUrl, moveItem, getItem, setNotes, setLinkImg, setImages, deleteImage, obtenerStatus, encontrarDuplicadosPorURL, getAllItems }
+module.exports = { getItemsCount, getItems, createItem, deleteItem, editItem, editdragItem, actualizarOrdenElementos, getNameByUrl, moveItem, getItem, setNotes, setLinkImg, setImages, deleteImage, obtenerStatus, encontrarDuplicadosPorURL, getAllItems, createMultipleItems }

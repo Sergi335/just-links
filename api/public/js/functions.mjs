@@ -6,7 +6,20 @@ export const constants = {
   COLUMN_WIDTH: '390px',
   COLUMN_COUNT: 4
 }
-
+export function saludo () {
+  const fecha = new Date()
+  const hora = fecha.getHours()
+  console.log(hora)
+  const posicion = document.getElementById('saludo')
+  console.log('🚀 ~ file: functions.mjs:14 ~ posicion:', posicion)
+  if (hora >= 7 && hora < 14) {
+    posicion.innerHTML = `Buenos días ${getCookieValue('user')}`
+  } else if (hora >= 14 && hora < 20) {
+    posicion.innerHTML = `Buenas tardes ${getCookieValue('user')}`
+  } else if (hora >= 20 && hora < 7) {
+    posicion.innerHTML = `Buenas noches ${getCookieValue('user')}`
+  }
+}
 function hora () {
   const fecha = new Date()
   const hora = fecha.getHours()
@@ -39,7 +52,6 @@ export async function fetchS (params) {
   let { url, method, options } = params
   let { body } = params
   if (options.query !== undefined) {
-    // console.log(`${url}${options.query}`)
     url = `${url}${options.query}`
     body = { body }
   }

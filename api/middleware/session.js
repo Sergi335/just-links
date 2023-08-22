@@ -4,7 +4,7 @@ const { usersModel } = require('../models/index')
 
 const authMiddleware = async (req, res, next) => {
   try {
-    console.log(req.cookies)
+    console.log('Cookies: ' + req.cookies)
     if (!req.cookies.token) {
       handleHttpError(res, 'NOT_TOKEN', 401)
       return
