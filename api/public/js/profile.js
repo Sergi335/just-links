@@ -330,9 +330,12 @@ async function findBrokenLinks () {
   const counter = document.getElementById('counter')
   const $raiz = document.getElementById('duplicatesResult')
   const $raiz2 = document.getElementById('brokenLinksResult')
+  const $ppc = document.querySelector('.progress-pie-chart')
+  const $fill = document.querySelector('.ppc-progress-fill')
+  const result = document.querySelector('.ppc-percents span')
+
   $raiz2.innerHTML = ''
   counter.innerHTML = 'Broken Links:'
-  const $ppc = document.querySelector('.progress-pie-chart')
   if ($ppc.classList.contains('fade-off')) {
     $ppc.classList.remove('fade-off')
   }
@@ -340,15 +343,14 @@ async function findBrokenLinks () {
     $ppc.classList.remove('gt-50')
   }
   $ppc.dataset.percent = 0
-  const $fill = document.querySelector('.ppc-progress-fill')
   $fill.style.transform = 'rotate(0deg)'
-  const result = document.querySelector('.ppc-percents span')
   result.innerHTML = 0 + '%'
   if ($raiz.childElementCount > 1) {
     $raiz.innerHTML = ''
   }
   $ppc.style.display = 'block'
   container.style.maxHeight = '2500px'
+  // try catch deberia estar en otra función y dejar un solo fetch
   const data = await fetch(`${constants.BASE_URL}/allLinks`, {
     method: 'GET',
     headers: {

@@ -955,8 +955,8 @@ async function deleteLink () {
  */
 async function moveLinks (event) {
   const menu = document.getElementById('menuLink')
-  const menuVisible = menu.style.display === 'block'
-  menu.style.display = menuVisible ? 'none' : 'block'
+  const menuVisible = menu.style.display === 'flex'
+  menu.style.display = menuVisible ? 'none' : 'flex'
   if (document.body.classList.contains('edit')) {
     moveLinksEdit(event)
   } else {
@@ -1327,36 +1327,54 @@ async function pasteLink (event) {
 async function pasteMultipleLinks (array, idpanel) {
   const escritorio = document.body.getAttribute('data-desk')
   const columna = document.body.getAttribute('data-panel')
-  const body = {
-    idpanel,
-    escritorio,
-    panel: columna,
-    data: array
-  }
+  // declarar loader y mostrarlo
+  let count = 0
   if (Array.isArray(array)) {
-    const params = {
-      url: `${constants.BASE_URL}/multlinks`,
-      method: 'POST',
-      options: {
-        contentType: 'application/json'
-      },
-      body
-    }
-    const res = await fetchS(params)
-    console.log(res)
+    const pastedLinks = await Promise.all(array.map(async (link) => {
+      const body = {
+        idpanel,
+        escritorio,
+        panel: columna,
+        data: [link]
+      }
+      const params = {
+        url: `${constants.BASE_URL}/multlinks`,
+        method: 'POST',
+        options: {
+          contentType: 'application/json'
+        },
+        body
+      }
+      const res = await fetchS(params)
+      if (Array.isArray(res)) {
+        console.log(res)
+        count++
+        return res
+      } else {
+        count++
+        return null
+      }
+    }))
+    console.log(count)
+    console.log(pastedLinks)
+    console.log(pastedLinks.slice(-1))
+    const longestPastedLinks = pastedLinks.reduce((longest, current) => {
+      return current.length > longest.length ? current : longest
+    }, [])
+    console.log('🚀 ~ file: scripts3.js:1364 ~ longestPastedLinks ~ longestPastedLinks:', longestPastedLinks)
     // if res = error y loader de progreso
     let $raiz
     if (!document.body.classList.contains('edit')) {
-      $raiz = document.querySelector(`[data-db="${res[0].idpanel}"]`)
+      $raiz = document.querySelector(`[data-db="${longestPastedLinks[0].idpanel}"]`)
     } else {
-      $raiz = document.querySelector(`[data-db="edit${res[0].idpanel}"]`)
+      $raiz = document.querySelector(`[data-db="edit${longestPastedLinks[0].idpanel}"]`)
     }
     if ($raiz.hasChildNodes()) {
       while ($raiz.childNodes.length > 0) {
         $raiz.removeChild($raiz.lastChild)
       }
     }
-    res.forEach(link => {
+    longestPastedLinks.forEach(link => {
       refreshLinks(link)
     })
   } else {
