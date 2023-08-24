@@ -2,7 +2,7 @@ const { check } = require('express-validator')
 const { validateResults } = require('../helpers/handleValidators')
 
 const validateEditLink = [
-  check('nombre')
+  check('name')
     .exists()
     .notEmpty()
     .isLength({ min: 1, max: 235 }),

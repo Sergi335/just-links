@@ -375,10 +375,10 @@ function handleLinkHeight (event) {
   console.log(event.currentTarget)
   const link = event.currentTarget.parentNode
   const anchor = link.childNodes[1]
-  // const description = anchor.childNodes[1]
+  const description = anchor.childNodes[1]
   const svg = event.currentTarget.childNodes[0]
   svg.classList.toggle('rotate180')
   anchor.classList.toggle('anchorHeight')
   link.classList.toggle('linkHeight')
-  // description.classList.toggle('opacityIn')
+  description.classList.toggle('opacityIn')
 }

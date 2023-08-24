@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator')
 
 const validateResults = (req, res, next) => {
   try {
-    validationResult(req).throw()
+    validationResult(req.body.fields).throw()
     return next()
   } catch (err) {
     res.status(403)

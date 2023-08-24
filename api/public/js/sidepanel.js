@@ -208,15 +208,16 @@ async function showLinkInfo (element) {
       }
     }
 
-    const res = await fetch(`/api/link?id=${id}`, {
+    const res = await fetch(`/api/links/id/${id}`, {
       method: 'GET',
       headers: {
         'content-type': 'application/json'
       }
     })
     const json = await res.json()
-    const notas = json.data[0].notes
-    const images = json.data[0].images
+    console.log(json)
+    const notas = json.notes
+    const images = json.images
 
     const idHolder = document.getElementById('linkId')
     idHolder.innerText = id
@@ -228,7 +229,7 @@ async function showLinkInfo (element) {
     nameHolder.innerText = nombre
 
     const descHolder = document.getElementById('ldesc')
-    descHolder.innerText = json.data[0].description
+    descHolder.innerText = json.description
 
     const panelHolder = document.getElementById('lpanel')
     panelHolder.innerText = panel
@@ -239,7 +240,7 @@ async function showLinkInfo (element) {
     urlHolder.innerText = url
     getUrlStatus(url)
     const dateHolder = document.getElementById('ladded')
-    dateHolder.innerText = formatDate(json.data[0].createdAt)
+    dateHolder.innerText = formatDate(json.createdAt)
 
     const notesDiv = document.getElementById('linkNotes')
     notesDiv.innerHTML = notas === undefined || notas === '' ? 'Escribe aquí ...' : notas
@@ -333,11 +334,11 @@ async function sendNotes (event) {
   console.log(id)
   const notesDiv = document.getElementById('linkNotes')
   const notes = notesDiv.innerHTML
-  let body = { id, notes }
+  let body = { id, fields: { notes } }
   body = JSON.stringify(body)
   console.log(body)
-  const res = await fetch('/api/linkNotes', {
-    method: 'POST',
+  const res = await fetch('/api/links', {
+    method: 'PATCH',
     headers: {
       'content-type': 'application/json'
     },

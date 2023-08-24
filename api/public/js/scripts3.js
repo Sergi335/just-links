@@ -776,11 +776,11 @@ async function editLink () {
   const linkURL = document.querySelector('#editlinkURL').value.trim()
   const dbID = document.getElementById('editlinkSubmit').getAttribute('sender')
 
-  const body = { id, nombre, URL: linkURL, description }
+  const body = { id, fields: { name: nombre, URL: linkURL, description } }
   console.log(body)
   const params = {
     url: `${constants.BASE_URL}/links`,
-    method: 'PUT',
+    method: 'PATCH',
     options: {
       contentType: 'application/json'
     },
@@ -808,6 +808,7 @@ async function editLink () {
         // si permitimos mismo nombre esto habrá que cambiarlo tmb (elementp.id?)
         const elementoAEditar = arr.find((elemento) => elemento.id === id)
         if (elementoAEditar) {
+          // llamar a refreshlinks
           console.log(elementoAEditar)
           elementoAEditar.querySelector('img').src = res.imgURL
           elementoAEditar.querySelector('a').href = res.URL
@@ -956,48 +957,29 @@ async function deleteLink () {
 async function moveLinks (event) {
   const menu = document.getElementById('menuLink')
   const menuVisible = menu.style.display === 'flex'
-  menu.style.display = menuVisible ? 'none' : 'flex'
+  if (menuVisible) {
+    menu.style.display = 'none'
+  }
   if (document.body.classList.contains('edit')) {
     moveLinksEdit(event)
   } else {
-    // Recogemos el id del panel de origen -> Correcto
-    const panelOrigenId = document.body.getAttribute('idpanel')
-    // Recogemos el nombre del panel de destino
-    const panelDestinoNombre = event.target.innerText
-    // Declaramos la variable para recoger el id del panel destino -> Correcto
-    let panelDestinoId
-    // Declaramos la variable para recoger la cantidad de hijos que quedan -> Dice la cantidad que hay en el de destino sin contar el nuevo
-    let panelOldChildCount
-    // Recogemos la variable para detectar el panel de destino que coincida con panelDestinoNombre
-    const paneles = document.querySelectorAll('h2.ctitle')
-    if (paneles) {
-      paneles.forEach(element => {
-        if (element.innerText === panelDestinoNombre) {
-        // Hacer algo con el elemento encontrado - y si hay duplicados???
-          panelDestinoId = element.parentNode.parentNode.childNodes[1].dataset.db
-          panelOldChildCount = element.parentNode.parentNode.childNodes[1].childNodes.length
-        }
-      })
-    }
-    console.log('Elementos en el panel Viejo')
-    console.log(panelOldChildCount)
-    // Recogemos el nombre del link movido
-    const linkName = event.target.parentNode.parentNode.parentNode.childNodes[2].innerText
-    // Declaramos el body
-    let body = { panelOrigenId, panelDestinoId, panelDestinoNombre, name: linkName, orden: panelOldChildCount + 1 }
-    console.log('Body')
-    console.log(body)
+    // se necesita para el testDummy
+    const idpanelOrigen = document.body.getAttribute('idpanel')
+    const panel = event.target.innerText
+    const id = document.body.getAttribute('data-link')
+    const idpanel = event.target.dataset.db
+    const orden = document.querySelectorAll(`[data-db="${idpanel}"]`)[0].childNodes.length
+
+    const body = { id, idpanelOrigen, fields: { idpanel, panel, orden } }
     const params = {
-      url: `${constants.BASE_URL}/moveLinks`,
-      method: 'PUT',
+      url: `${constants.BASE_URL}/links`,
+      method: 'PATCH',
       options: {
         contentType: 'application/json'
       },
       body
     }
     const res = await fetchS(params)
-    console.log('Resultado del servidor')
-    console.log(res)
     const firstKey = Object.keys(res)[0]
     const firstValue = res[firstKey]
 
@@ -1005,70 +987,21 @@ async function moveLinks (event) {
       const $error = document.getElementById('moveError') // Crear
       $error.innerText = `${firstKey}, ${firstValue}`
     } else {
-    // Recogemos los links para detectar el movido y eliminarlo
+      // Recogemos los links para detectar el movido y eliminarlo
       const links = document.querySelectorAll('div.link')
       if (links) {
         links.forEach(element => {
-          // problema con duplicados, meter id de base de datos como id de elemento
-          if (element.id === res._id) {
-            console.log('Hay coincidencia con el enviado del servidor')
-            console.log(element.id)
-            console.log(res._id)
-            // Hacer algo con el elemento encontrado
-            element.remove()
-          }
+          if (element.id === res._id) element.remove()
         })
       }
     }
-
-    /* --- */
-    const elements = document.querySelectorAll(`[data-db="${panelDestinoId}"]`)[0].childNodes
-    console.log('Elementos en panel de destino')
-    console.log(elements)
-    const id = elements[0].parentNode.getAttribute('data-db')
-    // console.log(id)
-    const sortedElements = Array.from(elements).sort((a, b) => {
-      return a.dataset.orden - b.dataset.orden
-    })
-    console.log('Sorted elements')
-    console.log(sortedElements)
-    const names = []
-    sortedElements.forEach(element => {
-      names.push(element.innerText)
-    })
-    console.log('nombres')
-    console.log(names)
-    body = names
-    const params2 = {
-      url: `${constants.BASE_URL}/draglink?idColumna=`,
-      method: 'PUT',
-      options: {
-        contentType: 'application/json',
-        query: id
-      },
-      body
-    }
-    // La url /draglink ejecuta una función que actualiza el orden del link en la columna
-    const res2 = await fetchS(params2)
-    console.log('Segundo res del servidor')
-    console.log(res2)
-    const firstKey2 = Object.keys(res2)[0]
-    const firstValue2 = res2[firstKey2]
-
-    if (firstKey2 === 'error') {
-      const $error = document.getElementById('linkError') // Crear
-      $error.innerText = `${firstKey2}, ${firstValue2}`
-    } else {
-      const testDummy = document.querySelectorAll(`[data-db="${panelOrigenId}"]`)[0].childNodes.length
-      if (testDummy === 0) {
+    refreshLinks(res)
+    const testDummy = document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].childNodes.length
+    if (testDummy === 0) {
       // Meter el dummy
-        const dummy = document.createElement('div')
-        dummy.setAttribute('class', 'link')
-        document.querySelectorAll(`[data-db="${panelOrigenId}"]`)[0].appendChild(dummy)
-      }
-      console.log('test dummy')
-      console.log(testDummy)
-      refreshLinks(res)
+      const dummy = document.createElement('div')
+      dummy.setAttribute('class', 'link')
+      document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].appendChild(dummy)
     }
   }
 }
@@ -1327,7 +1260,11 @@ async function pasteLink (event) {
 async function pasteMultipleLinks (array, idpanel) {
   const escritorio = document.body.getAttribute('data-desk')
   const columna = document.body.getAttribute('data-panel')
-  // declarar loader y mostrarlo
+  const loader = document.getElementById('loadingCard')
+  const loaderText = document.querySelector('#loadingCard p')
+  loaderText.innerHTML = 'Preparando para copiar ...'
+  const progressBar = document.querySelector('.progress-bar')
+  loader.style.transform = 'translateX(0)'
   let count = 0
   if (Array.isArray(array)) {
     const pastedLinks = await Promise.all(array.map(async (link) => {
@@ -1346,6 +1283,7 @@ async function pasteMultipleLinks (array, idpanel) {
         body
       }
       const res = await fetchS(params)
+      loaderText.innerHTML = 'Recibiendo datos ...'
       if (Array.isArray(res)) {
         console.log(res)
         count++
@@ -1357,12 +1295,11 @@ async function pasteMultipleLinks (array, idpanel) {
     }))
     console.log(count)
     console.log(pastedLinks)
-    console.log(pastedLinks.slice(-1))
     const longestPastedLinks = pastedLinks.reduce((longest, current) => {
       return current.length > longest.length ? current : longest
     }, [])
     console.log('🚀 ~ file: scripts3.js:1364 ~ longestPastedLinks ~ longestPastedLinks:', longestPastedLinks)
-    // if res = error y loader de progreso
+    // if res = error
     let $raiz
     if (!document.body.classList.contains('edit')) {
       $raiz = document.querySelector(`[data-db="${longestPastedLinks[0].idpanel}"]`)
@@ -1374,9 +1311,22 @@ async function pasteMultipleLinks (array, idpanel) {
         $raiz.removeChild($raiz.lastChild)
       }
     }
+    const porcentajePorPaso = 100 / longestPastedLinks.length
+    let anchoActual = 0
     longestPastedLinks.forEach(link => {
+      anchoActual += porcentajePorPaso
+      console.log(anchoActual)
+      console.log(link.name)
+      progressBar.style.width = `${anchoActual}%`
+      loaderText.innerHTML = link.name
       refreshLinks(link)
     })
+    setTimeout(() => {
+      loader.style.transform = 'translateX(375px)'
+    }, 500)
+    setTimeout(() => {
+      progressBar.style.width = '0%'
+    }, 1000)
   } else {
     sendMessage(false, 'El parametro debe ser un Array')
   }
@@ -1415,6 +1365,8 @@ function refreshLinks (json) {
   }
 
   const $div = document.createElement('div')
+  // const loader = document.getElementById('loadingCard')
+  // const progressBar = document.querySelector('.progress-bar')
   $div.setAttribute('class', 'link')
   $div.setAttribute('orden', `${json.orden}`)
   $div.setAttribute('id', `${json._id}`)
@@ -1484,6 +1436,12 @@ function refreshLinks (json) {
     $div.childNodes[0].click()
     $div.classList.add('navActive')
   }
+  // if (loader.style.transform === 'translateX(0px)') {
+  //   loader.style.transform = 'translateX(375px)'
+  // }
+  // if (progressBar.style.width === '100%') {
+  //   progressBar.style.width = '0%'
+  // }
   $div.addEventListener('contextmenu', mostrarMenu)
 }
 
@@ -1653,131 +1611,73 @@ function ordenaItems (panels) {
         // se ha arrastrado en la misma columna o a una distinta
         onEnd: async function (evt) {
           const itemEl = evt.item
+          const id = itemEl.id
           const listaOrigen = evt.from
           const listaDestino = evt.to
-          const newId = listaDestino.attributes[2].nodeValue
+          const idpanel = listaDestino.attributes[2].nodeValue
+          const idpanelOrigen = listaOrigen.attributes[2].nodeValue
           const escritorio = document.body.getAttribute('data-desk')
           const panel = itemEl.parentNode.parentNode.childNodes[0].innerText
           const nombre = itemEl.childNodes[1].childNodes[0].innerText
-          const oldId = listaOrigen.attributes[2].nodeValue
 
           // Si el elemento arrastrado es el último crea un elemento link vacio
-          if (document.querySelector(`[data-db="${oldId}"]`).childNodes.length === 0) {
-            console.log('Era el último')
-            const $raizOld = document.querySelector(`[data-db="${oldId}"]`)
+          if (document.querySelector(`[data-db="${idpanelOrigen}"]`).childNodes.length === 0) {
+            const $raizOld = document.querySelector(`[data-db="${idpanelOrigen}"]`)
             const $div = document.createElement('div')
             $div.setAttribute('class', 'link')
             $raizOld.appendChild($div)
           }
           // Si el elemento se vuelve a arrastrar a una columna con dummy eliminar el dummy
-          if (document.querySelector(`[data-db="${newId}"]`).childNodes.length === 2) {
-            const $raizNew = document.querySelector(`[data-db="${newId}"]`)
+          if (document.querySelector(`[data-db="${idpanel}"]`).childNodes.length === 2) {
+            const $raizNew = document.querySelector(`[data-db="${idpanel}"]`)
             const hijos = $raizNew.children
-            console.log(hijos)
             for (let i = 0; i < hijos.length; i++) {
               const hijo = hijos[i]
-
               if (!hijo.innerText) {
                 // El elemento hijo no tiene innerText
-                console.log('El elemento hijo no tiene innerText:', hijo)
                 $raizNew.removeChild(hijo)
               }
             }
           }
-
-          // Hacemos un fetch a la url /draglinks que ejecuta una funcion que edita el elemento si se ha arrastrado a una columna distinta, si se ha arrastrado a la misma columna devuelve un mensaje indicandolo, lo averigua comparando el oldId y el newId
-          let body = { escritorio, name: nombre, newId, oldId, panel }
-          body = JSON.stringify(body)
-          const res = await fetch(`${constants.BASE_URL}/draglinks`, {
-            method: 'PUT',
-            headers: {
-              'content-type': 'application/json'
-            },
-            body
+          const orden = document.querySelector(`[data-db="${idpanel}"]`).childNodes.length
+          const destinyElements = document.querySelectorAll(`[data-db="${idpanel}"]`)[0].childNodes
+          const destinyNames = []
+          destinyElements.forEach(element => {
+            destinyNames.push(element.childNodes[1].childNodes[0].innerText)
           })
-          const json = await res.json()
-          console.log(json)
-
-          const elements = document.querySelectorAll(`[data-db="${newId}"]`)[0].childNodes
-          const id = elements[0].parentNode.getAttribute('data-db')
-          const sortedElements = Array.from(elements).sort((a, b) => {
-            return a.dataset.orden - b.dataset.orden
-          })
-          const names = []
-          sortedElements.forEach(element => {
-            names.push(element.childNodes[1].childNodes[0].innerText)
-          })
-          body = names
-          body = JSON.stringify({ body })
-          // La url /draglink ejecuta una función que actualiza el orden del link en la columna
-          const res2 = await fetch(`${constants.BASE_URL}/draglink?idColumna=${id}`, {
-            method: 'PUT',
-            headers: {
-              'content-type': 'application/json'
-            },
-            body
-          })
-          const json2 = await res2.json()
-          console.log(json2)
-          // --------------------------------------------------------
-          // console.log(json.length);
-          // const objeto = JSON.parse(json);
-          const claves = Object.keys(json)
-          const primerValor = claves[0]
-          // console.log(primerValor);
-          // Si el primer valor es distinto de respuesta se ha arrastrado a otra columna
-          if (primerValor !== 'Respuesta') {
-            // const groupByPanel = json2.reduce((acc, elem) => {
-            //   if (acc[elem.panel]) {
-            //     acc[elem.panel].push(elem)
-            //   } else {
-            //     acc[elem.panel] = [elem]
-            //   }
-            //   return acc
-            // }, {})
-            // // console.log(groupByPanel);
-            // for (const panel in groupByPanel) {
-            //   // eslint-disable-next-line no-unused-vars
-            //   const items = groupByPanel[panel]
-            //   // eslint-disable-next-line no-unused-vars
-            //   const $raiz = document.querySelector(`[id="${escritorio}${panel}"]`)
-            //   // console.log($raiz);
-            //   // if ($raiz.hasChildNodes()) {
-            //   //     while ($raiz.childNodes.length >= 1) {
-            //   //         $raiz.removeChild($raiz.lastChild);
-            //   //     }
-            //   //     refreshLinks(items);
-            //   // }
-            //   // console.log(items);
-            //   // console.log(panel);
-            //   // ordenaItems(panel);
-            // }
-            // console.log(json)
+          const originElements = document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].childNodes
+          const originNames = []
+          if (originElements.length > 1) {
+            originElements.forEach(element => {
+              originNames.push(element.childNodes[1].childNodes[0].innerText)
+            })
+          }
+          // Try catch o fetchS
+          if (idpanel === idpanelOrigen) {
+            console.log('coinciden')
+            let body = { id, destinyNames, fields: { escritorio, name: nombre, idpanel, panel, orden } }
+            body = JSON.stringify(body)
+            const res = await fetch(`${constants.BASE_URL}/links`, {
+              method: 'PATCH',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body
+            })
+            const json = await res.json()
+            console.log(json)
           } else {
-            // const elements = document.querySelectorAll(`[data-db="${newId}"]`)[0].childNodes
-            // console.log(elements)
-            // const id = elements[0].parentNode.getAttribute('data-db')
-            // console.log(id)
-            // const sortedElements = Array.from(elements).sort((a, b) => {
-            //   return a.dataset.orden - b.dataset.orden
-            // })
-            // console.log(sortedElements)
-            // const names = []
-            // sortedElements.forEach(element => {
-            //   names.push(element.innerText)
-            // })
-            // console.log(names)
-            // let body = names
-            // body = JSON.stringify({ body })
-            // const res = await fetch(`${constants.BASE_URL}/draglink?idColumna=${id}`, {
-            //   method: 'PUT',
-            //   headers: {
-            //     'content-type': 'application/json'
-            //   },
-            //   body
-            // })
-            // const json = await res.json()
-            // console.log(json)
+            let body = { id, idpanelOrigen, destinyNames, originNames, fields: { escritorio, name: nombre, idpanel, panel, orden } }
+            body = JSON.stringify(body)
+            const res = await fetch(`${constants.BASE_URL}/links`, {
+              method: 'PATCH',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body
+            })
+            const json = await res.json()
+            console.log(json)
           }
         }
       })
@@ -1929,6 +1829,15 @@ export function mostrarMenu (event) {
           document.body.setAttribute('idPanel', elemento.parentNode.dataset.db)
           document.body.setAttribute('data-panel', elemento.parentNode.parentNode.childNodes[0].innerText)
         }
+        const idpanel = document.body.getAttribute('idpanel')
+        const menuItems = document.querySelectorAll('#destCol li')
+        menuItems.forEach(item => {
+          if (item.dataset.db === idpanel) {
+            item.style.display = 'none'
+          } else {
+            item.style.display = 'block'
+          }
+        })
         const informacion = elemento.childNodes[1].childNodes[0].textContent
         const infoDesc = elemento.childNodes[1].childNodes[1].textContent
         const info = document.getElementById('infoL')
@@ -2001,13 +1910,10 @@ function selectDestination (event) {
 }
 async function handleSubmitMove () {
   const destination = document.querySelector('li.accordion ul li.selected')
-  console.log(`Movemos a ${destination.id}`)
-  const panelOrigenId = document.body.getAttribute('idpanel')
-  console.log(panelOrigenId)
-  const panelDestinoNombre = destination.id
-  console.log(panelDestinoNombre)
-
+  const idpanelOrigen = document.body.getAttribute('idpanel')
+  const panel = destination.id
   const escritorio = document.body.getAttribute('destination-desk')
+
   const res = await fetch(`${constants.BASE_URL}/columnas?escritorio=${escritorio}`, {
     method: 'GET',
     headers: {
@@ -2015,36 +1921,34 @@ async function handleSubmitMove () {
     }
   })
   const data = await res.json()
-  console.log('Resultado del servidor')
-  console.log(data)
   const firstKey = Object.keys(res)[0]
   const firstValue = res[firstKey]
 
   if (firstKey === 'error') {
-    const $error = document.getElementById('moveError') // Crear
-    $error.innerText = `${firstKey}, ${firstValue}`
+    sendMessage(false, `Error: ${firstKey}, ${firstValue}`)
+    return
   } else {
-    console.log('correcto')
-    let panelDestinoId
+    let idpanel
     const linkName = document.body.getAttribute('dataLink')
     data.forEach(col => {
-      if (col.name === panelDestinoNombre) {
-        panelDestinoId = col._id
+      if (col.name === panel) {
+        idpanel = col._id
       }
     })
-    let panelOldChildCount = document.querySelector(`[data-db="${panelOrigenId}"]`)
-    if (panelOldChildCount) {
-      panelOldChildCount = panelOldChildCount.childNodes.length
+    let orden = document.querySelector(`[data-db="${idpanelOrigen}"]`)
+    if (orden) {
+      orden = orden.childNodes.length
     } else {
       // TODO
-      panelOldChildCount = 0
+      orden = 0
     }
-    console.log(panelOldChildCount)
-    const body = { panelOrigenId, panelDestinoId, panelDestinoNombre, name: linkName, orden: panelOldChildCount + 1, escritorio }
+    console.log(orden)
+    const id = document.body.getAttribute('data-link')
+    const body = { id, idpanelOrigen, fields: { idpanel, panel, name: linkName, orden, escritorio } }
     console.log(body)
     const params = {
-      url: `${constants.BASE_URL}/moveLinks`,
-      method: 'PUT',
+      url: `${constants.BASE_URL}/links`,
+      method: 'PATCH',
       options: {
         contentType: 'application/json'
       },

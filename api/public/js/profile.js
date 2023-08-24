@@ -351,7 +351,7 @@ async function findBrokenLinks () {
   $ppc.style.display = 'block'
   container.style.maxHeight = '2500px'
   // try catch deberia estar en otra función y dejar un solo fetch
-  const data = await fetch(`${constants.BASE_URL}/allLinks`, {
+  const data = await fetch(`${constants.BASE_URL}/links/all/all`, {
     method: 'GET',
     headers: {
       contentType: 'application/json'

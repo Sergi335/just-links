@@ -2,7 +2,6 @@ const { initializeApp } = require('firebase/app')
 const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll, getMetadata } = require('firebase/storage')
 const { firebaseConfig } = require('../config/firebase')
 const { updateProfileImage } = require('../controllers/users')
-const { setLinkImg, setImages, deleteImage } = require('../controllers/links')
 const { escritoriosModel, columnasModel, linksModel } = require('../models/index')
 
 const app = initializeApp(firebaseConfig)
@@ -49,7 +48,7 @@ const uploadLinkIcon = async (req, res) => {
   // Si no hay imagen ha elegido una de muestra
   if (!req.file) {
     const filePath = req.body.filePath
-    const resultadoDb = await setLinkImg(filePath, user, linkId)
+    const resultadoDb = await setLinkImgInDb(filePath, user, linkId)
     console.log(resultadoDb)
     const firstKey = Object.keys(resultadoDb)[0]
     const firstValue = resultadoDb[firstKey]
@@ -71,7 +70,7 @@ const uploadLinkIcon = async (req, res) => {
       const downloadURL = await getDownloadURL(snapshot.ref)
       console.log(downloadURL)
       console.log(req.body.linkId)
-      const resultadoDb = await setLinkImg(downloadURL, user, linkId)
+      const resultadoDb = await setLinkImgInDb(downloadURL, user, linkId)
       const firstKey = Object.keys(resultadoDb)[0]
       const firstValue = resultadoDb[firstKey]
       if (firstKey === 'error') {
@@ -108,7 +107,7 @@ const uploadImg = async (req, res) => {
       const downloadURL = await getDownloadURL(snapshot.ref)
       console.log(downloadURL)
       console.log(req.body.linkId)
-      const resultadoDb = await setImages(downloadURL, user, linkId)
+      const resultadoDb = await setImagesInDb(downloadURL, user, linkId)
       const firstKey = Object.keys(resultadoDb)[0]
       const firstValue = resultadoDb[firstKey]
       if (firstKey === 'error') {
@@ -143,13 +142,13 @@ const deleteImg = async (req, res) => {
     await deleteObject(imageRef)
 
     // Borra la referencia de la imagen en tu base de datos (suponiendo que tengas una función para hacerlo)
-    await deleteImage(imageUrl, user, linkId)
+    await deleteImageOnDb(imageUrl, user, linkId)
 
     res.send({ message: 'Imagen eliminada exitosamente' })
   } catch (error) {
     console.error('Error al eliminar la imagen:', error)
     if (error.code === 'storage/invalid-url' || error.code === 'storage/object-not-found') {
-      await deleteImage(imageUrl, user, linkId)
+      await deleteImageOnDb(imageUrl, user, linkId)
     }
     res.status(500).send({ error: error.code })
   }
@@ -237,6 +236,73 @@ const getBackgroundUrl = async (req, res) => {
     res.send(downloadUrl)
   } catch (error) {
     res.send(error)
+  }
+}
+// PATCH?
+const setImagesInDb = async (url, user, linkId) => {
+  if (url) {
+    const imagePath = url
+    const data = await linksModel.findOneAndUpdate(
+      { _id: linkId, user },
+      { $push: { images: imagePath } },
+      { new: true }
+    )
+    console.log(data)
+    return data
+  } else {
+    return { error: 'No hay url' }
+  }
+}
+// PATCH??
+/**
+ * Función para cambiar la imagen del link (favicon), si la url recibida es la de firebase inserta la ruta y si es de muestra inserta la ruta local
+ * @param {*} url
+ * @param {*} user
+ * @param {*} linkId
+ * @returns
+ */
+const setLinkImgInDb = async (url, user, linkId) => {
+  const urlObj = new URL(url)
+  const dominio = 'firebasestorage.googleapis.com'
+  const dominio2 = 't1.gstatic.com'
+  if (urlObj.hostname === dominio || urlObj.hostname === dominio2) {
+    try {
+      const imagePath = url
+      await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
+      return { message: 'imagen de link cambiada' }
+    } catch (error) {
+      return ({ error })
+    }
+  } else {
+    try {
+      const imagePath = urlObj.pathname
+      await linksModel.findOneAndUpdate({ _id: linkId, user }, { $set: { imgURL: imagePath } })
+      return { message: 'imagen de link cambiada' }
+    } catch (error) {
+      return ({ error })
+    }
+  }
+}
+// PATCH ??
+const deleteImageOnDb = async (url, user, linkId) => {
+  try {
+    const updatedArticle = await linksModel.findOneAndUpdate(
+      { _id: linkId, user },
+      { $pull: { images: { $in: [url] } } },
+      { new: true }
+    )
+
+    if (updatedArticle) {
+      console.log('Artículo actualizado:', updatedArticle)
+
+      return updatedArticle
+    } else {
+      console.log('No se encontró ningún artículo que cumpla los criterios de búsqueda.')
+      return { error: 'No encontrado' }
+    }
+  } catch (error) {
+    console.error('Error al actualizar el artículo:', error)
+    return { error: 'Error al borrar' }
   }
 }
 module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl }
