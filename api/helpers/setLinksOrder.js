@@ -9,12 +9,12 @@ const setLinksOrder = async (elementos, idpanel) => {
       ordenActual.set(elemento, orden)
       orden++
     })
-
+    console.log(ordenActual)
     // Actualizamos el campo "orden" de cada elemento en la base de datos
     const updates = elementos.map(async (elemento) => {
       const orden = ordenActual.get(elemento)
       await linksModel.findOneAndUpdate(
-        { name: elemento, idpanel },
+        { _id: elemento, idpanel },
         { orden },
         { new: true }
       )

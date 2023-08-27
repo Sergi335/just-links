@@ -25,7 +25,10 @@ html.light #sidepanel {
     width: 100%;
     background-color: var(--secondColor);
 }
-
+#sideHeader button {
+    font-size: 12px;
+    padding: 2px 7px;
+}
 #sideHeader h2 {
     font-weight: 400;
     font-size: 12px;
@@ -42,7 +45,6 @@ button#prev .ui-icon, button#next .ui-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 50px;
 }
 
 #closeContainer .icofont-close {
@@ -64,9 +66,8 @@ button#prev .ui-icon, button#next .ui-icon {
 }
 
 #imgContainer {
-    width: 100%;
+    width: 96%;
     overflow-y: hidden;
-    height: 76%;
 }
 
 #linkImages {
@@ -129,7 +130,7 @@ button#prev .ui-icon, button#next .ui-icon {
 #videoFrame {
     display: none;
     transform: none !important;
-    min-height: 503px;
+    min-height: 214px;
     aspect-ratio: 16 / 9;
 }
 #frameWrapper {
@@ -142,17 +143,16 @@ button#prev .ui-icon, button#next .ui-icon {
 #imgMasonry {
     background-image: var(--placeholderImg);
     background-repeat: no-repeat;
-    background-size: 42%;
+    background-size: 30%;
     background-position: center;
-    width: 99%;
     height: 100% !important;
     grid-area: a2;
 }
-button#pasteImg {
+/* button#pasteImg {
     position: relative;
     top: -62px;
     right: -90%;
-}
+} */
 .sidePanelA2 {
     display: flex;
     justify-content: center;
@@ -161,6 +161,7 @@ button#pasteImg {
 }
 #linkInfoContainer {
     width: 45%;
+    display: none;
 }
 
 #linkInfoContainer p {
@@ -178,6 +179,7 @@ button#pasteImg {
     flex-direction: column;
     align-items: center;
     opacity: 0;
+    visibility: hidden;
     padding: 11px;
     width: 51%;
     margin: 0;
@@ -188,11 +190,12 @@ button#pasteImg {
 .imgOptionsWrapper {
     display: flex;
     flex-wrap: wrap;
-    width: 50%;
-    gap: 19px;
+    gap: 6px;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    max-height: 26px;
+    overflow-y: auto;
 }
 
 .imgOptionsControls {
@@ -201,17 +204,32 @@ button#pasteImg {
     margin-top: 25px;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 #imgOptions input {
-    position: fixed;
-    left: 166px;
-    width: 37px;
-    height: 37px;
-    opacity: 0;
     cursor: pointer;
+    transform: translateX(-90px);
+    opacity: 0;
 }
-
+.upLinkImage label {
+    position: absolute;
+    display: flex;
+    gap: 6px;
+    cursor: pointer;
+    height: 37px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.upLinkImage {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 8%;
+}
 i.icofont-code-alt,
 i.icofont-font {
     display: none;
@@ -224,6 +242,8 @@ i.icofont-font {
     width: 20px;
     cursor: pointer;
     height: 20px;
+    padding: 3px;
+    border: 1px double transparent;
 }
 
 #limage {
@@ -245,7 +265,7 @@ button#option8 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 45%
+    width: 90%;
 }
 #notesContainer p {
     width: 90%;
@@ -284,6 +304,9 @@ button#option8 {
 #linkImages img {
     max-width: 100%;
 }
+button#pasteImg {
+    display: none;
+}
 @media (min-width: 1536px) {
     #sidepanel {
         top: 126px;
@@ -299,9 +322,20 @@ button#option8 {
         padding-left: 50px;
         font-size: revert;
     }
-
+    #sideHeader button {
+        font-size: 16px;
+        padding: 8px 19px;
+    }
+    #closeContainer {
+        margin-right: 50px;
+    }
+    button#pasteImg {
+        display: flex;
+    }
     #imgContainer {
         margin: 0 auto;
+        margin-top: 12px;
+        height: 76%;
     }
     #videoFrame {
         min-height: 503px;
@@ -309,7 +343,11 @@ button#option8 {
     }
     #linkInfoContainer {
         padding-left: 50px;
+        display: block;
     } 
+    #notesContainer {
+        width: 45%;
+    }
     .sidePanelA2 {
         justify-content: start;
     }
@@ -394,12 +432,14 @@ button#option8 {
         -webkit-transform: translateX(-122px);
         transform: translateX(-122px);
         opacity: 0;
+        visibility: hidden;
     }
 
     100% {
         -webkit-transform: translateX(0);
         transform: translateX(0);
         opacity: 1;
+        visibility: visible;
     }
 }
 
@@ -408,11 +448,13 @@ button#option8 {
         -webkit-transform: translateX(-122px);
         transform: translateX(-122px);
         opacity: 0;
+        visibility: hidden;
     }
 
     100% {
         -webkit-transform: translateX(0);
         transform: translateX(0);
         opacity: 1;
+        visibility: visible;
     }
 }

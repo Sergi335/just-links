@@ -42,6 +42,9 @@ function addPanelEvents () {
     const notesDiv = document.getElementById('linkNotes')
     notesDiv.innerHTML = 'Escribe aquí ...'
   })
+  const deleteButton = document.getElementById('deleteLinkImage')
+  deleteButton.removeEventListener('click', deleteLinkImage)
+  deleteButton.addEventListener('click', deleteLinkImage)
   document.querySelector('.icofont-delete-alt').addEventListener('mousedown', function () {
     document.querySelector('.icofont-delete-alt').classList.add('textContActive')
   })
@@ -62,7 +65,7 @@ function addPanelEvents () {
   opt8.removeEventListener('click', changeLinkImg)
   opt8.addEventListener('click', changeLinkImg)
 
-  document.querySelector('#upLinkImg').addEventListener('change', changeLinkImg)
+  document.querySelector('#upLinkImg').addEventListener('change', createIconMiniature)
   document.querySelector('#saveLinkImage').removeEventListener('click', fetchLinkImage)
   document.querySelector('#saveLinkImage').addEventListener('click', fetchLinkImage)
   if (!document.body.classList.contains('edit')) {
@@ -117,6 +120,7 @@ export function togglePanel (event) {
   panel.style.display = 'flex'
 }
 export function navLinkInfos (event) {
+  console.log(event.target)
   event.preventDefault()
   const loader = document.getElementById('liLoader')
   loader.classList.remove('fade-off')
@@ -141,7 +145,7 @@ export function navLinkInfos (event) {
   const buttonPrev = document.getElementById('prev')
   let actualPos = linksIds.indexOf(idHolder.innerText)
   // Navegación directa al clicar enlace en edit mode
-  if (event.target.nodeName === 'SPAN') {
+  if (event.currentTarget.nodeName === 'DIV') {
     const element = event.target.parentNode.parentNode
     showLinkInfo(element)
     links.forEach(link => {
@@ -390,59 +394,47 @@ function pasteImg () {
     }
   })
 }
-async function changeLinkImg (event) {
+function createIconMiniature (event) {
+  // Borrar la anterior
   console.log(event.target)
-  const url = document.getElementById('lurl').href
-  const previewImage = document.getElementById('limage')
-  // const imageH = document.getElementById('sideHeadImg')
+  const previousUpload = document.getElementById('tempImg')
+  if (previousUpload) {
+    previousUpload.remove()
+  }
   const imageInput = document.getElementById('upLinkImg')
   const file = imageInput.files[0]
-  console.log(file)
-  if (file) {
-    const imageUrl = URL.createObjectURL(file)
-    previewImage.src = imageUrl
-    // imageH.src = imageUrl
-  }
-
-  if (event.target.id === 'option1') {
-    console.log('Subimos imagen1')
-    previewImage.src = '/img/opcion1.svg'
-    // imageH.src = 'img/opcion1.svg'
-  }
-  if (event.target.id === 'option2') {
-    console.log('Subimos imagen2')
-    previewImage.src = '/img/opcion2.png'
-    // imageH.src = 'img/opcion2.png'
-  }
-  if (event.target.id === 'option3') {
-    console.log('Subimos imagen3')
-    previewImage.src = '/img/opcion3.png'
-    // imageH.src = 'img/opcion3.png'
-  }
-  if (event.target.id === 'option4') {
-    console.log('Subimos imagen4')
-    previewImage.src = '/img/opcion4.svg'
-    // imageH.src = 'img/opcion3.png'
-  }
-  if (event.target.id === 'option5') {
-    console.log('Subimos imagen5')
-    previewImage.src = '/img/opcion5.svg'
-    // imageH.src = 'img/opcion3.png'
-  }
-  if (event.target.id === 'option6') {
-    console.log('Subimos imagen6')
-    previewImage.src = '/img/opcion6.svg'
-    // imageH.src = 'img/opcion3.png'
-  }
-  if (event.target.id === 'option7') {
-    console.log('Subimos imagen7')
-    previewImage.src = '/img/opcion7.png'
-    // imageH.src = 'img/opcion3.png'
+  const previewImage = document.getElementById('limage')
+  const imgContainer = document.querySelector('#imgOptions .imgOptionsWrapper')
+  const img = document.createElement('img')
+  const imageUrl = URL.createObjectURL(file)
+  img.setAttribute('src', imageUrl)
+  img.setAttribute('id', 'tempImg')
+  img.setAttribute('class', 'linkImgSelected')
+  imgContainer.appendChild(img)
+  img.addEventListener('click', changeLinkImg)
+  previewImage.src = imageUrl
+}
+async function changeLinkImg (event) {
+  console.log(event.target)
+  const url = document.getElementById('lurl')
+  const images = document.querySelectorAll('.imgOptionsWrapper img')
+  const previewImage = document.getElementById('limage')
+  const button = document.getElementById('deleteLinkImage')
+  previewImage.src = event.target.src
+  event.target.classList.add('linkImgSelected')
+  images.forEach(img => {
+    if (img !== event.target) {
+      img.classList.remove('linkImgSelected')
+    }
+  })
+  if (event.target.classList.contains('userImages')) {
+    button.disabled = false
+    button.setAttribute('sender', event.target.src)
+  } else {
+    button.disabled = true
   }
   if (event.target.id === 'option8') {
-    console.log('Subimos imagen8')
     previewImage.src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`
-    // imageH.src = 'img/opcion3.png'
   }
 }
 // Para guardar la imagen favicon del link
@@ -478,6 +470,11 @@ async function fetchLinkImage () {
         if (firstKey === 'error') {
           sendMessage(false, `${firstKey}, ${firstValue}`)
         } else {
+          const imageElement = document.querySelector('.imgOptionsWrapper').lastElementChild
+          imageElement.classList.add('userImages')
+          imageElement.click()
+          imageElement.src = result.url
+          document.getElementById('deleteLinkImage').setAttribute('sender', result.url)
           sendMessage(true, 'Imagen cambiada!')
         }
         console.log(result)
@@ -523,7 +520,53 @@ async function fetchLinkImage () {
     }
   }
 }
+async function deleteLinkImage (event) {
+  const button = event.target
+  const imageToDelete = button.getAttribute('sender')
+  const imageInput = document.getElementById('upLinkImg')
+  imageInput.value = ''
+  const nodo = document.querySelector(`.imgOptionsWrapper img[src="${imageToDelete}"]`)
+  const previousNodo = nodo.previousSibling
+  nodo.remove()
+  previousNodo.click()
 
+  console.log(nodo)
+  try {
+    let body = {
+      image: imageToDelete
+      // id
+    }
+    body = JSON.stringify(body)
+    const res = await fetch('/api/deleteLinkImg', {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body
+    })
+    if (res.ok) {
+      const result = await res.json()
+      console.log(result)
+      const firstKey = Object.keys(result)[0]
+      const firstValue = result[firstKey]
+
+      if (firstKey === 'error' || firstKey === 'errors') {
+        if (firstKey === 'errors') {
+          sendMessage(false, `Error, valor ${firstValue[0].path} no válido`)
+        } else {
+          sendMessage(false, `${firstKey}, ${firstValue}`)
+        }
+      } else {
+        console.log('Borrado con éxito')
+      }
+    } else {
+      console.log('Error en la solicitud')
+      console.log(await res.json())
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 async function fetchImage () {
   const imagesContainer = document.getElementById('imgMasonry')
   const imagesCount = imagesContainer.childNodes.length

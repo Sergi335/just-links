@@ -4,7 +4,8 @@ export const constants = {
   BASE_URL: '/api',
   BACKGROUNDS_URL: '/img/',
   COLUMN_WIDTH: '390px',
-  COLUMN_COUNT: 4
+  COLUMN_COUNT: 4,
+  EDIT_MODE: document.body.classList.contains('edit')
 }
 export function saludo () {
   const fecha = new Date()

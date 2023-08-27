@@ -2,7 +2,7 @@ const { escritoriosModel, usersModel } = require('../models/index')
 const { linksModel } = require('../models/index')
 const { columnasModel } = require('../models/index')
 const { createDummyContent } = require('../helpers/createDummyContent')
-const { getBackgrounds } = require('../helpers/storage')
+const { getBackgrounds, getLinkIcons } = require('../helpers/storage')
 
 const cagadasFix = async (req, res) => {
   try {
@@ -160,12 +160,14 @@ const testTemplates = async (req, res) => {
     return
   }
   const backgrounds = await getBackgrounds(user)
+  const icons = await getLinkIcons(user)
   // console.log(backgrounds)
   // try catch
   const columnas = await columnasModel.find({ user, escritorio }).sort({ order: 1 })
   const columnasAll = await columnasModel.find({ user }).sort({ order: 1 })
   const links = await linksModel.find({ user, escritorio }).sort({ orden: 1 })
   const locals = {
+    icons,
     escritorioSelected,
     escritorioSelectedFormat,
     deskNames,

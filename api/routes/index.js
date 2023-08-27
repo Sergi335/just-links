@@ -5,7 +5,7 @@ const upload = multer()
 // eslint-disable-next-line no-unused-vars
 const { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword } = require('../controllers/auth')
 
-const { createItem, deleteItem, getNameByUrl, obtenerStatus, encontrarDuplicadosPorURL, createMultipleItems, getLinks, editLinks } = require('../controllers/links')
+const { deleteLinks, getNameByUrl, obtenerStatus, encontrarDuplicadosPorURL, getLinks, editLinks, createLinks } = require('../controllers/links')
 // eslint-disable-next-line no-unused-vars
 const { getDeskItems, deleteDeskItem, createDeskItem, editDeskItem, testTemplates, ordenaDesks, cagadasFix, getSidePanel } = require('../controllers/escritorios')
 
@@ -25,7 +25,7 @@ const { displayUserProfile, editAditionalInfo } = require('../controllers/users'
 
 const { searchLinks } = require('../controllers/searchController')
 
-const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl } = require('../helpers/storage')
+const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl, deleteLinkImg } = require('../helpers/storage')
 
 // const { loginWithGoogle } = require('../helpers/googleAuth')
 
@@ -35,6 +35,8 @@ router.get('/', (req, res) => {
 
 router.get('/api/links/:operation/:value', authMiddleware, getLinks)
 router.patch('/api/links', authMiddleware, editLinks)
+router.post('/api/links', authMiddleware, createLinks)
+router.delete('/api/links', authMiddleware, deleteLinks)
 
 // router.get('/signWithGoogle', loginWithGoogle)
 // router.get('/api/cagadas', cagadasFix)
@@ -56,9 +58,6 @@ router.get('/api/getBackground', authMiddleware, getBackgroundUrl)
 router.post('/api/changePassword', authMiddleware, cambiaPassword)
 // router.post('/register', registraUsuario)
 router.post('/login', compruebaUsuario)
-router.post('/api/', createItem)
-router.post('/api/links', authMiddleware, createItem)
-router.post('/api/multlinks', authMiddleware, createMultipleItems)
 router.post('/api/columnas', authMiddleware, createColItem)
 router.post('/api/escritorios', authMiddleware, validateCreateDesktop, createDeskItem)
 router.post('/api/backup', authMiddleware, backup)
@@ -67,10 +66,10 @@ router.post('/api/uploadLinkImg', authMiddleware, upload.single('linkImg'), uplo
 router.post('/api/uploadImg', authMiddleware, upload.single('images'), uploadImg)
 router.post('/api/userAditionalInfo', authMiddleware, editAditionalInfo)
 router.delete('/api/deleteImg', authMiddleware, deleteImg)
-router.delete('/api/links', authMiddleware, deleteItem)
 router.delete('/api/columnas', authMiddleware, deleteColItem)
 router.delete('/api/escritorios', authMiddleware, deleteDeskItem)
-router.put('/api/columnas', authMiddleware, validateEditColumn, editColItem)
+router.delete('/api/deleteLinkImg', authMiddleware, deleteLinkImg)
+router.put('/api/columnas', authMiddleware, editColItem)
 router.put('/api/escritorios', authMiddleware, validateEditDesktop, editDeskItem)
 router.put('/api/dragcol', actualizarOrdenColumnas)
 router.put('/api/ordenaDesks', authMiddleware, ordenaDesks)

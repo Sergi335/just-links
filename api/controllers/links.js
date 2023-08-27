@@ -45,6 +45,7 @@ const getLinks = async (req, res) => {
 }
 const editLinks = async (req, res) => {
   const { body } = req
+  console.log(body)
   const { fields } = body
   const { idpanel } = fields
   const user = req.user.name
@@ -58,12 +59,12 @@ const editLinks = async (req, res) => {
       if (body.idpanelOrigen) {
         // Si es movido a otra columna
         checkEmptyColumn(user, idpanel, body.idpanelOrigen)
-        setLinksOrder(body.destinyNames, idpanel)
-        setLinksOrder(body.originNames, body.idpanelOrigen)
+        setLinksOrder(body.destinyIds, idpanel)
+        setLinksOrder(body.originIds, body.idpanelOrigen)
       } else {
         // Si es movido a la misma
         checkEmptyColumn(user, idpanel, body.idpanelOrigen)
-        setLinksOrder(body.destinyNames, idpanel)
+        setLinksOrder(body.destinyIds, idpanel)
       }
     } catch (error) {
       res.status(500).send({ error })
@@ -73,6 +74,89 @@ const editLinks = async (req, res) => {
   }
   console.log(body)
 }
+const createLinks = async (req, res) => {
+  console.log(req.body)
+  const user = req.user.name
+  const links = req.body.data
+  const { idpanel } = req.body
+  if (Array.isArray(links) && links.length > 0) {
+    try {
+      if (links.length === 1) {
+        const count = await linksModel.countDocuments({ idpanel, user })
+        console.log('🚀 ~ file: links.js:87 ~ testCreateLink ~ count:', count)
+        if (count === 0) {
+          await columnasModel.findOneAndUpdate({ _id: idpanel, user }, { $set: { vacio: false } })
+        }
+        if (links[0].name === undefined) {
+          const name = await getNameByUrlLocal(links[0].URL)
+          const data = await linksModel.create({ user, ...links[0], name, orden: count + 1 })
+          res.status(201).send(data)
+        } else {
+          const data = await linksModel.create({ user, ...links[0], orden: count + 1 })
+          res.status(201).send(data)
+        }
+      } else {
+        const count = await linksModel.countDocuments({ idpanel, user })
+        console.log('Multiple')
+        if (count === 0) {
+          await columnasModel.findOneAndUpdate({ _id: idpanel, user }, { $set: { vacio: false } })
+        }
+        const data = []
+        for (const link of links) {
+          const name = await getNameByUrlLocal(link.URL)
+          data.push(await linksModel.create({ user, ...link, name, orden: count + 1 }))
+        }
+        res.status(201).send(data)
+      }
+      const results = await linksModel.find({ idpanel, user }).select('id').lean()
+      console.log(results)
+      const ids = results.map(res => (
+        res._id
+      ))
+      console.log(ids)
+      setLinksOrder(ids, idpanel)
+    } catch (error) {
+      res.status(500).send({ error })
+    }
+  } else {
+    res.status(500).send({ error: 'El parámetro debe ser un array' })
+  }
+}
+/**
+ * Borra enlace
+ * @param {*} req
+ * @param {*} res
+ */
+const deleteLinks = async (req, res) => {
+  const { body } = req
+  const { idpanel } = body
+  const user = req.user.name
+  console.log(body)
+  try {
+    await linksModel.deleteOne({ _id: `${body.linkId}`, user })
+    // Find y contar si 0 cambiar vacio true
+    const count = await linksModel.countDocuments({ idpanel, user })
+    if (count === 0) {
+      console.log('Esta vacia')
+      await columnasModel.findOneAndUpdate({ _id: idpanel, user }, { $set: { vacio: true } })
+    } else {
+      console.log('No esta vacia')
+    }
+    // buscar por id los links y mandar a helper
+    const lista = await linksModel.find({ idpanel, user })
+    res.status(200).send(lista)
+    const results = await linksModel.find({ idpanel, user }).select('id').lean()
+    console.log(results)
+    const ids = results.map(res => (
+      res._id
+    ))
+    console.log(ids)
+    setLinksOrder(ids, idpanel)
+  } catch (error) {
+    res.status(500).send({ error })
+  }
+}
+
 const getNameByUrl = async (req, res) => {
   const url = req.query.url
   axios.get(url)
@@ -100,142 +184,6 @@ const getNameByUrlLocal = async (url) => {
     console.log('Hubo un error al obtener el título de la página:', error)
     return altTitle // Lanzar el error para manejarlo en la función llamante
   }
-}
-/**
-* Funcion para ordenar los links de un escritorio y un panel pasados como parametro según su campo * orden, es llamada por: editDragItem, deleteItem
-* @param {*} req
-* @param {*} res
-*/
-const setOrder2 = async (desk, panel) => {
-  try {
-    console.log(desk, panel)
-
-    // Actualizar el campo "orden" para cada elemento del panel
-    const elementosPanel = await linksModel
-      .find({ escritorio: desk, idpanel: panel })
-      .sort({ orden: 1 })
-
-    for (let i = 0; i < elementosPanel.length; i++) {
-      await linksModel.findByIdAndUpdate(
-        elementosPanel[i]._id,
-        { $set: { orden: i } }
-      )
-    }
-    // Obtener la lista ordenada por el campo "orden"
-    const lista = await linksModel
-      .find({ escritorio: desk, idpanel: panel })
-      .sort({ orden: 1 })
-
-    // console.log(`La lista es: ${lista}`);
-    return lista
-  } catch (error) {
-    console.error(error)
-    return error
-  }
-}
-/**
- * Crear enlace nuevo
- * @param {*} req
- * @param {*} res
- */
-const createItem = async (req, res) => {
-  const { body } = req
-  const user = req.user.name
-  const objeto = { ...body, user }
-  if (body.nombre === undefined) {
-    console.log('Hay que consultar el nombre')
-  }
-
-  // Find idpanel si estaba vacio cambiar flag a false
-  const count = await linksModel.find({ idpanel: objeto.idpanel, user })
-  if (count.length === 0) {
-    console.log('Estaba vacia')
-    await columnasModel.findOneAndUpdate({ _id: objeto.idpanel, user }, { $set: { vacio: false } })
-  } else {
-    console.log('No estaba vacia')
-  }
-  const data = await linksModel.create(objeto)
-  res.send(data)
-  // Obtener los paneles del escritorio
-  const data2 = await linksModel.find({ escritorio: body.escritorio, panel: body.columna })
-  const paneles = [...new Set(data2.map((element) => element.panel))]
-
-  // Actualizar el campo "orden" para cada elemento del panel, se podría llamar a setOrder2?
-  for (const panel of paneles) {
-    const elementosPanel = await linksModel
-      .find({ escritorio: body.escritorio, panel, user })
-      .sort({ orden: 1 })
-
-    for (let i = 0; i < elementosPanel.length; i++) {
-      await linksModel.findByIdAndUpdate(
-        elementosPanel[i]._id,
-        { $set: { orden: i } }
-      )
-    }
-  }
-}
-const createMultipleItems = async (req, res) => {
-  const { body } = req
-  const user = req.user.name
-  const links = body.data
-  const count = await linksModel.find({ idpanel: body.idpanel, user })
-
-  if (count.length === 0) {
-    console.log('Estaba vacia')
-    await columnasModel.findOneAndUpdate({ _id: body.idpanel, user }, { $set: { vacio: false } })
-  } else {
-    console.log('No estaba vacia')
-  }
-
-  if (Array.isArray(body.data)) {
-    try {
-      console.log(body.data)
-      let counter = 0
-
-      for (const link of links) {
-        const name = await getNameByUrlLocal(link)
-        const object = {
-          name,
-          user,
-          URL: link,
-          imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${link}&size=64`,
-          escritorio: body.escritorio,
-          panel: body.panel,
-          idpanel: body.idpanel,
-          orden: count.length + counter
-        }
-        counter++
-        console.log(object)
-        await linksModel.create(object)
-      }
-      const data = await linksModel.find({ idpanel: body.idpanel, user })
-      res.send(data)
-      setOrder2(body.escritorio, body.idpanel)
-    } catch (error) {
-      res.send({ error: error.message })
-    }
-  }
-}
-/**
- * Borra enlace
- * @param {*} req
- * @param {*} res
- */
-const deleteItem = async (req, res) => {
-  const { body } = req
-  const user = req.user.name
-  console.log(body)
-  await linksModel.deleteOne({ _id: `${body.linkId}`, user })
-  // Find y contar si 0 cambiar vacio true
-  const count = await linksModel.find({ idpanel: body.id, user })
-  if (count.length === 0) {
-    console.log('Esta vacia')
-    await columnasModel.findOneAndUpdate({ _id: body.id, user }, { $set: { vacio: true } })
-  } else {
-    console.log('No esta vacia')
-  }
-  const lista = await setOrder2(body.escritorio, body.id)
-  res.send(lista)
 }
 // Mucha función para tan poca fiabilidad, hay que pulirlo esto
 const obtenerStatus = async (req, res) => {
@@ -317,4 +265,4 @@ const encontrarDuplicadosPorURL = async (req, res) => {
     res.send({ error })
   }
 }
-module.exports = { createItem, deleteItem, getNameByUrl, obtenerStatus, encontrarDuplicadosPorURL, createMultipleItems, getLinks, editLinks }
+module.exports = { deleteLinks, getNameByUrl, obtenerStatus, encontrarDuplicadosPorURL, getLinks, editLinks, createLinks }

@@ -76,7 +76,7 @@ const uploadLinkIcon = async (req, res) => {
       if (firstKey === 'error') {
         res.send({ error: `${firstKey} : ${firstValue}` })
       } else {
-        res.send({ message: '¡Archivo o blob subido!' })
+        res.send({ message: '¡Archivo o blob subido!', url: downloadURL })
       }
     } catch (error) {
       res.send(error)
@@ -153,6 +153,25 @@ const deleteImg = async (req, res) => {
     res.status(500).send({ error: error.code })
   }
 }
+const deleteLinkImg = async (req, res) => {
+  const user = req.cookies.user
+  if (user) {
+    const imageUrl = req.body.image
+    console.log(req.body)
+    try {
+      // Construye la referencia a la imagen en Storage
+      const imageRef = ref(storage, imageUrl)
+
+      // Borra el archivo
+      await deleteObject(imageRef)
+      res.send({ message: 'Imagen eliminada exitosamente' })
+    } catch (error) {
+      res.status(500).send({ error: error.code })
+    }
+  } else {
+    res.status(401).send('Error usuario no proporcionado')
+  }
+}
 async function backup (req, res) {
   const user = req.user.name
   try {
@@ -208,6 +227,24 @@ const getBackgrounds = async (user) => {
 
     const backgrounds = await Promise.all(backgroundsPromises)
     return backgrounds
+  } catch (err) {
+    console.error('Error al leer la carpeta:', err)
+    throw err
+  }
+}
+const getLinkIcons = async (user) => {
+  try {
+    const fileRef = ref(storage, `${user}/images/icons`)
+    const list = await listAll(fileRef)
+    const { items } = list
+    // console.log(items)
+    const iconsPromises = items.map(async (back) => ({
+      url: await getDownloadURL(back),
+      nombre: (await getMetadata(back)).name
+    }))
+
+    const icons = await Promise.all(iconsPromises)
+    return icons
   } catch (err) {
     console.error('Error al leer la carpeta:', err)
     throw err
@@ -305,4 +342,4 @@ const deleteImageOnDb = async (url, user, linkId) => {
     return { error: 'Error al borrar' }
   }
 }
-module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl }
+module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl, getLinkIcons, deleteLinkImg }

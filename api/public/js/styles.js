@@ -16,9 +16,12 @@ function loadStyles () {
   addActiveClass()
   if (window.matchMedia('(min-width: 1536px)').matches) {
     if (!document.body.classList.contains('edit') && window.location.pathname !== '/profile') {
-      sideInfo()
-      handleResize()
-      setColsAtStart()
+      const sideBlocks = Array.from(document.querySelectorAll('.sect'))
+      if (sideBlocks.length > 0) {
+        sideInfo()
+        handleResize()
+        setColsAtStart()
+      }
       const selectCols = document.getElementById('colsSelect')
       selectCols.removeEventListener('change', handleSelectCols)
       selectCols.addEventListener('change', handleSelectCols)
@@ -371,7 +374,7 @@ function setColsAtStart () {
     panel.addEventListener('click', putIntoView)
   })
 }
-function handleLinkHeight (event) {
+export function handleLinkHeight (event) {
   console.log(event.currentTarget)
   const link = event.currentTarget.parentNode
   const anchor = link.childNodes[1]

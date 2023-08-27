@@ -6,7 +6,7 @@
       #frameWrapper
         iframe(id='videoFrame' src='' frameborder='0' scrolling='no' allowfullscreen='')
       #imgMasonry
-    button#pasteImg Pegar Imágen
+      
   #sideHeader
     h2 Link Info
     button#prev(disabled)
@@ -23,6 +23,7 @@
         path(d='M3 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor')
         path(d='M6 8a1 1 0 0 1 .993 .883l.007 .117v6a1 1 0 0 1 -1.993 .117l-.007 -.117v-6a1 1 0 0 1 1 -1z' stroke-width='0' fill='currentColor') 
       | Siguiente
+    button#pasteImg Pegar Imágen
     #closeContainer
       i#sideClose.icofont-close
     p#linkId
@@ -51,12 +52,19 @@
           img#option5(src='/img/opcion5.svg')
           img#option6(src='/img/opcion6.svg')
           img#option7(src='/img/opcion7.png')
-          button#option8 Auto
+          if icons
+          each icon in icons
+            img(src=`${icon.url}` class='userImages')
+          
         .imgOptionsControls
-          input#upLinkImg(type='file' accept='image/*')
-          svg.ui-icon(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
-            path(stroke-linecap='round' stroke-linejoin='round' d='M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15')
+          button.upLinkImage
+            label(for="upLinkImg") 
+              svg.ui-icon-button(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                path(stroke-linecap='round' stroke-linejoin='round' d='M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15')
+            input#upLinkImg(type='file' accept='image/*')
           button#saveLinkImage Guardar
+          button#option8 Auto
+          button#deleteLinkImage(disabled) Borrar
     #notesContainer
       p Notas:&nbsp;
       #linkNotes(contenteditable='true') Escribe aqu&iacute;

@@ -47,7 +47,7 @@ html.light
               each link in links
                 if link.idpanel == val._id
                   .link(id=`${link._id}` orden= `${link.orden}`)
-                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = '/img/opcion4.svg';")
                     a(href= `${link.URL}` target='_blank' title= `${link.name}`)
                       span.title #{link.name}
                       span.description #{link.description}
@@ -64,7 +64,7 @@ html.light
               each link in links
                 if link.idpanel == val._id
                   .link(id=`${link._id}` orden= `${link.orden}`)
-                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                    img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = '/img/opcion4.svg';")
                     a(href= `${link.URL}` target='_blank' title= `${link.name}`)
                       span.title #{link.name}
                       span.description #{link.description}

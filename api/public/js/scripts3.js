@@ -1,6 +1,6 @@
 import { darHora, saludo, fetchS, sendMessage, handleDbClick, preEditColumn, handleSimpleClick, getCookieValue, openTab, constants, formatPath, sortSideInfo } from './functions.mjs'
 import { togglePanel, navLinkInfos } from './sidepanel.js'
-import { groupBy, putIntoView } from './styles.js'
+import { groupBy, putIntoView, handleLinkHeight } from './styles.js'
 
 document.addEventListener('DOMContentLoaded', cargaWeb)
 document.addEventListener('click', escondeDialogos)
@@ -479,13 +479,25 @@ async function createColumn () {
       item.removeEventListener('click', moveLinks)
       item.addEventListener('click', moveLinks)
     })
+    // al crear desde escritorio vacio no hay sideBlocks
     const sideBlocks = Array.from(document.querySelectorAll('.sect'))
-    const lastSideBlock = sideBlocks.at(-1)
-    const newChild = document.createElement('a')
-    newChild.setAttribute('id', `Side${escritorio}${nombre}`)
-    newChild.innerText = `${nombre}`
-    lastSideBlock.appendChild(newChild)
-    console.log(lastSideBlock)
+    if (sideBlocks.length > 0) {
+      const lastSideBlock = sideBlocks.at(-1)
+      const newChild = document.createElement('a')
+      newChild.setAttribute('id', `Side${escritorio}${nombre}`)
+      newChild.innerText = `${nombre}`
+      lastSideBlock.appendChild(newChild)
+      console.log(lastSideBlock)
+    } else {
+      const sideInfoRoot = document.getElementById('sectContainer')
+      const sideBlock = document.createElement('div')
+      sideBlock.setAttribute('class', 'sect')
+      const newChild = document.createElement('a')
+      newChild.setAttribute('id', `Side${escritorio}${nombre}`)
+      newChild.innerText = `${nombre}`
+      sideBlock.appendChild(newChild)
+      sideInfoRoot.appendChild(sideBlock)
+    }
     // Ojo
     refreshColumns(res)
     const dialog = document.getElementById('addColForm')
@@ -497,6 +509,11 @@ async function createColumn () {
  * Función para borrar una columna refact x
  */
 async function deleteColumn () {
+  const dialog = document.getElementById('deleteColForm')
+  const visible = dialog.style.display === 'flex'
+  if (visible) {
+    dialog.style.display = 'none'
+  }
   const escritorio = document.body.getAttribute('data-desk')
   const elementoId = document.getElementById('confDeletecolSubmit').getAttribute('sender')
   const body = { id: elementoId }
@@ -539,9 +556,6 @@ async function deleteColumn () {
       sideParent.remove()
     }
     sendMessage(true, 'Columna Borrada!!')
-    const dialog = document.getElementById('deleteColForm')
-    const visible = dialog.style.display === 'flex'
-    dialog.style.display = visible ? 'none' : 'flex'
   }
 }
 /**
@@ -758,8 +772,10 @@ async function refreshColumns (json) {
     })
     // $tabcontent.innerHTML += html
     addColumnEvents()
-    ordenaItems(nombre)
-    ordenaCols($raiz)
+    if (!constants.EDIT_MODE) {
+      ordenaItems(nombre)
+      ordenaCols($raiz)
+    }
   }
 }
 
@@ -842,17 +858,17 @@ async function editLink () {
 async function createLink () {
   // Recogemos los datos para enviarlos a la db
   const escritorio = document.body.getAttribute('data-desk')
-  const columna = document.body.getAttribute('data-panel')
+  const panel = document.body.getAttribute('data-panel')
   const nombre = document.querySelector('#linkName').value.trim()
   const linkURL = document.querySelector('#linkURL').value.trim()
   const imgURL = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${linkURL}&size=64`
-  const dbID = document.getElementById('linkSubmit').getAttribute('sender')
+  const idpanel = document.getElementById('linkSubmit').getAttribute('sender')
   // Seleccionamos columna por id, por si hay dos con el mismo nombre
   let $raiz
   if (!document.body.classList.contains('edit')) {
-    $raiz = document.querySelector(`[data-db="${dbID}"]`)
+    $raiz = document.querySelector(`[data-db="${idpanel}"]`)
   } else {
-    const id = dbID.replace(/edit/g, '')
+    const id = idpanel.replace(/edit/g, '')
     $raiz = document.querySelector(`[data-db="${id}"]`)
   }
 
@@ -861,9 +877,9 @@ async function createLink () {
   console.log(orden)
 
   // Declaramos el body para enviar
-  const body = { name: nombre, URL: linkURL, imgURL, escritorio, panel: columna, idpanel: dbID, orden }
+  const body = { idpanel, data: [{ name: nombre, URL: linkURL, imgURL, escritorio, panel, idpanel, orden }] }
   const params = {
-    url: `${constants.BASE_URL}/links`,
+    url: '/api/links',
     method: 'POST',
     options: {
       contentType: 'application/json'
@@ -895,13 +911,15 @@ async function createLink () {
  * Función para borrar un link refact xx
  */
 async function deleteLink () {
+  const dialog = document.getElementById('deleteLinkForm')
+  const visible = dialog.style.display === 'flex'
+  dialog.style.display = visible ? 'none' : 'flex'
+
   const linkId = document.body.getAttribute('data-link')
-  const panel = document.body.getAttribute('data-panel')
-
-  const id = document.getElementById('confDeletelinkSubmit').getAttribute('sender')
-
+  const idpanel = document.getElementById('confDeletelinkSubmit').getAttribute('sender')
   const escritorio = document.body.getAttribute('data-desk')
-  const body = { linkId, panel, escritorio, id }
+
+  const body = { linkId, escritorio, idpanel }
   const params = {
     url: `${constants.BASE_URL}/links`,
     method: 'DELETE',
@@ -920,9 +938,9 @@ async function deleteLink () {
   } else {
     let $raiz
     if (!document.body.classList.contains('edit')) {
-      $raiz = document.querySelector(`[data-db="${id}"]`)
+      $raiz = document.querySelector(`[data-db="${idpanel}"]`)
     } else {
-      $raiz = document.querySelector(`[data-db="edit${id}"]`)
+      $raiz = document.querySelector(`[data-db="edit${idpanel}"]`)
     }
     if ($raiz) {
       console.log($raiz.childNodes)
@@ -942,11 +960,6 @@ async function deleteLink () {
       // Se ha borrado desde la lista de resultados de busqueda
       sendMessage(true, 'Enlace Borrado!')
     }
-
-    const dialog = document.getElementById('deleteLinkForm')
-    const visible = dialog.style.display === 'flex'
-    console.log(visible)
-    dialog.style.display = visible ? 'none' : 'flex'
     sendMessage(true, 'Enlace Borrado!')
   }
 }
@@ -1006,28 +1019,27 @@ async function moveLinks (event) {
   }
 }
 async function moveLinksEdit (event) {
-  console.log(event.target)
-  const panelOrigenId = document.body.getAttribute('idpanel')
-  const panelDestinoNombre = event.target.innerText
-  let panelOldChildCount
-  let panelDestinoId
+  const linkId = document.body.getAttribute('data-link')
+  const idpanelOrigen = document.body.getAttribute('idpanel')
+  const panel = event.target.innerText
+  let orden
+  let idpanel
   const paneles = document.querySelectorAll('.tablinks')
   if (paneles) {
     paneles.forEach(element => {
-      if (element.innerText === panelDestinoNombre) {
+      if (element.innerText === panel) {
         // Hacer algo con el elemento encontrado - y si hay duplicados???
-        panelDestinoId = element.dataset.db
-        panelOldChildCount = document.querySelector(`[data-db="edit${panelDestinoId}"]`).childElementCount
+        idpanel = element.dataset.db
+        orden = document.querySelector(`[data-db="edit${idpanel}"]`).childElementCount
       }
     })
   }
 
-  const linkName = event.target.parentNode.parentNode.parentNode.childNodes[2].innerText
-  let body = { panelOrigenId, panelDestinoId, panelDestinoNombre, name: linkName, orden: panelOldChildCount + 1 }
+  const body = { id: linkId, idpanelOrigen, fields: { idpanel, panel, orden } }
   console.log(body)
   const params = {
-    url: `${constants.BASE_URL}/moveLinks`,
-    method: 'PUT',
+    url: `${constants.BASE_URL}/links`,
+    method: 'PATCH',
     options: {
       contentType: 'application/json'
     },
@@ -1055,7 +1067,7 @@ async function moveLinksEdit (event) {
         }
       })
     }
-    const testDummy = document.querySelector(`[data-db="edit${panelOrigenId}"]`).childElementCount
+    const testDummy = document.querySelector(`[data-db="edit${idpanelOrigen}"]`).childElementCount
     if (testDummy === 0) {
       // Meter el dummy
       const dummy = document.createElement('div')
@@ -1065,57 +1077,57 @@ async function moveLinksEdit (event) {
     sendMessage(true, 'Link Movido Correctamente')
   }
   /* --- */
-  const elements = document.querySelectorAll(`[data-db="${panelDestinoId}"]`)[0].childNodes
-  console.log('Elementos en panel de destino')
-  console.log(elements)
-  const id = elements[0].parentNode.getAttribute('data-db')
-  // console.log(id)
-  const sortedElements = Array.from(elements).sort((a, b) => {
-    return a.dataset.orden - b.dataset.orden
-  })
-  console.log('Sorted elements')
-  console.log(sortedElements)
-  const names = []
-  sortedElements.forEach(element => {
-    names.push(element.innerText)
-  })
-  console.log('nombres')
-  console.log(names)
-  body = names
-  const params2 = {
-    url: `${constants.BASE_URL}/draglink?idColumna=`,
-    method: 'PUT',
-    options: {
-      contentType: 'application/json',
-      query: id
-    },
-    body
-  }
-  // La url /draglink ejecuta una función que actualiza el orden del link en la columna
-  const res2 = await fetchS(params2)
-  console.log('Segundo res del servidor')
-  console.log(res2)
-  const firstKey2 = Object.keys(res2)[0]
-  const firstValue2 = res2[firstKey2]
+  // const elements = document.querySelectorAll(`[data-db="${idpanel}"]`)[0].childNodes
+  // console.log('Elementos en panel de destino')
+  // console.log(elements)
+  // const id = elements[0].parentNode.getAttribute('data-db')
+  // // console.log(id)
+  // const sortedElements = Array.from(elements).sort((a, b) => {
+  //   return a.dataset.orden - b.dataset.orden
+  // })
+  // console.log('Sorted elements')
+  // console.log(sortedElements)
+  // const names = []
+  // sortedElements.forEach(element => {
+  //   names.push(element.innerText)
+  // })
+  // console.log('nombres')
+  // console.log(names)
+  // body = names
+  // const params2 = {
+  //   url: `${constants.BASE_URL}/draglink?idColumna=`,
+  //   method: 'PUT',
+  //   options: {
+  //     contentType: 'application/json',
+  //     query: id
+  //   },
+  //   body
+  // }
+  // // La url /draglink ejecuta una función que actualiza el orden del link en la columna
+  // const res2 = await fetchS(params2)
+  // console.log('Segundo res del servidor')
+  // console.log(res2)
+  // const firstKey2 = Object.keys(res2)[0]
+  // const firstValue2 = res2[firstKey2]
 
-  if (firstKey2 === 'error') {
-    const $error = document.getElementById('linkError') // Crear
-    $error.innerText = `${firstKey2}, ${firstValue2}`
-  } else {
-    const testDummy = document.querySelectorAll(`[data-db="${panelOrigenId}"]`)[0].childNodes.length
-    if (testDummy === 0) {
-    // Meter el dummy
-      const dummy = document.createElement('div')
-      dummy.setAttribute('class', 'link')
-      document.querySelectorAll(`[data-db="${panelOrigenId}"]`)[0].appendChild(dummy)
-    }
-    console.log('test dummy')
-    console.log(testDummy)
-    refreshLinks(res)
-  }
+  // if (firstKey2 === 'error') {
+  //   const $error = document.getElementById('linkError') // Crear
+  //   $error.innerText = `${firstKey2}, ${firstValue2}`
+  // } else {
+  //   const testDummy = document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].childNodes.length
+  //   if (testDummy === 0) {
+  //   // Meter el dummy
+  //     const dummy = document.createElement('div')
+  //     dummy.setAttribute('class', 'link')
+  //     document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].appendChild(dummy)
+  //   }
+  //   console.log('test dummy')
+  //   console.log(testDummy)
+  // }
+  refreshLinks(res)
 }
 /**
- * Función para pegar links en columna (Pegado múltiple?) refact x
+ * Función para pegar links en columna refact x
  * @param {*} event
  */
 async function pasteLink (event) {
@@ -1125,6 +1137,7 @@ async function pasteLink (event) {
     menu.style.display = 'none'
   }
   // lee el contenido del portapapeles entonces ...
+  // Arrow function anónima con los items de param
   navigator.clipboard.read().then((clipboardItems) => {
     // por cada clipboardItem ...
     for (const clipboardItem of clipboardItems) {
@@ -1133,129 +1146,133 @@ async function pasteLink (event) {
         // lo confirmamos
         for (const type of clipboardItem.types) {
           if (type === 'text/plain') {
-            // Pasamos el blob a texto
-            clipboardItem.getType(type).then((blob) => {
-              blob.text().then(function (text) {
-                console.log(text)
-                // Si tiene un enlace
-                if (text.indexOf('http') === 0) {
-                  const raiz = event.target.parentNode.childNodes[1].innerText
-                  const $raiz = document.querySelector(`[data-db="${raiz}"]`)
-                  const urls = text.match(/https?:\/\/[^\s]+/g)
-                  if (urls.length > 1) {
-                    console.log('entramos')
-                    pasteMultipleLinks(urls, raiz)
-                    return
-                  }
-                  console.log('Tiene un enlace')
-                  const url = text
-                  console.log(typeof url, url.length)
-                  async function procesarEnlace () {
-                    const nombre = await getNameByUrl(text)
-                    const escritorio = document.body.getAttribute('data-desk')
-                    const columna = document.body.getAttribute('data-panel')
-                    const orden = $raiz.childNodes.length
-                    console.log(orden)
-                    const json = {
-                      idpanel: raiz,
-                      name: nombre,
-                      URL: url,
-                      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
-                      orden,
-                      escritorio,
-                      panel: columna
-                    }
-                    const params = {
-                      url: `${constants.BASE_URL}/links`,
-                      method: 'POST',
-                      options: {
-                        contentType: 'application/json'
-                      },
-                      body: json
-                    }
-                    // TODO Gestion errores
-                    const res = await fetchS(params)
-                    console.log(res)
-                    refreshLinks(res)
-                  }
-                  procesarEnlace()
-                } else {
-                  console.log('Es texto plano')
-                  console.log(text)
-                }
-              })
-            })
+            handlePastedTextLinks(event, clipboardItem, type)
           }
         }
       } else {
         for (const type of clipboardItem.types) {
           if (type === 'text/html') {
-            clipboardItem.getType(type).then((blob) => {
-              blob.text().then(function (text) {
-                console.log(text)
-                if (text.indexOf('<a href') === 0) {
-                  console.log('Es un enlace html')
-                  console.log(text)
-                  const raiz = event.target.parentNode.childNodes[1].innerText
-                  console.log(typeof (text))
-                  console.log(text)
-                  // raiz.innerHTML += text;
-                  async function procesarEnlace () {
-                    const range = document.createRange()
-                    range.selectNode(document.body)
-
-                    const fragment = range.createContextualFragment(text)
-
-                    const a = fragment.querySelector('a')
-                    const url = a.href
-                    const nombre = a.innerText
-                    const escritorio = document.body.getAttribute('data-desk')
-                    const columna = document.body.getAttribute('data-panel')
-                    const $raiz = document.querySelector(`[data-db="${raiz}"]`)
-
-                    let orden = $raiz.childNodes.length
-                    orden = orden + 1
-                    console.log(orden)
-                    const json = {
-                      idpanel: raiz,
-                      name: nombre,
-                      URL: url,
-                      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
-                      orden,
-                      escritorio,
-                      panel: columna
-                    }
-                    const params = {
-                      url: `${constants.BASE_URL}/links`,
-                      method: 'POST',
-                      options: {
-                        contentType: 'application/json'
-                      },
-                      body: json
-                    }
-                    // createLinkApi(json)
-                    const res = await fetchS(params)
-                    console.log(res)
-                    // console.log(raiz.lastChild.innerText)
-                    refreshLinks(res)
-                  }
-                  procesarEnlace()
-                }
-              })
-            })
+            handlePastedHtmlLinks(event, clipboardItem, type)
           }
           if (type.startsWith('image/')) {
             clipboardItem.getType(type).then((blob) => {
-              console.log('Imagen:', blob)
-              // var imageUrl = URL.createObjectURL(blob);
-              // Establecer la URL de datos como el src de la imagen
-              // document.getElementById('imagen').src = imageUrl;
+              console.log('Es una immagen:', blob)
             })
           }
         }
       }
     }
   })
+}
+const handlePastedTextLinks = (event, clipboardItem, type) => {
+  // Pasamos el blob a texto
+  clipboardItem.getType(type).then((blob) => {
+    blob.text().then(function (text) {
+      console.log(text)
+      // Si tiene un enlace
+      if (text.indexOf('http') === 0) {
+        const urls = text.match(/https?:\/\/[^\s]+/g)
+        if (urls.length > 1) {
+          console.log('entramos')
+          const raiz = event.target.parentNode.childNodes[1].innerText
+          pasteMultipleLinks(urls, raiz)
+          return
+        }
+        console.log('Tiene un enlace')
+        processTextLinks(event, text)
+      } else {
+        console.log('Es texto plano sin enlace')
+        console.log(text)
+      }
+    })
+  })
+}
+async function processTextLinks (event, text) {
+  const nombre = await getNameByUrl(text)
+  const escritorio = document.body.getAttribute('data-desk')
+  const url = text
+  const columna = document.body.getAttribute('data-panel')
+  const raiz = event.target.parentNode.childNodes[1].innerText
+  const $raiz = document.querySelector(`[data-db="${raiz}"]`)
+  const orden = $raiz.childNodes.length
+  console.log(orden)
+  const json = {
+    idpanel: raiz,
+    data: [{
+      idpanel: raiz,
+      name: nombre,
+      URL: url,
+      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
+      orden,
+      escritorio,
+      panel: columna
+    }]
+
+  }
+  const params = {
+    url: '/api/links',
+    method: 'POST',
+    options: {
+      contentType: 'application/json'
+    },
+    body: json
+  }
+  // TODO Gestion errores
+  const res = await fetchS(params)
+  console.log(res)
+  refreshLinks(res)
+}
+const handlePastedHtmlLinks = (event, clipboardItem, type) => {
+  clipboardItem.getType(type).then((blob) => {
+    blob.text().then(function (text) {
+      if (text.indexOf('<a href') === 0) {
+        console.log('Es un enlace html')
+        console.log(text)
+        console.log(typeof (text))
+        processHtmlLink(event, text)
+      } else {
+        console.log('No hay enlace')
+      }
+    })
+  })
+}
+async function processHtmlLink (event, text) {
+  const raiz = event.target.parentNode.childNodes[1].innerText
+  const range = document.createRange()
+  range.selectNode(document.body)
+  const fragment = range.createContextualFragment(text)
+  const a = fragment.querySelector('a')
+  const url = a.href
+  const nombre = a.innerText
+  const escritorio = document.body.getAttribute('data-desk')
+  const columna = document.body.getAttribute('data-panel')
+  const $raiz = document.querySelector(`[data-db="${raiz}"]`)
+  const orden = $raiz.childNodes.length
+  console.log(orden)
+
+  const json = {
+    idpanel: raiz,
+    data: [{
+      idpanel: raiz,
+      name: nombre,
+      URL: url,
+      imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`,
+      orden,
+      escritorio,
+      panel: columna
+    }]
+  }
+  const params = {
+    url: '/api/links',
+    method: 'POST',
+    options: {
+      contentType: 'application/json'
+    },
+    body: json
+  }
+  const res = await fetchS(params) // Manejo errores
+  console.log(res)
+  refreshLinks(res)
 }
 async function pasteMultipleLinks (array, idpanel) {
   const escritorio = document.body.getAttribute('data-desk')
@@ -1265,55 +1282,42 @@ async function pasteMultipleLinks (array, idpanel) {
   loaderText.innerHTML = 'Preparando para copiar ...'
   const progressBar = document.querySelector('.progress-bar')
   loader.style.transform = 'translateX(0)'
-  let count = 0
-  if (Array.isArray(array)) {
-    const pastedLinks = await Promise.all(array.map(async (link) => {
-      const body = {
+  const body = {
+    idpanel,
+    data: array.map(link => {
+      return {
         idpanel,
         escritorio,
         panel: columna,
-        data: [link]
+        URL: link,
+        imgURL: `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${link}&size=64`
       }
-      const params = {
-        url: `${constants.BASE_URL}/multlinks`,
-        method: 'POST',
-        options: {
-          contentType: 'application/json'
-        },
-        body
-      }
-      const res = await fetchS(params)
-      loaderText.innerHTML = 'Recibiendo datos ...'
-      if (Array.isArray(res)) {
-        console.log(res)
-        count++
-        return res
-      } else {
-        count++
-        return null
-      }
-    }))
-    console.log(count)
-    console.log(pastedLinks)
-    const longestPastedLinks = pastedLinks.reduce((longest, current) => {
-      return current.length > longest.length ? current : longest
-    }, [])
-    console.log('🚀 ~ file: scripts3.js:1364 ~ longestPastedLinks ~ longestPastedLinks:', longestPastedLinks)
-    // if res = error
-    let $raiz
-    if (!document.body.classList.contains('edit')) {
-      $raiz = document.querySelector(`[data-db="${longestPastedLinks[0].idpanel}"]`)
+    })
+  }
+  console.log(body)
+  const params = {
+    url: '/api/links',
+    method: 'POST',
+    options: {
+      contentType: 'application/json'
+    },
+    body
+  }
+  const res = await fetchS(params)
+  console.log(res)
+  loaderText.innerHTML = 'Recibiendo datos ...'
+  const firstKey = Object.keys(res)[0]
+  const firstValue = res[firstKey]
+  if (firstKey === 'error' || firstKey === 'errors') {
+    if (firstKey === 'errors') {
+      sendMessage(false, `${firstKey} ${firstValue}`)
     } else {
-      $raiz = document.querySelector(`[data-db="edit${longestPastedLinks[0].idpanel}"]`)
+      sendMessage(false, `${firstKey} ${firstValue}`)
     }
-    if ($raiz.hasChildNodes()) {
-      while ($raiz.childNodes.length > 0) {
-        $raiz.removeChild($raiz.lastChild)
-      }
-    }
-    const porcentajePorPaso = 100 / longestPastedLinks.length
+  } else {
+    const porcentajePorPaso = 100 / res.length
     let anchoActual = 0
-    longestPastedLinks.forEach(link => {
+    res.forEach(link => {
       anchoActual += porcentajePorPaso
       console.log(anchoActual)
       console.log(link.name)
@@ -1327,8 +1331,6 @@ async function pasteMultipleLinks (array, idpanel) {
     setTimeout(() => {
       progressBar.style.width = '0%'
     }, 1000)
-  } else {
-    sendMessage(false, 'El parametro debe ser un Array')
   }
 }
 /**
@@ -1395,12 +1397,35 @@ function refreshLinks (json) {
   }
 
   $lcontrols.appendChild($editControl)
+  const $expandControl = document.createElement('div')
+  $expandControl.setAttribute('class', 'expandControl')
+  // Crear el elemento <svg>
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  svg.setAttribute('fill', 'none')
+  svg.setAttribute('viewBox', '0 0 24 24')
+  svg.setAttribute('stroke-width', '1.5')
+  svg.setAttribute('stroke', 'currentColor')
+  svg.setAttribute('class', 'ui-icon-menu')
+
+  // Crear el elemento <path> dentro del <svg>
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  path.setAttribute('stroke-linecap', 'round')
+  path.setAttribute('stroke-linejoin', 'round')
+  path.setAttribute('d', 'M19.5 8.25l-7.5 7.5-7.5-7.5')
+
+  // Agregar el elemento <path> al <svg>
+  svg.appendChild(path)
+  $expandControl.appendChild(svg)
   $link.appendChild($spanName)
   $link.appendChild($spanDesc)
 
   $div.appendChild($img)
   $div.appendChild($link)
   $div.appendChild($lcontrols)
+  if (!document.body.classList.contains('edit')) {
+    $div.appendChild($expandControl)
+  }
 
   $raiz.appendChild($div)
   // Borrar el dummy
@@ -1419,10 +1444,15 @@ function refreshLinks (json) {
     item.removeEventListener('click', togglePanel)
     item.addEventListener('click', togglePanel)
   })
+  const carets = document.querySelectorAll('.expandControl')
+  carets.forEach(caret => {
+    caret.removeEventListener('click', handleLinkHeight)
+    caret.addEventListener('click', handleLinkHeight)
+  })
   if (document.body.classList.contains('edit')) {
     $div.addEventListener('click', navLinkInfos)
     $editControl.addEventListener('click', (event) => {
-      const link = event.target.parentNode.parentNode.childNodes[0].href
+      const link = event.target.parentNode.childNodes[1].href
       window.open(link, '_blank')
     })
     const columns = document.querySelectorAll('.tablinks')
@@ -1433,7 +1463,7 @@ function refreshLinks (json) {
         }
       })
     }
-    $div.childNodes[0].click()
+    $div.childNodes[1].childNodes[0].click()
     $div.classList.add('navActive')
   }
   // if (loader.style.transform === 'translateX(0px)') {
@@ -1641,21 +1671,21 @@ function ordenaItems (panels) {
           }
           const orden = document.querySelector(`[data-db="${idpanel}"]`).childNodes.length
           const destinyElements = document.querySelectorAll(`[data-db="${idpanel}"]`)[0].childNodes
-          const destinyNames = []
+          const destinyIds = []
           destinyElements.forEach(element => {
-            destinyNames.push(element.childNodes[1].childNodes[0].innerText)
+            destinyIds.push(element.id)
           })
           const originElements = document.querySelectorAll(`[data-db="${idpanelOrigen}"]`)[0].childNodes
-          const originNames = []
+          const originIds = []
           if (originElements.length > 1) {
             originElements.forEach(element => {
-              originNames.push(element.childNodes[1].childNodes[0].innerText)
+              originIds.push(element.id)
             })
           }
           // Try catch o fetchS
           if (idpanel === idpanelOrigen) {
             console.log('coinciden')
-            let body = { id, destinyNames, fields: { escritorio, name: nombre, idpanel, panel, orden } }
+            let body = { id, destinyIds, fields: { escritorio, name: nombre, idpanel, panel, orden } }
             body = JSON.stringify(body)
             const res = await fetch(`${constants.BASE_URL}/links`, {
               method: 'PATCH',
@@ -1667,7 +1697,7 @@ function ordenaItems (panels) {
             const json = await res.json()
             console.log(json)
           } else {
-            let body = { id, idpanelOrigen, destinyNames, originNames, fields: { escritorio, name: nombre, idpanel, panel, orden } }
+            let body = { id, idpanelOrigen, destinyIds, originIds, fields: { escritorio, name: nombre, idpanel, panel, orden } }
             body = JSON.stringify(body)
             const res = await fetch(`${constants.BASE_URL}/links`, {
               method: 'PATCH',
@@ -1786,10 +1816,14 @@ export function mostrarMenu (event) {
       }
       // Obtener la información del elemento en el que se hizo clic
       const elemento = event.currentTarget
-      const colId = elemento.parentNode.childNodes[1].dataset.db
+      console.log(elemento)
+      const editMode = document.body.classList.contains('edit')
+      const colId = editMode
+        ? elemento.dataset.db
+        : elemento.parentNode.childNodes[1].dataset.db
       const botonConfBorrar = document.getElementById('confDeletecolSubmit')
       botonConfBorrar.setAttribute('sender', colId)
-
+      console.log(colId)
       // Actualizar el contenido del menú emergente con la información relevante
       const informacion = elemento.textContent
       const info = document.getElementById('infoC')

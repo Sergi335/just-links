@@ -109,12 +109,13 @@ html.light
                 each link in links
                   if link.idpanel == val._id
                     .link(id=`${link._id}` orden= `${link.orden}`)
-                      img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                      img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = '/img/opcion4.svg';")
                       a(href= `${link.URL}` target='_blank' title= `${link.name}`)
                         span.title #{link.name}
                         span.description #{link.description}
                       .lcontrols
-                        span.ui-icon.icofont-external
+                        svg.ui-icon-menu.w-6.h-6(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                          path(stroke-linecap='round' stroke-linejoin='round' d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25')
                 if val.vacio == true
                   .link(orden='0')
             //- include includes/sidepanel.pug
@@ -125,12 +126,14 @@ html.light
                 each link in links
                   if link.idpanel == val._id
                     .link(id=`${link._id}` orden= `${link.orden}`)
-                      img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = 'img/opcion4.svg';")
+                      img(src=`${link.imgURL}` onerror="this.onerror = null; this.src = '/img/opcion4.svg';")
                       a(href= `${link.URL}` target='_blank' title= `${link.name}`)
                         span.title #{link.name}
                         span.description #{link.description}
                       .lcontrols
-                        span.ui-icon.icofont-external
+                        svg.ui-icon-menu.w-6.h-6(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke-width='1.5' stroke='currentColor')
+                          path(stroke-linecap='round' stroke-linejoin='round' d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25')
+
                 if val.vacio == true
                   .link(orden='0')
         include includes/sidepanel.pug

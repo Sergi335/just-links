@@ -27,9 +27,6 @@
 .sideInfo {
     height: auto;
 }
-.active {
-    border-bottom: 3px solid var(--accentColor);
-}
 i.icofont-scroll-up {
     font-size: 27px;
 }
@@ -179,7 +176,7 @@ div.textHolder.skeleton {
 }
 .tab button {
     display: block;
-    background-color: var(--secondColor);
+    background-color: var(--sixthColor);
     color: var(--firstTextColor);
     border: none;
     outline: none;
@@ -188,13 +185,12 @@ div.textHolder.skeleton {
     font-size: 13px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     width: 225px;
-    height: 50px;
+    height: 43px;
     padding-left: 12px;
     font-weight: 500;
 }
 .envolt {
     box-shadow: none;
-    border-radius: 0;
 }
 .tab button:hover {
     background-color: var(--firstHvColor);
@@ -202,17 +198,43 @@ div.textHolder.skeleton {
 }
 .tab button.active {
     border-left: 3px solid var(--accentColor);
-    background-color: var(--fifthColor);
+    background-color: var(--firstButtonColor);
     color: var(--firstTextColor);
 }
 html.light body.edit .envolt {
     box-shadow: none !important;
 }
+html:not(.dark) body.edit div.columna {
+    background-color: transparent;
+}
+body.edit #sidepanel.maximized {
+    height: calc(100% - 126px);
+    border-radius: 0;
+}
+/* body.edit .upLinkImage label {
+    width: inherit;
+} */
+body.edit #sidepanel.maximized #linkInfoContainer {
+    width: 39%;
+}
+#menuMoveTo {
+    z-index: 6;
+}
+body.edit #sidepanel.maximized #imgContainer {
+    height: 900px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+div.columna {
+    padding-top: 0;
+}
 .tabcontent {
     padding: 0;
     width: 38%;
     border-left: none;
-    /* height: 83vh; */
+    height: 79vh;
     align-items: start;
     justify-content: start;
     overflow-y: auto;
@@ -238,11 +260,12 @@ body.edit #sidepanel {
     display: flex;
     background-image: var(--bgGradient);
     width: 45%;
-    position: initial;
+    position: sticky;
     border-top: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     flex-grow: 1;
+    height: auto;
 }
 .tabcontent::-webkit-scrollbar {
     width: 8px;
@@ -257,14 +280,16 @@ body.edit #sidepanel {
     background-color: #d4d4d430;
 }
 #sidepanel.maximized iframe#videoFrame {
-    width: 80% !important;
+    /* width: 40% !important; */
     margin: 0 auto;
-    height: 38rem;
+    height: 692px;
 }
 #sidepanel.maximized #notesContainer {
     width: 58%;
     align-self: end;
     margin-bottom: 35px;
+    display: flex;
+    height: -webkit-fill-available;
 }
 iframe#videoFrame {
 
@@ -276,9 +301,11 @@ body.edit #linkImages {
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
+    padding: 0;
 }
 body.edit .sidePanelA2 {
-    height: 57%;
+    height: 49%;
     flex-direction: column;
 }
 body.edit #linkInfoContainer {
@@ -286,10 +313,16 @@ body.edit #linkInfoContainer {
     display: flex;
     flex-direction: column;
     padding-left: 40px;
-    gap: 5px;
+    gap: 12px;
+    height: -webkit-fill-available;
+    margin-top: 50px;
+}
+body.edit #sidepanel button {
+    font-size: 12px;
 }
 #notesContainer {
     width: auto;
+    display: none;
 }
 body.edit #linkInfoContainer p:first-child {
     margin-top: initial;
@@ -299,17 +332,23 @@ body.edit #linkInfoContainer p {
     width: 67%;
 }
 #sidepanel.maximized .sidePanelA2 {
-    display: none;
+    display: flex;
+    flex-direction: row;
 }
 #sidepanel.maximized #imgMasonry {
     height: fit-content;
 }
 #sideHeader {
-    justify-content: space-around;
-    padding: 10px 0;
+    justify-content: space-between;
+    padding: 19px 40px;
+    width: -webkit-fill-available;
+    background-color: var(--firstColor);
+    height: 1%;
+    margin-top: 12px;
+    width: 84%;
+    border-radius: 5px;
 }
 .link.navActive {
-    border-left-color: var(--accentColor);
     background-color: var(--secondColor) !important;
 }
 #imgOptions {
@@ -327,9 +366,18 @@ body.edit #linkInfoContainer p {
     margin-right: 0;
 }
 
-button#pasteImg {
-    left: 78%;
+#sidepanel.maximized button#pasteImg {
+    right: 40px;
+    position: fixed;
+    width: 6%;
+    top: 50%;
+
 }
+/* button#pasteImg {
+    position: fixed;
+    right: 203px;
+    top: 44%;
+} */
 .textContActive {
 
     box-shadow: 0px 0px 12px #ccc inset;
@@ -337,6 +385,7 @@ button#pasteImg {
 }
 body.edit #imgContainer {
     height: 26rem;
+    border-radius: 5px;
 }
 #resultsContainer .link {
     height: auto;
@@ -362,22 +411,18 @@ html.light body.edit .cuerpoInt {
 .icofont-expand {
     cursor: pointer;
 }
+.lcontrols {
+    margin-right: 8px;
+    top: 5px;
+}
 .columna {
     margin-right: 45px;
     margin-bottom: 0;
-    display: flex;
     flex-wrap: wrap;
-    overflow-y: auto;
-    column-gap: 15px;
 }
 
 .link {
-    max-width: 225px;
-    min-width: 225px;
-    border-left-width: 3px;
-    border-left-style: solid;
-    border-left-color: transparent;
-    background-color: transparent;
+    width: 225px;
 }
 .link:nth-child(even):not(.lastVisited) {
     background-color: transparent;
@@ -392,11 +437,12 @@ html.light body.edit .cuerpoInt {
     border-left-color: var(--accentColor);
     background-color: var(--secondColor);
 }
+.link a {
+    top: 0;
+    justify-content: center;
+}
 .navActive a {
     color: var(--light-textColor);
-}
-.lcontrols {
-    padding: 11px;
 }
 .link:last-child {
     border-bottom-left-radius: 0;
