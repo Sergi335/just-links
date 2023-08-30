@@ -11,7 +11,7 @@ const { URL } = require('url')
 const getLinks = async (req, res) => {
   const OPERATIONS_AVAILABLE = ['id', 'all', 'count', 'desktop']
   const operation = req.params.operation
-  const user = req.user.name
+  const user = 'SergioSR'
   if (OPERATIONS_AVAILABLE.includes(operation) && user) {
     console.log(req.params)
     console.log(operation)
@@ -24,7 +24,7 @@ const getLinks = async (req, res) => {
       if (operation === 'desktop') {
         const desktop = req.params.value
         const data = await linksModel.find({ escritorio: desktop, user })
-        res.status(200).send(data)
+        res.status(200).json(data)
       }
       if (operation === 'all') {
         const data = await linksModel.find({ user })

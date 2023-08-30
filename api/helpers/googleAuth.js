@@ -1,34 +1,24 @@
-// const { getAuth, getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup } = require('firebase/auth')
-const { getAuth, signInWithPopup, GoogleAuthProvider } = require('firebase/auth')
-const { initializeApp } = require('firebase/app')
-const { firebaseConfig } = require('../config/firebase')
+const { getAuth } = require('firebase-admin/auth')
+const admin = require('firebase-admin')
+const serviceAccount = require('../config/justlinks-7330b-firebase-adminsdk-lxi21-31ef679de3.json')
 
-const app = initializeApp(firebaseConfig)
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+})
 
-const loginWithGoogle = (req, res) => {
-  const auth = getAuth()
-  const provider = new GoogleAuthProvider()
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result)
-      const token = credential.accessToken
-      // The signed-in user info.
-      const user = result.user
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-      res.send(user, token, credential)
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code
-      const errorMessage = error.message
-      // The email of the user's account used.
-      const email = error.customData.email
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error)
-      // ...
-      res.send(errorCode, errorMessage, email, credential)
+const checkGoogleSession = (req, res) => {
+  // idToken comes from the client app
+  const { data } = req.body
+  const idToken = data.idToken
+  getAuth()
+    .verifyIdToken(idToken)
+    .then((decodedToken) => {
+      const uid = decodedToken.uid
+      res.send(data)
+    })
+    .catch((error) => {
+      res.send({ error })
     })
 }
 
-module.exports = { loginWithGoogle }
+module.exports = { checkGoogleSession }

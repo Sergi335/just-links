@@ -3,7 +3,7 @@ const router = express.Router()
 const multer = require('multer')
 const upload = multer()
 // eslint-disable-next-line no-unused-vars
-const { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword } = require('../controllers/auth')
+const { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword, compruebaUsuarioUniversal } = require('../controllers/auth')
 
 const { deleteLinks, getNameByUrl, obtenerStatus, encontrarDuplicadosPorURL, getLinks, editLinks, createLinks } = require('../controllers/links')
 // eslint-disable-next-line no-unused-vars
@@ -27,18 +27,20 @@ const { searchLinks } = require('../controllers/searchController')
 
 const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl, deleteLinkImg } = require('../helpers/storage')
 
-// const { loginWithGoogle } = require('../helpers/googleAuth')
-
+const { checkGoogleSession } = require('../helpers/googleAuth')
 router.get('/', (req, res) => {
   res.render('landing.pug')
 })
 
-router.get('/api/links/:operation/:value', authMiddleware, getLinks)
+router.get('/api/links/:operation/:value', getLinks)
 router.patch('/api/links', authMiddleware, editLinks)
 router.post('/api/links', authMiddleware, createLinks)
 router.delete('/api/links', authMiddleware, deleteLinks)
 
-// router.get('/signWithGoogle', loginWithGoogle)
+router.post('/login', compruebaUsuario)
+
+router.post('/session', checkGoogleSession)
+
 // router.get('/api/cagadas', cagadasFix)
 router.get('/desktop/:nombre', authMiddleware, testTemplates)
 router.get('/profile', authMiddleware, displayUserProfile)
@@ -57,7 +59,6 @@ router.get('/api/getBackground', authMiddleware, getBackgroundUrl)
 
 router.post('/api/changePassword', authMiddleware, cambiaPassword)
 // router.post('/register', registraUsuario)
-router.post('/login', compruebaUsuario)
 router.post('/api/columnas', authMiddleware, createColItem)
 router.post('/api/escritorios', authMiddleware, validateCreateDesktop, createDeskItem)
 router.post('/api/backup', authMiddleware, backup)

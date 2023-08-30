@@ -33,7 +33,8 @@ const cagadasFix = async (req, res) => {
  */
 const getDeskItems = async (req, res) => {
   const data = await escritoriosModel.find()
-  res.send(data)
+  console.log(data)
+  res.json(data)
 }
 /**
  * Edita escritorio

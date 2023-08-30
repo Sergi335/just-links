@@ -1,6 +1,9 @@
 const { escritoriosModel, usersModel, linksModel, columnasModel } = require('../models/index')
 const { encrypt, compare } = require('../helpers/handlePassword')
 const { tokenSign } = require('../helpers/handleJwt')
+const { getAuth } = require('firebase-admin/auth')
+const admin = require('firebase-admin')
+const serviceAccount = require('../config/justlinks-7330b-firebase-adminsdk-lxi21-31ef679de3.json')
 
 const registraUsuario = async (req, res) => {
   try {
@@ -52,6 +55,68 @@ const compruebaUsuario = async (req, res) => {
   } catch (e) {
     const message = 'Error usuario o contraseña incorrecta'
     res.send({ message })
+  }
+}
+const compruebaUsuarioUniversal = async (req, res) => {
+  const { method, data } = req.body
+  if (method === 'mail') {
+    try {
+      const dataUser = await usersModel.find({ name: `${data.name}` })
+      const dbPassword = dataUser.password
+      console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ dataUser:', req.body)
+      console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ dataUser:', dataUser)
+      const resultado = await compare(data.password, dbPassword)
+      if (!resultado) {
+        const message = 'Error usuario o contraseña incorrecta'
+        res.send({ message })
+      } else {
+        const data = {
+          token: await tokenSign(dataUser[0]),
+          user: dataUser
+        }
+        res.send(data)
+      }
+    } catch (error) {
+      const message = 'Error usuario o contraseña incorrecta'
+      res.send({ message })
+    }
+  }
+  if (method === 'google') {
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      })
+    }
+    const idToken = data.idToken
+    getAuth()
+      .verifyIdToken(idToken)
+      .then(async (decodedToken) => {
+        try {
+          const count = await usersModel.countDocuments({ email: data.userInfo.email })
+          if (count === 0) {
+            const uid = decodedToken.uid
+            const user = {
+              name: data.userInfo.displayName,
+              email: data.userInfo.email,
+              profileImage: data.userInfo.photoUrl,
+              realName: data.userInfo.displayName,
+              signMethod: 'google',
+              googleId: uid
+            }
+            await usersModel.create(user)
+            res.send(data.userInfo)
+          } else {
+            // si no existe crear
+            res.send(data.userInfo)
+          }
+        } catch (error) {
+          const message = 'Error al crear usuario'
+          res.send({ message })
+        }
+      })
+      .catch((error) => {
+        res.send({ error })
+      })
   }
 }
 const eliminaUsuario = async (req, res) => {
@@ -119,4 +184,4 @@ const cambiaPassword = async (req, res) => {
     res.send({ error })
   }
 }
-module.exports = { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword }
+module.exports = { registraUsuario, compruebaUsuario, eliminaUsuario, cambiaPassword, compruebaUsuarioUniversal }

@@ -18,6 +18,12 @@ const UsersSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String
+  },
+  signMethod: {
+    type: String
+  },
+  googleId: {
+    type: String
   }
 }, {
   timestamps: true,

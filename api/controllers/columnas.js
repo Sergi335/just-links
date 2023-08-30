@@ -49,7 +49,6 @@ const setOrder = async (req, res) => {
  * @param {*} res
  */
 const getColItems = async (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*')
   const params = req.query.escritorio
   const data = await columnasModel.find({ escritorio: `${params}` }).sort({ order: 1 })
   console.log(params)

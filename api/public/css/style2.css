@@ -56,7 +56,7 @@ html {
 }
 
 body {
-    background-size: cover;
+    /* background-size: cover; */
     background-attachment: fixed;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-image: var(--bgGradient);
@@ -539,6 +539,7 @@ div.avatar img {
     display: none;
     max-height: 95vh;
     z-index: 6;
+    align-items: center;
 }
 
 #resultsContainer p.idpanel {
@@ -552,8 +553,12 @@ div.avatar img {
     height: auto;
     border-bottom: 1px solid var(--firstBorderColor);
     padding-bottom: 10px;
+    max-height: max-content;
+    align-items: center;
 }
-
+#resultsContainer .link img {
+    position: initial;
+}
 #resultsContainer .link:nth-child(even):not(.lastVisited) {
     background-color: transparent;
 }
@@ -823,6 +828,7 @@ body.profile #resultsContainer .link img {
     justify-content: start;
     align-items: center;
     width: 90%;
+    top: initial;
 }
 
 #resultsContainer .link:hover,
@@ -1858,9 +1864,9 @@ div.headCenter input[type="text"] {
     width: 90%;
 }
 
-html.light div.headCenter input[type="text"] {
+/* html.light div.headCenter input[type="text"] {
     background-color: var(--thirdColor);
-}
+} */
 
 div.headCenter input[type="text"]::placeholder {
     color: var(--firstTextColor);
@@ -1871,7 +1877,9 @@ div.headCenter input[type="text"]:focus-visible {
     outline-style: none;
     background-color: var(--secondColor);
 }
-
+html.dark div.headCenter input[type="text"]:focus-visible {
+    background-color: var(--thirdColor);
+}
 /** -- Progresss Circle ---- **/
 
 .progress-pie-chart {
@@ -2069,6 +2077,7 @@ div.headCenter input[type="text"]:focus-visible {
         width: 100%;
         align-items: center;
         gap: 5px;
+        padding: 0;
     }
 
     .dropdown-content a.active {
@@ -2079,6 +2088,7 @@ div.headCenter input[type="text"]:focus-visible {
     .dropdown-content a {
         max-width: 180px;
         font-size: 14px;
+        padding: 8px 10px;
     }
 
     div.headCenter input[type="text"] {
@@ -2096,6 +2106,9 @@ div.headCenter input[type="text"]:focus-visible {
         max-height: 350px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
+    }
+    html.dark #resultsContainer {
+        background-color: var(--thirdColor);
     }
     .link a {
         position: relative;
