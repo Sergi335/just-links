@@ -37,7 +37,7 @@ router.patch('/api/links', authMiddleware, editLinks)
 router.post('/api/links', authMiddleware, createLinks)
 router.delete('/api/links', authMiddleware, deleteLinks)
 
-router.post('/login', compruebaUsuarioUniversal)
+router.post('/login', compruebaUsuario)
 
 router.post('/session', checkGoogleSession)
 
