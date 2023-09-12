@@ -1,3 +1,37 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js'
+import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js'
+// ...
+
+// TODO: Replace the following with your app's Firebase project configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyDpLDFsm4FgCkw5YP6aRfjFJ8eo5kakNpE',
+  authDomain: 'justlinks-7330b.firebaseapp.com',
+  projectId: 'justlinks-7330b',
+  storageBucket: 'justlinks-7330b.appspot.com',
+  messagingSenderId: '788955672995',
+  appId: '1:788955672995:web:9ced722a20e33f6a01ea16'
+}
+
+// Initialize Firebase
+initializeApp(firebaseConfig)
+const auth = getAuth()
+
+const handleMailLoginFirebase = (email, password) => {
+  return new Promise((resolve, reject) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user
+        console.log(user)
+        resolve(user.accessToken) // Resuelve la promesa con el usuario
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.log(errorCode, errorMessage)
+        reject(errorMessage) // Rechaza la promesa con el mensaje de error
+      })
+  })
+}
 window.onload = function () {
   const btnStart = document.getElementById('btnStart')
   btnStart.addEventListener('click', () => {
@@ -39,15 +73,22 @@ window.onload = function () {
   /**
    * Login
    */
-  document.getElementById('loginForm').addEventListener('submit', function (event) {
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
     event.preventDefault()
 
     const nick = document.getElementById('loginName').value
     const password = document.getElementById('loginPass').value
-
+    const email = document.getElementById('loginMail').value
+    const idToken = await handleMailLoginFirebase(email, password)
+    console.log('🚀 ~ file: landing.js:81 ~ idToken:', idToken)
     const formData = {
-      name: nick,
-      password
+      method: 'mail',
+      data: {
+        name: nick,
+        email,
+        password,
+        idToken
+      }
     }
 
     fetch('/login', {

@@ -229,7 +229,7 @@ const getBackgrounds = async (user) => {
     return backgrounds
   } catch (err) {
     console.error('Error al leer la carpeta:', err)
-    throw err
+    return null
   }
 }
 const getLinkIcons = async (user) => {
@@ -247,7 +247,7 @@ const getLinkIcons = async (user) => {
     return icons
   } catch (err) {
     console.error('Error al leer la carpeta:', err)
-    throw err
+    return null
   }
 }
 const getBackgroundUrl = async (req, res) => {

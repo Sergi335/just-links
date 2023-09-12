@@ -19,7 +19,7 @@ const { validateEditColumn, validateCreateColumn } = require('../validators/colu
 
 const { validateEditDesktop, validateCreateDesktop } = require('../validators/escritorios')
 
-const { getColItems, createColItem, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns } = require('../controllers/columnas')
+const { getColItems, createColItem, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns, getAllColItems } = require('../controllers/columnas')
 
 const { displayUserProfile, editAditionalInfo } = require('../controllers/users')
 
@@ -37,7 +37,7 @@ router.patch('/api/links', authMiddleware, editLinks)
 router.post('/api/links', authMiddleware, createLinks)
 router.delete('/api/links', authMiddleware, deleteLinks)
 
-router.post('/login', compruebaUsuario)
+router.post('/login', compruebaUsuarioUniversal)
 
 router.post('/session', checkGoogleSession)
 
@@ -47,10 +47,10 @@ router.get('/profile', authMiddleware, displayUserProfile)
 
 router.get('/api/linkStatus', authMiddleware, obtenerStatus) // /helpers/ ...
 router.get('/api/duplicados', authMiddleware, encontrarDuplicadosPorURL) // /helpers/ ...
-router.get('/api/linkName', authMiddleware, getNameByUrl) // /helpers/ ...
-
+router.get('/api/linkName', getNameByUrl) // /helpers/ ...
+router.get('/api/columnasAll', getAllColItems)
 router.get('/api/columnas', getColItems)
-router.get('/api/escritorios', getDeskItems)
+router.get('/api/escritorios', authMiddleware, getDeskItems)
 router.get('/api/sidepanel', authMiddleware, getSidePanel)
 router.get('/api/search', authMiddleware, searchLinks)
 router.get('/api/deleteUser', authMiddleware, eliminaUsuario)

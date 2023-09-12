@@ -57,22 +57,50 @@ const compruebaUsuario = async (req, res) => {
     res.send({ message })
   }
 }
+const verificaUsuarioMailFirebase = async (data) => {
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    })
+  }
+  const idToken = data.idToken
+  console.log('🚀 ~ file: auth.js:67 ~ verificaUsuarioMailFirebase ~ idToken:', idToken)
+  if (!idToken) {
+    return 'not token'
+  } else {
+    getAuth()
+      .verifyIdToken(idToken)
+      .then(async (decodedToken) => {
+        const token = await decodedToken.uid
+        console.log('🚀 ~ file: auth.js:75 ~ .then ~ token:', token)
+        return token
+      })
+      .catch((error) => {
+        return error
+      })
+  }
+}
 const compruebaUsuarioUniversal = async (req, res) => {
   const { method, data } = req.body
   if (method === 'mail') {
     try {
       const dataUser = await usersModel.find({ name: `${data.name}` })
-      const dbPassword = dataUser.password
-      console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ dataUser:', req.body)
+      const dbPassword = dataUser[0].password
+      console.log('🚀 ~ file: auth.js:82 ~ compruebaUsuarioUniversal ~ dbPassword:', dbPassword)
+      console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ body:', req.body)
       console.log('🚀 ~ file: auth.js:39 ~ compruebaUsuario ~ dataUser:', dataUser)
       const resultado = await compare(data.password, dbPassword)
+      console.log('🚀 ~ file: auth.js:86 ~ compruebaUsuarioUniversal ~ resultado:', resultado)
+      const fireResponse = await verificaUsuarioMailFirebase(data)
+      console.log('🚀 ~ file: auth.js:88 ~ compruebaUsuarioUniversal ~ fireResponse:', fireResponse)
       if (!resultado) {
         const message = 'Error usuario o contraseña incorrecta'
         res.send({ message })
       } else {
         const data = {
           token: await tokenSign(dataUser[0]),
-          user: dataUser
+          user: dataUser,
+          fireResponse
         }
         res.send(data)
       }

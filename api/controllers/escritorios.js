@@ -32,8 +32,8 @@ const cagadasFix = async (req, res) => {
  * @param {*} res
  */
 const getDeskItems = async (req, res) => {
-  const data = await escritoriosModel.find()
-  console.log(data)
+  const user = req.user.name
+  const data = await escritoriosModel.find({ user }).sort({ orden: 1 })
   res.json(data)
 }
 /**

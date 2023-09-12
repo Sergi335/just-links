@@ -151,6 +151,10 @@ const moveColumns = async (req, res) => {
 
   res.send({ response })
 }
+const getAllColItems = async (req, res) => {
+  const data = await columnasModel.find().sort({ order: 1 })
+  res.json(data)
+}
 // Recibe las columnas que están actualmente en el escritorio por orden y recibe el escritorio donde están -> USER
 const actualizarOrdenColumnas = async (req, res) => {
   try {
@@ -245,4 +249,4 @@ const actualizarOrdenColumnasLocal = async (elementos, escritorio) => {
   }
 }
 
-module.exports = { createColItem, getColItems, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns }
+module.exports = { createColItem, getColItems, deleteColItem, editColItem, actualizarOrdenColumnas, moveColumns, getAllColItems }

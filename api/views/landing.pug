@@ -6,7 +6,8 @@ head
   title JustLinks | Home
   link(rel='shortcut icon' href='/img/favicon.ico' type='image/x-icon')
   link(rel='stylesheet' href='/css/landingStyle.css')
-  script(src='/js/landing.js')
+  script(type='module' src='/js/landing.js')
+  //- script(type='module' src='/js/firebase.js')
 #homepage
   header
     .logo 
@@ -42,6 +43,7 @@ head
     #loginForm
       form
         input#loginName(type='text' name='nick' placeholder='nombre' required='true')
+        input#loginMail(type='email' name='email' placeholder='email' required='true')
         input#loginPass(type='password' name='password' placeholder='password' required='true')
         input(type='submit' value='Log In')
       button#googleSignIn

@@ -11,6 +11,7 @@ const { URL } = require('url')
 const getLinks = async (req, res) => {
   const OPERATIONS_AVAILABLE = ['id', 'all', 'count', 'desktop']
   const operation = req.params.operation
+  console.log(req.cookies)
   const user = 'SergioSR'
   if (OPERATIONS_AVAILABLE.includes(operation) && user) {
     console.log(req.params)
@@ -49,6 +50,7 @@ const editLinks = async (req, res) => {
   const { fields } = body
   const { idpanel } = fields
   const user = req.user.name
+  console.log('🚀 ~ file: links.js:53 ~ editLinks ~ user:', user)
   if (body.id && user) {
     try {
       // Solo hay que pasar los datos que se van a cambiar

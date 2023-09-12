@@ -13,7 +13,7 @@ const checkGoogleSession = (req, res) => {
   getAuth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
-      const uid = decodedToken.uid
+      // const uid = decodedToken.uid
       res.send(data)
     })
     .catch((error) => {

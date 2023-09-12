@@ -20,6 +20,7 @@
         option(value=5) 5
     h3 Cambiar Fondo 
     .selectBackground
+    if backgrounds
       each item in backgrounds 
         img(class='miniatures' src=`${item.url}`, alt=`${item.nombre}`)
       .solidColor.miniatures
