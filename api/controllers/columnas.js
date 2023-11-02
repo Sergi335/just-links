@@ -159,9 +159,9 @@ const getAllColItems = async (req, res) => {
 const actualizarOrdenColumnas = async (req, res) => {
   try {
     const elementos = req.body.body
+    console.log('🚀 ~ file: columnas.js:162 ~ actualizarOrdenColumnas ~ elementos:', elementos)
     const escritorio = req.query.escritorio
-    console.log(elementos)
-    console.log(escritorio)
+    console.log('🚀 ~ file: columnas.js:164 ~ actualizarOrdenColumnas ~ escritorio:', escritorio)
 
     if (!escritorio) {
       return res.status(400).json({ message: 'Falta el parámetro "escritorio"' })
@@ -186,6 +186,7 @@ const actualizarOrdenColumnas = async (req, res) => {
           { order: orden },
           { new: true }
         )
+        console.log('🚀 ~ file: columnas.js:189 ~ updates ~ updatedElement:', updatedElement)
 
         if (!updatedElement) {
           console.warn(`No se encontró el elemento con _id=${elemento} y escritorio=${escritorio}`)

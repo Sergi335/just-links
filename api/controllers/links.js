@@ -55,7 +55,6 @@ const editLinks = async (req, res) => {
     try {
       // Solo hay que pasar los datos que se van a cambiar
       const data = await linksModel.findOneAndUpdate({ _id: body.id, user }, { $set: { ...fields } }, { new: true })
-      console.log(data)
       res.status(200).send(data)
       // Sección por si el elemento es movido/arrastrado a otra columna o a la misma
       if (body.idpanelOrigen) {

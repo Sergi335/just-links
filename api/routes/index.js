@@ -27,7 +27,7 @@ const { searchLinks } = require('../controllers/searchController')
 
 const { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgroundUrl, deleteLinkImg } = require('../helpers/storage')
 
-// const { checkGoogleSession } = require('../helpers/googleAuth')
+const { checkGoogleSession } = require('../helpers/googleAuth')
 router.get('/', (req, res) => {
   res.render('landing.pug')
 })
@@ -39,7 +39,7 @@ router.delete('/api/links', authMiddleware, deleteLinks)
 
 router.post('/login', compruebaUsuario)
 
-// router.post('/session', checkGoogleSession)
+router.post('/session', checkGoogleSession)
 
 // router.get('/api/cagadas', cagadasFix)
 router.get('/desktop/:nombre', authMiddleware, testTemplates)

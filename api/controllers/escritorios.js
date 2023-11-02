@@ -194,8 +194,8 @@ const getSidePanel = async (req, res) => {
 }
 const ordenaDesks = async (req, res) => {
   try {
-    const elementos = req.body.body
-    console.log(elementos)
+    console.log(req.body)
+    const elementos = req.body.names
     const user = req.user.name
 
     // Creamos un mapa para almacenar el orden actual de los elementos

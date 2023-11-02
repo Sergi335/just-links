@@ -10,17 +10,27 @@ const viewDir = path.join(__dirname, 'views')
 const port = (process.env.port || 3000)
 const cookieParser = require('cookie-parser')
 const routes = require('./routes/index')
+
 app
 // Configurando app
   .set('views', viewDir)
   .set('view engine', 'pug')
+
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
+  const origin = req.header('origin')
+
+  const ACCEPTED_ORIGINS = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175']
+
+  if (ACCEPTED_ORIGINS.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin)
+  }
+
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-justlinks-user, x-justlinks-token')
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
   res.header('Access-Control-Allow-Credentials', 'true')
   next()
 })
+
 app
   .use(publicDir)
   .use(express.json())

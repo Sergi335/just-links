@@ -1771,7 +1771,7 @@ function ordenaDesks () {
       })
       console.log(names)
       let body = names
-      body = JSON.stringify({ body })
+      body = JSON.stringify(body)
       const res = await fetch(`${constants.BASE_URL}/ordenaDesks`, {
         method: 'PUT',
         headers: {

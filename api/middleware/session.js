@@ -9,14 +9,14 @@ const authMiddleware = async (req, res, next) => {
     console.log('Headers: ' + JSON.stringify(req.headers))
 
     if (!req.cookies.token) {
-      if (req.headers.origin !== 'http://localhost:5173') {
-        handleHttpError(res, 'NOT_TOKEN', 401)
-        return
-      } else {
+      if (req.headers.origin !== 'http://localhost:5173' || req.headers.origin !== 'http://localhost:5174') {
         console.log('Vale eres tu')
         const user = await usersModel.findOne({ name: 'SergioSR' })
         console.log('🚀 ~ file: session.js:17 ~ authMiddleware ~ user:', user)
         req.user = user
+      } else {
+        handleHttpError(res, 'NOT_TOKEN', 401)
+        return
       }
     } else {
       const token = req.cookies.token
