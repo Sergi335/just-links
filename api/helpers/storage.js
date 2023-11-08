@@ -1,6 +1,6 @@
 const { initializeApp } = require('firebase/app')
 const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll, getMetadata } = require('firebase/storage')
-const { firebaseConfig } = require('../config/firebase')
+const { firebaseConfig } = require('../../firebase-secret/firebase')
 const { updateProfileImage } = require('../controllers/users')
 const { escritoriosModel, columnasModel, linksModel } = require('../models/index')
 
