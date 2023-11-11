@@ -1,8 +1,17 @@
 const { initializeApp } = require('firebase/app')
 const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll, getMetadata } = require('firebase/storage')
-const { firebaseConfig } = require('../../firebase-secret/firebase')
+// const { firebaseConfig } = require('../../firebase-secret/firebase')
 const { updateProfileImage } = require('../controllers/users')
 const { escritoriosModel, columnasModel, linksModel } = require('../models/index')
+
+const firebaseConfig = {
+  apiKey: process.env.FB_API_KEY,
+  authDomain: process.env.FB_AUTH_DOMAIN,
+  projectId: process.env.FB_PROJECT_ID,
+  storageBucket: process.env.FB_STORAGE_BUCKET,
+  messagingSenderId: process.env.FB_MESSAGING_ID,
+  appId: process.env.FB_APP_ID
+}
 
 const app = initializeApp(firebaseConfig)
 const storage = getStorage(app)
@@ -232,6 +241,16 @@ const getBackgrounds = async (user) => {
     return null
   }
 }
+const getBackgroundsPublic = async (req, res) => {
+  try {
+    const user = req.user.name
+    const backgrounds = await getBackgrounds(user)
+    res.send(backgrounds)
+  } catch (err) {
+    console.error('Error al leer la carpeta:', err)
+    res.send({ err })
+  }
+}
 const getLinkIcons = async (user) => {
   try {
     const fileRef = ref(storage, `${user}/images/icons`)
@@ -342,4 +361,4 @@ const deleteImageOnDb = async (url, user, linkId) => {
     return { error: 'Error al borrar' }
   }
 }
-module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl, getLinkIcons, deleteLinkImg }
+module.exports = { uploadProfileImage, uploadLinkIcon, uploadImg, deleteImg, backup, downloadBackup, getBackgrounds, getBackgroundUrl, getLinkIcons, deleteLinkImg, getBackgroundsPublic }
